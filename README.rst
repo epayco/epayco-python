@@ -61,17 +61,19 @@ customer_info = {
 
 customer=objepayco.customer.create(customer_info)
 
-#### Retrieve
+Retrieve
+******
 
-id_customer="eXj5Wdqgj7xzvC7AR"
-customer=objepayco.customer.get(id_customer)
+customer=objepayco.customer.get("eXj5Wdqgj7xzvC7AR")
 
-#### List
+List
+******
 
 customers = testepayco.customer.getlist()
 
-#### Update
-
+Update
+******
+:
 id_customer="eXj5Wdqgj7xzvC7AR"
 update_customer_info = {
   name: "Alex"
@@ -79,10 +81,12 @@ update_customer_info = {
 
 customer =test.customer.update(id_customer,update_customer_info)
 
-### Plans
+Plans
+####
 
-#### Create
-
+Create
+******
+:
 plan_info = {
   id_plan: "coursereact",
   name: "Course react js",
