@@ -20,18 +20,20 @@ If you want clone the repository, point it directly into our GitHub project::
 
 ## Usage
 
-```ruby
-require 'epayco-ruby'
+import pyepayco.epayco as epayco
 
-Epayco.apiKey = '491d6a0b6e992.......'
-Epayco.privateKey = '268c8e0162990cf.......'
-Epayco.lang = 'ES'
-Epayco.test = true
-```
+apiKey = "491d6a0b6e992cf924edd8d3d088aff1"
+privateKey = "268c8e0162990cf2ce97fa7ade2eff5a"
+lenguage = "ES";
+test = True;
+options={"apiKey":apiKey,"privateKey":privateKey,"test":test,"lenguage":lenguage}
+
+test=epayco.Epayco(options);
+
 
 ### Create Token
 
-```ruby
+```python
 credit_info = {
   "card[number]": "4575623182290326",
   "card[exp_year]": "2017",
@@ -39,11 +41,8 @@ credit_info = {
   "card[cvc]": "123"
 }
 
-begin
-  token = Epayco::Token.create credit_info
-rescue Epayco::Error => e
-  puts e
-end
+response=test.token.create(credit_info)
+
 ```
 
 ### Customers
