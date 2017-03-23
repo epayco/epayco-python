@@ -4,6 +4,7 @@
     <list default="true" id="7a82d11e-539a-480c-8c59-9a35178faa66" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.rst" afterPath="$PROJECT_DIR$/README.rst" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyepayco/client.py" afterPath="$PROJECT_DIR$/pyepayco/client.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pyepayco/resources.py" afterPath="$PROJECT_DIR$/pyepayco/resources.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,7 +24,7 @@
         <entry file="file://$PROJECT_DIR$/../testpackages/prueba.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="150">
-              <caret line="10" column="19" lean-forward="false" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+              <caret line="10" column="27" lean-forward="false" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -31,11 +32,21 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="255">
+              <caret line="17" column="1" lean-forward="false" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="resources.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyepayco/resources.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="102" column="17" lean-forward="false" selection-start-line="102" selection-start-column="17" selection-end-line="102" selection-end-column="17" />
+            <state relative-caret-position="349">
+              <caret line="324" column="9" lean-forward="true" selection-start-line="324" selection-start-column="9" selection-end-line="324" selection-end-column="9" />
               <folding>
                 <element signature="e#0#34#0" expanded="true" />
               </folding>
@@ -46,8 +57,8 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="13" column="3" lean-forward="true" selection-start-line="13" selection-start-column="3" selection-end-line="13" selection-end-column="3" />
+            <state relative-caret-position="225">
+              <caret line="18" column="4" lean-forward="false" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="53" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -55,21 +66,33 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+      <file leaf-file-name="epayco.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pyepayco/epayco.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="375">
+              <caret line="25" column="26" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="26" />
+              <folding>
+                <element signature="e#0#25#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/.gitignore">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="15">
-              <caret line="1" column="8" lean-forward="true" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
+              <caret line="1" column="8" lean-forward="false" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.rst" pinned="false" current-in-tab="false">
+      <file leaf-file-name="README.rst" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/README.rst">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="84" column="40" lean-forward="false" selection-start-line="84" selection-start-column="40" selection-end-line="84" selection-end-column="40" />
+            <state relative-caret-position="150">
+              <caret line="26" column="15" lean-forward="false" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
               <folding />
             </state>
           </provider>
@@ -78,8 +101,8 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../pyepayco/epayco-python/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="10" column="22" lean-forward="false" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
+            <state relative-caret-position="255">
+              <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
               <folding>
                 <element signature="e#0#32#0" expanded="true" />
               </folding>
@@ -90,8 +113,8 @@
       <file leaf-file-name="client.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pyepayco/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="-1110">
+              <caret line="15" column="7" lean-forward="true" selection-start-line="15" selection-start-column="7" selection-end-line="15" selection-end-column="7" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
               </folding>
@@ -106,30 +129,41 @@
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="e#0#34#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="epayco.py" pinned="false" current-in-tab="false">
-        <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pyepayco/epayco.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#25#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="client.py" pinned="false" current-in-tab="false">
-        <entry file="file:///Library/Frameworks/Python.framework/Versions/3.6/lib/python3.6/site-packages/pyepayco/client.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
+                <marker date="1490288732000" expanded="true" signature="720:1960" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="2307:2330" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="2355:2807" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="2360:2502" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="2539:2807" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="2810:2833" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="2857:4608" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="2862:2960" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="2997:3265" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="3271:3362" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="3387:3703" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="3709:3786" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="3810:4124" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="4130:4259" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="4301:4608" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="4611:4653" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="4686:6486" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="4691:4797" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="4834:5110" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="5116:5224" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="5249:5575" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="5581:5666" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="5690:6012" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="6018:6147" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="6180:6486" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="6489:6511" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="6535:7790" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="6540:6602" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="6626:6916" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="6922:7036" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="7070:7341" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="7347:7458" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="7494:7790" ph="..." />
+                <marker date="1490288732000" expanded="true" signature="7793:7824" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+                <marker date="1490288732000" expanded="true" signature="7853:8005" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
               </folding>
             </state>
           </provider>
@@ -186,12 +220,13 @@
         <option value="$PROJECT_DIR$/../pyepayco/epayco-python/pyepayco/epayco.py" />
         <option value="$PROJECT_DIR$/../pyepayco/epayco-python/pyepayco/__init__.py" />
         <option value="$PROJECT_DIR$/pyepayco/README.rst" />
-        <option value="$PROJECT_DIR$/README.rst" />
+        <option value="$PROJECT_DIR$/.gitignore" />
         <option value="$PROJECT_DIR$/../testpackages/prueba.py" />
         <option value="$PROJECT_DIR$/../pyepayco/epayco-python/test.py" />
-        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/pyepayco/client.py" />
         <option value="$PROJECT_DIR$/pyepayco/resources.py" />
-        <option value="$PROJECT_DIR$/.gitignore" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/README.rst" />
       </list>
     </option>
   </component>
@@ -312,23 +347,6 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="resources" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../pyepayco/epayco-python/pyepayco" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="pyepayco" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../pyepayco/epayco-python/pyepayco/resources.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <method />
-    </configuration>
     <configuration default="false" name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -376,6 +394,23 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="epayco-python" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="resources (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/pyepayco" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="epayco-python" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pyepayco/resources.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -533,18 +568,18 @@
     </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.epayco" />
-      <item index="1" class="java.lang.String" itemvalue="Python.resources" />
-      <item index="2" class="java.lang.String" itemvalue="Python.test" />
-      <item index="3" class="java.lang.String" itemvalue="Python.prueba" />
-      <item index="4" class="java.lang.String" itemvalue="Python.test (1)" />
+      <item index="1" class="java.lang.String" itemvalue="Python.test" />
+      <item index="2" class="java.lang.String" itemvalue="Python.prueba" />
+      <item index="3" class="java.lang.String" itemvalue="Python.test (1)" />
+      <item index="4" class="java.lang.String" itemvalue="Python.resources (1)" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.test (1)" />
-        <item index="1" class="java.lang.String" itemvalue="Python.prueba" />
-        <item index="2" class="java.lang.String" itemvalue="Python.test" />
-        <item index="3" class="java.lang.String" itemvalue="Python.epayco" />
-        <item index="4" class="java.lang.String" itemvalue="Python.resources" />
+        <item index="1" class="java.lang.String" itemvalue="Python.resources (1)" />
+        <item index="2" class="java.lang.String" itemvalue="Python.prueba" />
+        <item index="3" class="java.lang.String" itemvalue="Python.test" />
+        <item index="4" class="java.lang.String" itemvalue="Python.epayco" />
       </list>
     </recent_temporary>
   </component>
@@ -590,7 +625,14 @@
       <option name="project" value="LOCAL" />
       <updated>1490288982105</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="mas cambios readme">
+      <created>1490291071945</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1490291071945</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -651,7 +693,8 @@
     <MESSAGE value="Cliente Finalizado" />
     <MESSAGE value="Add README V1" />
     <MESSAGE value="Add gitignore" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add gitignore" />
+    <MESSAGE value="mas cambios readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="mas cambios readme" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -666,13 +709,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/errors.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/errors.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -759,14 +795,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../pyepayco/setup.py" />
-    <entry file="file://$PROJECT_DIR$/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="1" lean-forward="false" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../pyepayco/epayco-python/pyepayco/errors.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
@@ -875,14 +903,49 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#34#0" expanded="true" />
+            <marker date="1490288732000" expanded="true" signature="720:1960" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="2307:2330" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="2355:2807" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="2360:2502" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="2539:2807" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="2810:2833" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="2857:4608" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="2862:2960" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="2997:3265" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="3271:3362" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="3387:3703" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="3709:3786" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="3810:4124" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="4130:4259" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="4301:4608" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="4611:4653" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="4686:6486" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="4691:4797" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="4834:5110" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="5116:5224" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="5249:5575" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="5581:5666" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="5690:6012" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="6018:6147" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="6180:6486" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="6489:6511" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="6535:7790" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="6540:6602" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="6626:6916" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="6922:7036" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="7070:7341" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="7347:7458" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="7494:7790" ph="..." />
+            <marker date="1490288732000" expanded="true" signature="7793:7824" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
+            <marker date="1490288732000" expanded="true" signature="7853:8005" ph="&quot;&quot;&quot;...&quot;&quot;&quot;" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.rst">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="84" column="40" lean-forward="false" selection-start-line="84" selection-start-column="40" selection-end-line="84" selection-end-column="40" />
+        <state relative-caret-position="15">
+          <caret line="1" column="8" lean-forward="false" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
           <folding />
         </state>
       </provider>
@@ -890,7 +953,7 @@
     <entry file="file://$PROJECT_DIR$/../testpackages/prueba.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
-          <caret line="10" column="19" lean-forward="false" selection-start-line="10" selection-start-column="19" selection-end-line="10" selection-end-column="19" />
+          <caret line="10" column="27" lean-forward="false" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
@@ -899,8 +962,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../pyepayco/epayco-python/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="10" column="22" lean-forward="false" selection-start-line="10" selection-start-column="22" selection-end-line="10" selection-end-column="22" />
+        <state relative-caret-position="255">
+          <caret line="17" column="1" lean-forward="true" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
@@ -909,18 +972,36 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pyepayco/client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="-1110">
+          <caret line="15" column="7" lean-forward="true" selection-start-line="15" selection-start-column="7" selection-end-line="15" selection-end-column="7" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pyepayco/epayco.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="25" column="26" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#25#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="17" column="1" lean-forward="false" selection-start-line="17" selection-start-column="1" selection-end-line="17" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pyepayco/resources.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="102" column="17" lean-forward="false" selection-start-line="102" selection-start-column="17" selection-end-line="102" selection-end-column="17" />
+        <state relative-caret-position="349">
+          <caret line="324" column="9" lean-forward="true" selection-start-line="324" selection-start-column="9" selection-end-line="324" selection-end-column="9" />
           <folding>
             <element signature="e#0#34#0" expanded="true" />
           </folding>
@@ -929,18 +1010,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="13" column="3" lean-forward="true" selection-start-line="13" selection-start-column="3" selection-end-line="13" selection-end-column="3" />
+        <state relative-caret-position="225">
+          <caret line="18" column="4" lean-forward="false" selection-start-line="18" selection-start-column="4" selection-end-line="18" selection-end-column="53" />
           <folding>
             <element signature="e#0#32#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/README.rst">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="8" lean-forward="true" selection-start-line="1" selection-start-column="8" selection-end-line="1" selection-end-column="8" />
+        <state relative-caret-position="150">
+          <caret line="26" column="15" lean-forward="false" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
           <folding />
         </state>
       </provider>

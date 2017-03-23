@@ -5,7 +5,7 @@ import json
 import base64
 from Crypto.Cipher import AES
 import requests
-import pyepayco.errors as errors
+import pyepayco.errors
 
 from requests.exceptions import ConnectionError
 

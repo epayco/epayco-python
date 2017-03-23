@@ -24,16 +24,15 @@ import pyepayco.epayco as epayco
 
 apiKey = "491d6a0b6e992cf924edd8d3d088aff1"
 privateKey = "268c8e0162990cf2ce97fa7ade2eff5a"
-lenguage = "ES";
-test = True;
+lenguage = "ES"
+test = True
 options={"apiKey":apiKey,"privateKey":privateKey,"test":test,"lenguage":lenguage}
 
-objepayco=epayco.Epayco(options);
+objepayco=epayco.Epayco(options)
 
 
 ### Create Token
 
-```python
 credit_info = {
   "card[number]": "4575623182290326",
   "card[exp_year]": "2017",
@@ -43,13 +42,10 @@ credit_info = {
 
 token=objepayco.token.create(credit_info)
 
-```
-
 ### Customers
 
 #### Create
 
-```python
 customer_info = {
   token_card: "eXj5Wdqgj7xzvC7AR",
   name: "Joe Doe",
@@ -60,37 +56,28 @@ customer_info = {
 
 customer=objepayco.customer.create(customer_info)
 
-```
-
 #### Retrieve
 
-```python
 id_customer="eXj5Wdqgj7xzvC7AR"
 customer=objepayco.customer.get(id_customer)
-```
 
 #### List
 
-```python
 customers = testepayco.customer.getlist()
-```
 
 #### Update
 
-```python
 id_customer="eXj5Wdqgj7xzvC7AR"
 update_customer_info = {
   name: "Alex"
 }
 
 customer =test.customer.update(id_customer,update_customer_info)
-```
 
 ### Plans
 
 #### Create
 
-```python
 plan_info = {
   id_plan: "coursereact",
   name: "Course react js",
@@ -102,7 +89,7 @@ plan_info = {
   trial_days: 30
 }
 
-  plan = objepayco.plan.create(plan_info)
+plan = objepayco.plan.create(plan_info)
 
 
 #### Retrieve
@@ -128,6 +115,7 @@ subscription_info = {
     "doc_type": "CC",
     "doc_number": "5234567"
 }
+
 sub=objepayco.subscriptions.create(subscription_info)
 
 #### Retrieve
@@ -140,13 +128,10 @@ sub=objepayco.subscriptions.getlist()
 
 #### Cancel
 
-
 sub=objepayco.subscriptions.cancel("fayE66HxYbxWydaN8")
-
 
 #### Pay Subscription
 
-```ruby
 subscription_info = {
   id_plan: "coursereact",
   customer: "A6ZGiJ6rgxK5RB2WT",
@@ -155,12 +140,8 @@ subscription_info = {
   doc_number: "5234567"
 }
 
-begin
-  sub = Epayco::Subscriptions.charge subscription_info
-rescue Epayco::Error => e
-  puts e
-end
-```
+sub = objepayco.subscriptions.charge(subscription_info)
+
 
 ### PSE
 
