@@ -20,21 +20,23 @@ If you want clone the repository, point it directly into our GitHub project::
 
     $ git clone https://github.com/Mango/mango-python.git
 
-## Usage
+Usage
+####
 
-import pyepayco.epayco as epayco
+::
+    import pyepayco.epayco as epayco
 
-apiKey = "491d6a0b6e992cf924edd8d3d088aff1"
-privateKey = "268c8e0162990cf2ce97fa7ade2eff5a"
-lenguage = "ES"
-test = True
-options={"apiKey":apiKey,"privateKey":privateKey,"test":test,"lenguage":lenguage}
+    apiKey = "491d6a0b6e992cf924edd8d3d088aff1"
+    privateKey = "268c8e0162990cf2ce97fa7ade2eff5a"
+    lenguage = "ES"
+    test = True
+    options={"apiKey":apiKey,"privateKey":privateKey,"test":test,"lenguage":lenguage}
 
-objepayco=epayco.Epayco(options)
+    objepayco=epayco.Epayco(options)
 
-
-### Create Token
-
+Create Token
+####
+::
 credit_info = {
   "card[number]": "4575623182290326",
   "card[exp_year]": "2017",
@@ -44,10 +46,11 @@ credit_info = {
 
 token=objepayco.token.create(credit_info)
 
-### Customers
+Customers
+####
 
-#### Create
-
+Create
+******
 customer_info = {
   token_card: "eXj5Wdqgj7xzvC7AR",
   name: "Joe Doe",
