@@ -40,14 +40,13 @@ Usage
 
 Create Token
 ####
-::
+
 credit_info = {
   "card[number]": "4575623182290326",
   "card[exp_year]": "2017",
   "card[exp_month]": "07",
   "card[cvc]": "123"
 }
-
 token=objepayco.token.create(credit_info)
 
 Customers
