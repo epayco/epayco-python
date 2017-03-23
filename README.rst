@@ -28,7 +28,7 @@ lenguage = "ES";
 test = True;
 options={"apiKey":apiKey,"privateKey":privateKey,"test":test,"lenguage":lenguage}
 
-test=epayco.Epayco(options);
+objepayco=epayco.Epayco(options);
 
 
 ### Create Token
@@ -41,7 +41,7 @@ credit_info = {
   "card[cvc]": "123"
 }
 
-response=test.token.create(credit_info)
+token=objepayco.token.create(credit_info)
 
 ```
 
@@ -58,7 +58,7 @@ customer_info = {
   default: true
 }
 
-response=test.customer.create(customer_info)
+customer=objepayco.customer.create(customer_info)
 
 ```
 
@@ -66,30 +66,31 @@ response=test.customer.create(customer_info)
 
 ```python
 id_customer="eXj5Wdqgj7xzvC7AR"
-response=test.customer.get(id_customer)
+customer=objepayco.customer.get(id_customer)
 ```
 
 #### List
 
 ```python
-customer = testepayco.customer.getlist()
+customers = testepayco.customer.getlist()
 ```
 
 #### Update
 
 ```python
+id_customer="eXj5Wdqgj7xzvC7AR"
 update_customer_info = {
   name: "Alex"
 }
 
-customer = testepayco.customer.getlist()
+customer =test.customer.update(id_customer,update_customer_info)
 ```
 
 ### Plans
 
 #### Create
 
-```ruby
+```python
 plan_info = {
   id_plan: "coursereact",
   name: "Course react js",
@@ -101,93 +102,47 @@ plan_info = {
   trial_days: 30
 }
 
-begin
-  plan = Epayco::Plan.create plan_info
-rescue Epayco::Error => e
-  puts e
-end
-```
+  plan = objepayco.plan.create(plan_info)
+
 
 #### Retrieve
 
-```ruby
-begin
-  plan = Epayco::Plan.get "coursereact"
-rescue Epayco::Error => e
-  puts e
-end
-```
+plan = objepayco.plan.get("coursereact")
 
 #### List
 
-```ruby
-begin
-  plan = Epayco::Plan.list
-rescue Epayco::Error => e
-  puts e
-end
-```
+planes = objepayco.plan.getlist()
 
 #### Remove
 
-```ruby
-begin
-  plan = Epayco::Plan.delete "coursereact"
-rescue Epayco::Error => e
-  puts e
-end
-```
+plan = objepayco.plan.delete("coursereact")
 
 ### Subscriptions
 
 #### Create
 
-```ruby
 subscription_info = {
-  id_plan: "coursereact",
-  customer: "A6ZGiJ6rgxK5RB2WT",
-  token_card: "eXj5Wdqgj7xzvC7AR",
-  doc_type: "CC",
-  doc_number: "5234567"
+    "id_plan": "coursereact2",
+    "customer": "9xRxhaJ2YmLTkT5uz",
+    "token_card": "eXj5Wdqgj7xzvC7AR",
+    "doc_type": "CC",
+    "doc_number": "5234567"
 }
-
-begin
-  sub = Epayco::Subscriptions.create subscription_info
-  assert(sub)
-rescue Epayco::Error => e
-  puts e
-end
-```
+sub=objepayco.subscriptions.create(subscription_info)
 
 #### Retrieve
 
-```ruby
-begin
-  sub = Epayco::Subscriptions.get "id_subscription"
-rescue Epayco::Error => e
-  puts e
-end
-```
+sub=objepayco.subscriptions.get("efPXtZ5r4nZRoPtjZ")
 
 #### List
 
-```ruby
-begin
-  sub = Epayco::Subscriptions.list
-rescue Epayco::Error => e
-  puts e
-end
-```
+sub=objepayco.subscriptions.getlist()
 
 #### Cancel
 
-```ruby
-begin
-  sub = Epayco::Subscriptions.cancel "id_subscription"
-rescue Epayco::Error => e
-  puts e
-end
-```
+
+sub=objepayco.subscriptions.cancel("fayE66HxYbxWydaN8")
+
 
 #### Pay Subscription
 
