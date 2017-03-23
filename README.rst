@@ -1,9 +1,11 @@
+*****
 Epayco
-=====
+*****
 
 Python wrapper for Epayco API
 
-## Description
+Description
+########
 
 API to interact with Epayco
 https://epayco.co/docs/api/
