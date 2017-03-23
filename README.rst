@@ -23,13 +23,17 @@ If you want clone the repository, point it directly into our GitHub project::
 Usage
 ####
 
-::
+
     import pyepayco.epayco as epayco
 
     apiKey = "491d6a0b6e992cf924edd8d3d088aff1"
+
     privateKey = "268c8e0162990cf2ce97fa7ade2eff5a"
+
     lenguage = "ES"
+
     test = True
+
     options={"apiKey":apiKey,"privateKey":privateKey,"test":test,"lenguage":lenguage}
 
     objepayco=epayco.Epayco(options)
