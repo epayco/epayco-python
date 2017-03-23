@@ -97,7 +97,18 @@ class Customers(Resource):
             self.epayco.lang
         )
 
+    def update(self,uid,options):
 
+        return self.request(
+            "POST",
+            "payment/v1/customer/edit/" + self.epayco.api_key + "/" + uid + "/",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang
+        )
 
 """
  * Class Charge

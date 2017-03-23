@@ -49,7 +49,7 @@ response=test.token.create(credit_info)
 
 #### Create
 
-```ruby
+```python
 customer_info = {
   token_card: "eXj5Wdqgj7xzvC7AR",
   name: "Joe Doe",
@@ -58,45 +58,31 @@ customer_info = {
   default: true
 }
 
-begin
-  customer = Epayco::Customers.create customer_info
-rescue Epayco::Error => e
-  puts e
-end
+response=test.customer.create(customer_info)
+
 ```
 
 #### Retrieve
 
-```ruby
-begin
-  customer = Epayco::Customers.get "id_customer"
-rescue Epayco::Error => e
-  puts e
-end
+```python
+id_customer="eXj5Wdqgj7xzvC7AR"
+response=test.customer.get(id_customer)
 ```
 
 #### List
 
-```ruby
-begin
-  customer = Epayco::Customers.list
-rescue Epayco::Error => e
-  puts e
-end
+```python
+customer = testepayco.customer.getlist()
 ```
 
 #### Update
 
-```ruby
+```python
 update_customer_info = {
   name: "Alex"
 }
 
-begin
-  customer = Epayco::Customers.update "id_customer", update_customer_info
-rescue Epayco::Error => e
-  puts e
-end
+customer = testepayco.customer.getlist()
 ```
 
 ### Plans
