@@ -12,9 +12,7 @@ https://epayco.co/docs/api/
 
 You can get the library from ``PyPI`` using ``pip``::
 
-```
 $ pip install pyepayco
-```
 
 If you want clone the repository, point it directly into our GitHub project::
 
