@@ -19,7 +19,7 @@ If you want clone the repository, point it directly into our GitHub project::
 
 Run the file setup.py
 
-    $ sudo python setup.py install
+    $ sudo python3 setup.py install
 
 Usage
 ####
