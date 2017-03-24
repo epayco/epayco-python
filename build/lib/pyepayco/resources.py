@@ -1,5 +1,5 @@
 from pyepayco.client import Client
-import pyepayco.errors
+import pyepayco.errors as errors
 
 class Resource(Client):
     """
@@ -215,6 +215,18 @@ class Plan(Resource):
             self.epayco.lang
         )
 
+    def delete(self,uid):
+        options={}
+        return self.request(
+            "POST",
+            "recurring/v1/plan/remove/" + self.epayco.api_key + "/" + uid + "/",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang
+        )
 
 """
  * Create subcription from clients
@@ -299,6 +311,18 @@ class Subscriptions(Resource):
             self.epayco.lang
         )
 
+    def charge(self, options=None):
+
+        return self.request(
+            "POST",
+            "payment/v1/charge/subscription/create",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang
+        )
 
 """
  * Pse methods

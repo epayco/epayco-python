@@ -10,15 +10,16 @@ Description
 API to interact with Epayco
 https://epayco.co/docs/api/
 
-## Installation
-
-You can get the library from ``PyPI`` using ``pip``::
-
-$ pip install pyepayco
+Installation
+****
 
 If you want clone the repository, point it directly into our GitHub project::
 
     $ git clone https://github.com/Mango/mango-python.git
+
+Run the file setup.py
+
+    $ sudo python setup.py install
 
 Usage
 ####
