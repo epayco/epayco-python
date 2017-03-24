@@ -133,7 +133,18 @@ class Charge(Resource):
             self.epayco.lang
         )
 
+    def get(self, uid):
 
+        return self.request(
+            "GET",
+            "restpagos/transaction/response.json",
+            self.epayco.api_key,
+            {'ref_payco': uid},
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang
+        )
 """
  * Plan methods
 """
@@ -384,7 +395,18 @@ class Bank(Resource):
             self.epayco.lang
         )
 
+    def get(self, uid):
 
+        return self.request(
+            "GET",
+            "restpagos/transaction/response.json",
+            self.epayco.api_key,
+            {'ref_payco': uid},
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang
+        )
 """
  * Cash payment methods
 """
@@ -415,6 +437,19 @@ class Cash(Resource):
             url,
             self.epayco.api_key,
             options,
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang
+        )
+
+    def get(self, uid):
+
+        return self.request(
+            "GET",
+            "restpagos/transaction/response.json",
+            self.epayco.api_key,
+            {'ref_payco': uid},
             self.epayco.private_key,
             self.epayco.test,
             True,

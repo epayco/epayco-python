@@ -41,7 +41,7 @@ class AESCipher:
 class Util():
 
     def setKeys(self, array={}):
-        file = open('utils/key_lang.json', 'r').read()
+        file = open('pyepayco/utils/key_lang.json', 'r').read()
         values = json.loads(file)
         aux = {}
         for key, value in array.items():
@@ -106,22 +106,20 @@ class Client:
                     addData = {
                         'public_key': api_key,
                         'i': base64.b64encode(self.IV.encode('ascii')),
-                        'transactionID': data['transactionID'],
                         'lenguaje': self.LENGUAGE,
                         'enpruebas': enpruebas,
                     }
 
-                    if (hasattr(addData, "__len__")):
-                        url_params = addData
-                    else:
-                        url_params = ""
+                    url_params = addData
+                    url_params.update(data)
+
                     response=requests.get(self.build_url(url), data={},params=url_params,auth=(api_key, ""),headers=headers)
-                    print(response.url)
+
                 else:
                     url_params=data
                     #url_params.update({"public_key":api_key,'test':test})
                     response=requests.get(self.build_url(url),data={},params=url_params,auth=(api_key,""),headers=headers)
-                    print(response.url)
+
             elif (method == "POST"):
                 if (switch):
                     if(test):
