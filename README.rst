@@ -15,7 +15,7 @@ Installation
 
 If you want clone the repository, point it directly into our GitHub project::
 
-    $ git clone https://github.com/Mango/mango-python.git
+    $ git clone https://github.com/epayco/epayco-python.git
 
 Run the file setup.py
 
