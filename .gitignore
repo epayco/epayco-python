@@ -1,3 +1,6 @@
+#Ignore .pyc
+*.pyc
+
 #Ignore test.py
 test*.py
 
