@@ -193,7 +193,7 @@ pse = objepayco.bank.create(pse_info)
 Retrieve
 *****
 
-pse = objepayco.bank.get("transactionID")
+pse = objepayco.bank.pseTransaction("transactionID")
 
 Cash
 ####
@@ -231,7 +231,7 @@ cash = objepayco.cash.create('efecty',cash_info)
 Retrieve
 *****
 
-cash = epayco.cash.get("id_transaction")
+cash = epayco.cash.get("ref_payco")
 
 Payment
 ####
@@ -262,4 +262,4 @@ pay = objepayco.charge.create(payment_info)
 Retrieve
 *******
 
-pay = epayco::charge.get("id_payment")
+pay = epayco.charge.get("ref_payco")
