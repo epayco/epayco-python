@@ -1,2 +1,8 @@
-#Ignora test.py
+#Ignore test.py
 test*.py
+
+#Ignore build
+build/*
+
+#Ignore idea
+idea/*
