@@ -56,11 +56,11 @@ Customers
 Create
 ******
 customer_info = {
-  token_card: "eXj5Wdqgj7xzvC7AR",
-  name: "Joe Doe",
-  email: "joe@payco.co",
-  phone: "3005234321",
-  default: true
+  "token_card": "eXj5Wdqgj7xzvC7AR",
+  "name": "Joe Doe",
+  "email": "joe@payco.co",
+  "phone": "3005234321",
+  "default": true
 }
 
 customer=objepayco.customer.create(customer_info)
@@ -77,50 +77,51 @@ customers = testepayco.customer.getlist()
 
 Update
 ******
-:
-id_customer="eXj5Wdqgj7xzvC7AR"
+
 update_customer_info = {
-  name: "Alex"
+  "name": "Alex"
 }
 
-customer =test.customer.update(id_customer,update_customer_info)
+customer =test.customer.update("eXj5Wdqgj7xzvC7AR",update_customer_info)
 
 Plans
 ####
 
 Create
 ******
-:
+
 plan_info = {
-  id_plan: "coursereact",
-  name: "Course react js",
-  description: "Course react and redux",
-  amount: 30000,
-  currency: "cop",
-  interval: "month",
-  interval_count: 1,
-  trial_days: 30
+  "id_plan": "coursereact",
+  "name": "Course react js",
+  "description": "Course react and redux",
+  "amount": 30000,
+  "currency": "cop",
+  "interval": "month",
+  "interval_count": 1,
+  "trial_days": 30
 }
 
 plan = objepayco.plan.create(plan_info)
 
 
-#### Retrieve
-
+Retrieve
+******
 plan = objepayco.plan.get("coursereact")
 
-#### List
-
+List
+******
 planes = objepayco.plan.getlist()
 
-#### Remove
+Remove
+******
 
 plan = objepayco.plan.delete("coursereact")
 
-### Subscriptions
+Subscriptions
+####
 
-#### Create
-
+Create
+******
 subscription_info = {
     "id_plan": "coursereact2",
     "customer": "9xRxhaJ2YmLTkT5uz",
@@ -131,36 +132,39 @@ subscription_info = {
 
 sub=objepayco.subscriptions.create(subscription_info)
 
-#### Retrieve
-
+Retrieve
+******
 sub=objepayco.subscriptions.get("efPXtZ5r4nZRoPtjZ")
 
-#### List
+List
+******
 
 sub=objepayco.subscriptions.getlist()
 
-#### Cancel
-
+Cancel
+******
 sub=objepayco.subscriptions.cancel("fayE66HxYbxWydaN8")
 
-#### Pay Subscription
+Pay Subscription
+******
 
 subscription_info = {
-  id_plan: "coursereact",
-  customer: "A6ZGiJ6rgxK5RB2WT",
-  token_card: "eXj5Wdqgj7xzvC7AR",
-  doc_type: "CC",
-  doc_number: "5234567"
+  "id_plan": "coursereact",
+  "customer": "A6ZGiJ6rgxK5RB2WT",
+  "token_card": "eXj5Wdqgj7xzvC7AR",
+  "doc_type": "CC",
+  "doc_number": "1035851980"
 }
 
 sub = objepayco.subscriptions.charge(subscription_info)
 
+PSE
+####
 
-### PSE
+Create
+*****
 
-#### Create
 
-```ruby
 pse_info = {
   bank: "1007",
   invoice: "1472050778",
@@ -178,60 +182,48 @@ pse_info = {
   country: "CO",
   cell_phone: "3010000001",
   ip: "186.116.10.133",
-  url_response: "https:/secure.payco.co/restpagos/testRest/endpagopse.php",
-  url_confirmation: "https:/secure.payco.co/restpagos/testRest/endpagopse.php",
+  url_response: "https://tudominio.com/respuesta.php",
+  url_confirmation: "https://tudominio.com/confirmacion.php",
   method_confirmation: "GET",
 }
 
-begin
-  pse = Epayco::Bank.create pse_info
-rescue Epayco::Error => e
-  puts e
-end
-```
+pse = Epayco::Bank.create pse_info
 
-#### Retrieve
+Retrieve
+*****
+pse = Epayco::bank.get("transactionID")
 
-```ruby
-begin
-  pse = Epayco::Bank.get "id_transaction"
-rescue Epayco::Error => e
-  puts e
-end
-```
+Cash
+####
 
-### Cash
+Create
+*****
 
-#### Create
-
-```ruby
 cash_info = {
-    invoice: "1472050778",
-    description: "pay test",
-    value: "20000",
-    tax: "0",
-    tax_base: "0",
-    currency: "COP",
-    type_person: "0",
-    doc_type: "CC",
-    doc_number: "10358519",
-    name: "testing",
-    last_name: "PAYCO",
-    email: "test@mailinator.com",
-    cell_phone: "3010000001",
-    end_date: "2017-12-05",
-    ip: "186.116.10.133",
-    url_response: "https:/secure.payco.co/restpagos/testRest/endpagopse.php",
-    url_confirmation: "https:/secure.payco.co/restpagos/testRest/endpagopse.php",
-    method_confirmation: "GET",
+    "invoice": "1472050778",
+    "description": "pay test",
+    "value": "20000",
+    "tax": "0",
+    "tax_base": "0",
+    "currency": "COP",
+    "type_person": "0",
+    "doc_type": "CC",
+    "doc_number": "10358519",
+    "name": "testing",
+    "last_name": "PAYCO",
+    "email": "test@mailinator.com",
+    "cell_phone": "3010000001",
+    "end_date": "2017-12-05",
+    "ip": "186.116.10.133",
+    "url_response": "https://tudominio.com/respuesta.php",
+    "url_confirmation": "https://tudominio.com/confirmacion.php",
+    "method_confirmation": "GET",
 }
 
-begin
-  cash = Epayco::Cash.create cash_info, "efecty"
-rescue Epayco::Error => e
-  puts e
-end
-```
+cash = objepayco.cash.create('efecty',cash_info)
+
+#cash = objepayco.cash.create('baloto',cash_info)
+#cash = objepayco.cash.create('gana',cash_info)
 
 #### Retrieve
 
