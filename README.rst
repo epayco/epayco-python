@@ -226,52 +226,38 @@ cash = objepayco.cash.create('efecty',cash_info)
 
 #cash = objepayco.cash.create('gana',cash_info)
 
-#### Retrieve
+Retrieve
+*****
 
-```ruby
-begin
-  cash = Epayco::Cash.get "id_transaction"
-rescue Epayco::Error => e
-  puts e
-end
-```
+cash = epayco.cash.get("id_transaction")
 
-### Payment
+Payment
+####
 
-#### Create
+Create
+*****
 
-```ruby
 payment_info = {
-  token_card: "eXj5Wdqgj7xzvC7AR",
-  customer_id: "A6ZGiJ6rgxK5RB2WT",
-  doc_type: "CC",
-  doc_number: "1035851980",
-  name: "John",
-  last_name: "Doe",
-  email: "example@email.com",
-  ip: "192.198.2.114",
-  bill: "OR-1234",
-  description: "Test Payment",
-  value: "116000",
-  tax: "16000",
-  tax_base: "100000",
-  currency: "COP",
-  dues: "12"
+  "token_card": "eXj5Wdqgj7xzvC7AR",
+  "customer_id": "A6ZGiJ6rgxK5RB2WT",
+  "doc_type": "CC",
+  "doc_number": "1035851980",
+  "name": "John",
+  "last_name": "Doe",
+  "email": "example@email.com",
+  "ip": "192.198.2.114",
+  "bill": "OR-1234",
+  "description": "Test Payment",
+  "value": "116000",
+  "tax": "16000",
+  "tax_base": "100000",
+  "currency": "COP",
+  "dues": "12"
 }
 
-begin
-  pay = Epayco::Charge.create payment_info
-rescue Epayco::Error => e
-  puts e
-end
-```
+pay = objepayco.charge.create(payment_info)
 
-#### Retrieve
+Retrieve
+*******
 
-```ruby
-begin
-  pay = Epayco::Charge.get "id_payment"
-rescue Epayco::Error => e
-  puts e
-end
-```
+pay = epayco::charge.get("id_payment")
