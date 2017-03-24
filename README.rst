@@ -24,6 +24,7 @@ Run the file setup.py
 Usage
 ####
 
+.. code-block:: python
 
     import pyepayco.epayco as epayco
 
@@ -44,16 +45,16 @@ Create Token
 
 .. code-block:: python
 
-credit_info = {
-  "card[number]": "4575623182290326",
+    credit_info = {
+      "card[number]": "4575623182290326",
 
-  "card[exp_year]": "2017",
+      "card[exp_year]": "2017",
 
-  "card[exp_month]": "07",
+      "card[exp_month]": "07",
 
-  "card[cvc]": "123"
+      "card[cvc]": "123"
 
-  }
+      }
 
 token=objepayco.token.create(credit_info)
 
@@ -62,18 +63,20 @@ Customers
 
 Create
 ******
-customer_info = {
+.. code-block:: python
 
-  "token_card": "eXj5Wdqgj7xzvC7AR",
+    customer_info = {
 
-  "name": "Joe Doe",
+      "token_card": "eXj5Wdqgj7xzvC7AR",
 
-  "email": "joe@payco.co",
+      "name": "Joe Doe",
 
-  "phone": "3005234321",
+      "email": "joe@payco.co",
 
-  "default": true
-}
+      "phone": "3005234321",
+
+      "default": true
+    }
 
 customer=objepayco.customer.create(customer_info)
 
