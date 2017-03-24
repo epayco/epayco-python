@@ -42,7 +42,7 @@ Usage
 Create Token
 ####
 
-.. code:: python
+.. code-block:: python
 
 credit_info = {
 
