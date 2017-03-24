@@ -167,32 +167,33 @@ Create
 
 
 pse_info = {
-  bank: "1007",
-  invoice: "1472050778",
-  description: "pay test",
-  value: "10000",
-  tax: "0",
-  tax_base: "0",
-  currency: "COP",
-  type_person: "0",
-  doc_type: "CC",
-  doc_number: "10358519",
-  name: "testing",
-  last_name: "PAYCO",
-  email: "no-responder@payco.co",
-  country: "CO",
-  cell_phone: "3010000001",
-  ip: "186.116.10.133",
-  url_response: "https://tudominio.com/respuesta.php",
-  url_confirmation: "https://tudominio.com/confirmacion.php",
-  method_confirmation: "GET",
+  "bank": "1007",
+  "invoice": "1472050778",
+  "description": "pay test",
+  "value": "10000",
+  "tax": "0",
+  "tax_base": "0",
+  "currency": "COP",
+  "type_person": "0",
+  "doc_type": "CC",
+  "doc_number": "10358519",
+  "name": "testing",
+  "last_name": "PAYCO",
+  "email": "no-responder@payco.co",
+  "country": "CO",
+  "cell_phone": "3010000001",
+  "ip": "186.116.10.133",
+  "url_response": "https://tudominio.com/respuesta.php",
+  "url_confirmation": "https://tudominio.com/confirmacion.php",
+  "method_confirmation": "GET",
 }
 
-pse = Epayco::Bank.create pse_info
+pse = objepayco.bank.create(pse_info)
 
 Retrieve
 *****
-pse = Epayco::bank.get("transactionID")
+
+pse = objepayco.bank.get("transactionID")
 
 Cash
 ####
