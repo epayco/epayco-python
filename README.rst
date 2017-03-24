@@ -41,6 +41,7 @@ Usage
 
 Create Token
 ####
+.. code:: python
 
 credit_info = {
   "card[number]": "4575623182290326",
