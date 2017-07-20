@@ -1,4 +1,4 @@
-import epayco
+import pyepayco.epayco as epayco
 import unittest
 
 class EpaycoTest(unittest.TestCase):

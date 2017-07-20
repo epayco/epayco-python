@@ -346,13 +346,12 @@ class Bank(Resource):
      * @return object
     """
 
-    def pseBank(self):
-        options = None
+    def pseBank(self,options = None):
         return self.request(
             "GET",
             "restpagos/pse/bancos.json",
             self.epayco.api_key,
-            options,
+            {'public_key':self.epayco.api_key},
             self.epayco.private_key,
             self.epayco.test,
             True,
@@ -365,7 +364,7 @@ class Bank(Resource):
      * @return object
     """
 
-    def pse(self, options=None):
+    def create(self, options=None):
         return self.request(
             "POST",
             "restpagos/pagos/debitos.json",
