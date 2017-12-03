@@ -56,7 +56,7 @@ class Client:
     BASE_URL = "https://api.secure.payco.co";
     BASE_URL_SECURE = "https://secure.payco.co";
     IV = "0000000000000000";
-    LENGUAGE = "python";
+    LANGUAGE = "python";
     SWITCH= False
 
     def __init__(self):
@@ -107,7 +107,7 @@ class Client:
                     addData = {
                         'public_key': api_key,
                         'i': base64.b64encode(self.IV.encode('ascii')),
-                        'lenguaje': self.LENGUAGE,
+                        'lenguaje': self.LANGUAGE,
                         'enpruebas': enpruebas,
                     }
 
@@ -136,7 +136,7 @@ class Client:
                         'public_key': api_key,
                         'i': base64.b64encode(self.IV.encode('ascii')),
                         'enpruebas': enpruebas,
-                        'lenguaje': self.LENGUAGE,
+                        'lenguaje': self.LANGUAGE,
                         'p': ''
                     }
                     enddata = {}
