@@ -147,7 +147,8 @@ class Client:
 
                 else:
                     #Agregamos la llave publica
-                    data.update({'public_key':api_key,'test': test})
+                    #data.update({'public_key':api_key,'test': test})
+                    data.update({'test': test})
                     data=json.dumps(data)
                     response = requests.post(
                         self.build_url(url),
