@@ -18,7 +18,7 @@ class Epayco:
         self.api_key = options["apiKey"]
         self.private_key = options["privateKey"]
         self.test = options["test"]
-        self.lang = options["lenguage"]
+        self.lang = options["language"]
 
         self.token = Token(self)
         self.customer = Customers(self)
