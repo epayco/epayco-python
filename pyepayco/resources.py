@@ -309,7 +309,7 @@ class Subscriptions(Resource):
     """
 
     def cancel(self, uid=None):
-        options = {uid: uid}
+        options = {id: uid}
 
         return self.request(
             "POST",
