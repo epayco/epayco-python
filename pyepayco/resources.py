@@ -71,7 +71,7 @@ class Customers(Resource):
     def get(self, uid):
         return self.request(
             "GET",
-            "payment/v1/customer/" + uid + "/",
+            "payment/v1/customer/" + self.epayco.api_key + "/" + uid + "/",
             self.epayco.api_key,
             None,
             self.epayco.private_key,
