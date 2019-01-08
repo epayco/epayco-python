@@ -282,8 +282,9 @@ Split Payments
 *****
 
 Previous requirements: https://docs.epayco.co/tools/split-payment
+*****
 
-```
+
 .. code-block:: python
  cash_info = {
  #Other customary parameters...
@@ -297,15 +298,15 @@ Previous requirements: https://docs.epayco.co/tools/split-payment
     cash = objepayco.cash.create('efecty',cash_info)
     cash = objepayco.cash.create('baloto',cash_info)
     cash = objepayco.cash.create('gana',cash_info)
-```
 
 
 
-### Payment
-####
+
+ Payment
+*****
 
 Create
-```
+*****
 .. code-block:: python
 
     payment_info = {
@@ -327,22 +328,22 @@ Create
     }
 
     pay = objepayco.charge.create(payment_info)
-```
-### Retrieve
-```
+
+Retrieve
+*****
 
 .. code-block:: python
 
     pay = epayco.charge.get("ref_payco")
-```
+
 
 Split Payments
 *****
 
 Previous requirements https://docs.epayco.co/tools/split-payment
+*****
 
 
-```
 .. code-block::python
  payment_info = {
    ##Other customary parameters...
@@ -355,4 +356,3 @@ Previous requirements https://docs.epayco.co/tools/split-payment
  }
 
  pay_split = objepayco.charge.create(payment_info)
-```
