@@ -341,8 +341,6 @@ Split Payments
 *****
 
 Previous requirements https://docs.epayco.co/tools/split-payment
-*****
-
 
 .. code-block::python
  payment_info = {
