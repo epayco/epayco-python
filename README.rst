@@ -344,8 +344,8 @@ Previous requirements https://docs.epayco.co/tools/split-payment
 
 
 
-```python
-payment_info = {
+::python
+ payment_info = {
    ##Other customary parameters...
    "splitpayment":"true",
    "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
@@ -356,4 +356,3 @@ payment_info = {
  }
 
  pay_split = objepayco.charge.create(payment_info)
-```
