@@ -340,7 +340,7 @@ Retrieve
 Split Payments
 ####
 
-Previous requirements: https://docs.epayco.co/tools/split-payment
+Previous requirements https://docs.epayco.co/tools/split-payment
 *******
 
 .. code-block:: python
