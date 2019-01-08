@@ -216,16 +216,16 @@ Retrieve
 
     pse = objepayco.bank.pseTransaction("transactionID")
 
- Split Payments
+Split Payments
 ####
 
 Previous requirements:
 https://docs.epayco.co/tools/split-payment
-*******
+******
 
 .. code-block:: python
  pse_info = {
-#Other customary parameters...
+ #Other customary parameters...
   "splitpayment":"true",
    "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
    "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
@@ -279,16 +279,16 @@ Retrieve
 
 
 
- Split Payments
+Split Payments
 ####
 
 Previous requirements:
 https://docs.epayco.co/tools/split-payment
-*******
+******
 
 .. code-block:: python
  cash_info = {
-#Other customary parameters...
+ #Other customary parameters...
   "splitpayment":"true",
    "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
    "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
@@ -339,17 +339,16 @@ Retrieve
     pay = epayco.charge.get("ref_payco")
 
 
-
- Split Payments
+Split Payments
 ####
 
 Previous requirements:
 https://docs.epayco.co/tools/split-payment
-*******
+******
 
 .. code-block:: python
  payment_info = {
-#Other customary parameters...
+ #Other customary parameters...
   "splitpayment":"true",
    "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
    "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
