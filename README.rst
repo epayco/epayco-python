@@ -343,8 +343,9 @@ Split Payments
 Previous requirements https://docs.epayco.co/tools/split-payment
 
 
-.. code-block:: python
- payment_info = {
+
+```python
+payment_info = {
    ##Other customary parameters...
    "splitpayment":"true",
    "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
@@ -355,3 +356,4 @@ Previous requirements https://docs.epayco.co/tools/split-payment
  }
 
  pay_split = objepayco.charge.create(payment_info)
+```
