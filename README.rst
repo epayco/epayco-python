@@ -221,7 +221,7 @@ Split Payments
 
 Previous requirements:
 https://docs.epayco.co/tools/split-payment
-******
+*****
 
 .. code-block:: python
  pse_info = {
@@ -284,7 +284,7 @@ Split Payments
 
 Previous requirements:
 https://docs.epayco.co/tools/split-payment
-******
+*****
 
 .. code-block:: python
  cash_info = {
@@ -344,7 +344,7 @@ Split Payments
 
 Previous requirements:
 https://docs.epayco.co/tools/split-payment
-******
+*****
 
 .. code-block:: python
  payment_info = {
