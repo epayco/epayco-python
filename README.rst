@@ -346,6 +346,7 @@ Previous requirements https://docs.epayco.co/tools/split-payment
 .. code-block:: python
 
     payment_info = {
+    #Other customary parameters...
       "splitpayment":"true",
        "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
        "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
