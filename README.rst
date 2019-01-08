@@ -220,22 +220,21 @@ Split Payments
 *****
 
 Previous requirements: https://docs.epayco.co/tools/split-payment
-
+*****
 
 .. code-block:: python
- pse_info = {
- #Other customary parameters...
-  "splitpayment":"true",
-   "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-   "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-   "split_type" : "02",
-   "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-   "split_primary_receiver_fee":"10",
- }
- pay_split_pse = objepayco.bank.create(pse_info)
 
+    pse_info = {
+    #Other customary parameters...
+      "splitpayment":"true",
+       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
+       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
+       "split_type" : "02",
+       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
+       "split_primary_receiver_fee":"10"
+     }
 
-
+    pse_split = objepayco.bank.create(pse_info)
 
 Cash
 ####
@@ -284,25 +283,21 @@ Split Payments
 Previous requirements: https://docs.epayco.co/tools/split-payment
 *****
 
-
 .. code-block:: python
- cash_info = {
- #Other customary parameters...
-  "splitpayment":"true",
-   "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-   "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-   "split_type" : "02",
-   "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-   "split_primary_receiver_fee":"10",
- }
-    cash = objepayco.cash.create('efecty',cash_info)
-    cash = objepayco.cash.create('baloto',cash_info)
-    cash = objepayco.cash.create('gana',cash_info)
 
+    cash_info = {
+    #Other customary parameters...
+      "splitpayment":"true",
+       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
+       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
+       "split_type" : "02",
+       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
+       "split_primary_receiver_fee":"10"
+     }
+  
+    cash_info_split = objepayco.cash.create('efecty',cash_info)
 
-
-
- Payment
+Payment
 *****
 
 Create
