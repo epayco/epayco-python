@@ -43,7 +43,7 @@ Create Token
 
     credit_info = {
       "card[number]": "4575623182290326",
-      "card[exp_year]": "2017",
+      "card[exp_year]": "2019",
       "card[exp_month]": "07",
       "card[cvc]": "123"
       }
@@ -257,7 +257,7 @@ Create
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
         "cell_phone": "3010000001",
-        "end_date": "2017-12-05",
+        "end_date": "2019-12-05",
         "ip": "186.116.10.133",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
