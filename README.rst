@@ -44,7 +44,7 @@ Create Token
 
     credit_info = {
       "card[number]": "4575623182290326",
-      "card[exp_year]": "2017",
+      "card[exp_year]": "2019",
       "card[exp_month]": "07",
       "card[cvc]": "123"
     }
@@ -213,6 +213,26 @@ Retrieve
 
     pse = objepayco.bank.pseTransaction("transactionID")
 
+Split Payments
+*****
+
+Previous requirements: https://docs.epayco.co/tools/split-payment
+*****
+
+.. code-block:: python
+
+    pse_info = {
+    #Other customary parameters...
+      "splitpayment":"true",
+       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
+       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
+       "split_type" : "02",
+       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
+       "split_primary_receiver_fee":"10"
+     }
+
+    pse_split = objepayco.bank.create(pse_info)
+
 Cash
 ####
 
@@ -234,7 +254,7 @@ Create
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
         "cell_phone": "3010000001",
-        "end_date": "2017-12-05",
+        "end_date": "2019-12-05",
         "ip": "186.116.10.133",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
@@ -252,8 +272,30 @@ Retrieve
 
     cash = epayco.cash.get("ref_payco")
 
+
+
+Split Payments
+*****
+
+Previous requirements: https://docs.epayco.co/tools/split-payment
+*****
+
+.. code-block:: python
+
+    cash_info = {
+    #Other customary parameters...
+      "splitpayment":"true",
+       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
+       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
+       "split_type" : "02",
+       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
+       "split_primary_receiver_fee":"10"
+     }
+  
+    cash_info_split = objepayco.cash.create('efecty',cash_info)
+
 Payment
-####
+*****
 
 Create
 *****
@@ -280,8 +322,29 @@ Create
     pay = objepayco.charge.create(payment_info)
 
 Retrieve
-*******
+*****
 
 .. code-block:: python
 
     pay = epayco.charge.get("ref_payco")
+
+Split Payments
+*****
+
+Previous requirements https://docs.epayco.co/tools/split-payment
+*****
+
+.. code-block:: python
+
+    payment_info = {
+    #Other customary parameters...
+      "splitpayment":"true",
+       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
+       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
+       "split_type" : "02",
+       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
+       "split_primary_receiver_fee":"10"
+     }
+
+    pay_split = objepayco.charge.create(payment_info)
+

@@ -3,12 +3,14 @@ import urllib.parse
 import ssl
 import json
 import base64
+import hashlib
 from Crypto.Cipher import AES
 import requests
 import pyepayco.errors as errors
+#import os
 
 from requests.exceptions import ConnectionError
-
+from pathlib import Path
 
 # No verificar el certifcado para los request
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -17,20 +19,31 @@ BS = 16
 pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
 unpad = lambda s : s[0:-(s[-1])]
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('pyepayco/utils/key_lang.json'))
+#Dir = os.path.join(EPAYCO_KEY_LANG_FILE, 'key_lang.json')
+
 
 class AESCipher:
-    def __init__( self, key,iv ):
+    def __init__( self, key,iv  ):
         self.key = key
-        self.iv = iv
+        self.iv = iv    
 
-    def encrypt( self, raw ):
-        cipher = AES.new( self.key, AES.MODE_CBC, self.iv )
-        return base64.b64encode(cipher.encrypt( pad(raw) ) ).strip()
-
+    def encrypt( self, row ):
+          
+    
+        raw = pad(row).encode("utf8")
+        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
+        enc = cipher.encrypt(raw)
+        return base64.b64encode(enc)
+        #         cipher = AES.new( raw.encode("utf8"), AES.MODE_CBC, iv().encode("utf8") )
+        # return base64.b64encode(cipher.encrypt( pad(raw) ) ).strip()
     def decrypt( self, enc ):
-        enc=base64.b64decode(enc)
-        cipher = AES.new(self.key, AES.MODE_CBC, self.iv )
-        return unpad(cipher.decrypt( enc))
+       
+        enc = base64.b64decode(enc)
+        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
+        dec = cipher.decrypt(enc)
+        return unpad(dec).decode('utf-8')
 
     def encryptArray(self,data):
         aux = {}
@@ -41,7 +54,8 @@ class AESCipher:
 class Util():
 
     def setKeys(self, array={}):
-        file = open('pyepayco/utils/key_lang.json', 'r').read()
+
+        file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
         values = json.loads(file)
         aux = {}
         for key, value in array.items():
@@ -56,7 +70,7 @@ class Client:
     BASE_URL = "https://api.secure.payco.co";
     BASE_URL_SECURE = "https://secure.payco.co";
     IV = "0000000000000000";
-    LENGUAGE = "python";
+    LANGUAGE = "python";
     SWITCH= False
 
     def __init__(self):
@@ -86,7 +100,7 @@ class Client:
         if (switch and hasattr(data, "__len__")):
             util = Util()
             data = util.setKeys(data)
-
+           
         self.SWITCH=switch
 
         headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk'}
@@ -101,13 +115,13 @@ class Client:
                         test = "FALSE"
 
                     #Encriptamos el enpruebas
-                    aes = AESCipher(private_key, self.IV)
+                    aes = AESCipher(private_key,self.IV)
                     enpruebas=aes.encrypt(test)
 
                     addData = {
                         'public_key': api_key,
                         'i': base64.b64encode(self.IV.encode('ascii')),
-                        'lenguaje': self.LENGUAGE,
+                        'lenguaje': self.LANGUAGE,
                         'enpruebas': enpruebas,
                     }
 
@@ -127,7 +141,7 @@ class Client:
                     else:
                         test= "FALSE"
 
-                    aes = AESCipher(private_key, self.IV)
+                    aes = AESCipher(private_key,self.IV)
                     enpruebas = aes.encrypt(test)
 
                     encryptData = None
@@ -136,7 +150,7 @@ class Client:
                         'public_key': api_key,
                         'i': base64.b64encode(self.IV.encode('ascii')),
                         'enpruebas': enpruebas,
-                        'lenguaje': self.LENGUAGE,
+                        'lenguaje': self.LANGUAGE,
                         'p': ''
                     }
                     enddata = {}
@@ -144,7 +158,7 @@ class Client:
                     enddata.update(addData)
                     data=enddata
                     response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-
+                    #print(enddata)
                 else:
                     #Agregamos la llave publica
                     #data.update({'public_key':api_key,'test': test})
@@ -222,4 +236,5 @@ class Client:
                 return "{base_url}/{endpoint}".format(
                     base_url=self.BASE_URL,
                     endpoint=endpoint
+                    
                 )
