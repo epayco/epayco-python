@@ -8,4 +8,4 @@ test*.py
 build/*
 
 #Ignore idea
-idea/*
+*.idea
