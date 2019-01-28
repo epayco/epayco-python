@@ -21,6 +21,11 @@ Run the file setup.py
 
     $ sudo python3 setup.py install
 
+Install from Packages
+****
+   $ pip install pyepayco
+
+   
 Usage
 ####
 
@@ -77,7 +82,7 @@ List
 ******
 .. code-block:: python
 
-    customers = testepayco.customer.getlist()
+    customers = objepayco.customer.getlist()
 
 Update
 ******

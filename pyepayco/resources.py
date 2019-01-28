@@ -71,7 +71,7 @@ class Customers(Resource):
     def get(self, uid):
         return self.request(
             "GET",
-            "payment/v1/customer/" + uid + "/",
+            "payment/v1/customer/" + self.epayco.api_key + "/" + uid + "/",
             self.epayco.api_key,
             None,
             self.epayco.private_key,
@@ -309,7 +309,7 @@ class Subscriptions(Resource):
     """
 
     def cancel(self, uid=None):
-        options = {uid: uid}
+        options = {'id': uid}
 
         return self.request(
             "POST",
