@@ -211,6 +211,14 @@ Create
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
       "method_confirmation": "GET",
+      #Extra params: These params are optional and can be used by the commerce
+      "extra1": "",
+      "extra2": "",
+      "extra3": "",
+      "extra4": "",
+      "extra5": "",  
+      "extra6": "",
+      "extra7": ""
     }
 
     pse = objepayco.bank.create(pse_info)
