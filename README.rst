@@ -100,7 +100,7 @@ Delete Token
 .. code-block:: python
 
     delete_customer_info = {
-      "franchise": "master-card",
+      "franchise": "visa",
       "mask": "457562******0326",
       "customer_id":"id_client"
     }
