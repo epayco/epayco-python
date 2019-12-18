@@ -48,8 +48,8 @@ Create Token
 
     credit_info = {
       "card[number]": "4575623182290326",
-      "card[exp_year]": "2019",
-      "card[exp_month]": "07",
+      "card[exp_year]": "2025",
+      "card[exp_month]": "19",
       "card[cvc]": "123"
       }
 
@@ -77,7 +77,7 @@ Retrieve
 ******
 .. code-block:: python
 
-    customer=objepayco.customer.get("eXj5Wdqgj7xzvC7AR")
+    customer=objepayco.customer.get("id_client")
 
 List
 ******
@@ -93,7 +93,19 @@ Update
       "name": "Alex"
     }
 
-    customer =test.customer.update("eXj5Wdqgj7xzvC7AR",update_customer_info)
+    customer =test.customer.update("id_client",update_customer_info)
+
+Delete Token
+******
+.. code-block:: python
+
+    delete_customer_info = {
+      "franchise": "master-card",
+      "mask": "457562******0326",
+      "customer_id":"id_client"
+    }
+
+    customer =test.customer.delete(delete_customer_info)
 
 Plans
 ####

@@ -109,6 +109,19 @@ class Customers(Resource):
             False,
             self.epayco.lang
         )
+        
+    def delete(self,options):
+
+        return self.request(
+            "POST",
+            "/v1/remove/token",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang
+        )
 
 """
  * Class Charge
