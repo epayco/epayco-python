@@ -191,7 +191,8 @@ Pay Subscription
       "customer": "A6ZGiJ6rgxK5RB2WT",
       "token_card": "eXj5Wdqgj7xzvC7AR",
       "doc_type": "CC",
-      "doc_number": "1000000"
+      "doc_number": "1000000",
+      "ip":"190.000.000.000"  // This is the client's IP, it is required
 
     }
 
@@ -345,7 +346,8 @@ Create
       "tax": "19000",
       "tax_base": "100000",
       "currency": "COP",
-      "dues": "12"
+      "dues": "12",
+      "ip":"190.000.000.000"  // This is the client's IP, it is required
     }
 
     pay = objepayco.charge.create(payment_info)

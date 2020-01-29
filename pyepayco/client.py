@@ -94,7 +94,7 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="" ):
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="" ):
         dataSet = None
 
         if (switch and hasattr(data, "__len__")):
@@ -141,24 +141,52 @@ class Client:
                     else:
                         test= "FALSE"
 
-                    aes = AESCipher(private_key,self.IV)
-                    enpruebas = aes.encrypt(test)
+                    
+                    if(cashdata):
+                        aes = AESCipher(private_key,self.IV)
+                        enpruebas = aes.encrypt(test)
 
-                    encryptData = None
-                    encryptData = aes.encryptArray(data)
-                    addData = {
-                        'public_key': api_key,
-                        'i': base64.b64encode(self.IV.encode('ascii')),
-                        'enpruebas': enpruebas,
-                        'lenguaje': self.LANGUAGE,
-                        'p': ''
-                    }
-                    enddata = {}
-                    enddata.update(encryptData)
-                    enddata.update(addData)
-                    data=enddata
-                    response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-                    #print(enddata)
+                        encryptData = data
+                        #encryptData = aes.encryptArray(data)
+                        addData = {
+                            "public_key": api_key,
+                            "i": base64.b64encode(self.IV.encode('ascii')),
+                            "enpruebas": enpruebas,
+                            "lenguaje": self.LANGUAGE,
+                            "p": ""
+                        }
+                        enddata = {}
+                        enddata.update(encryptData)
+                        enddata.update(addData)
+                        data=enddata
+                        #print('//',data)
+                        response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
+                        #response = enddata
+                        #print('/////////////////////////////////////////////////')
+                       
+                    else:
+                        aes = AESCipher(private_key,self.IV)
+                        enpruebas = aes.encrypt(test)
+
+                        encryptData = None
+                        encryptData = aes.encryptArray(data)
+                        addData = {
+                            'public_key': api_key,
+                            'i': base64.b64encode(self.IV.encode('ascii')),
+                            'enpruebas': enpruebas,
+                            'lenguaje': self.LANGUAGE,
+                            'p': ''
+                        }
+                        enddata = {}
+                        enddata.update(encryptData)
+                        enddata.update(addData)
+                        data=enddata
+                        response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
+                        #response = enddata
+                        #print('***************************************')
+
+
+
                 else:
                     #Agregamos la llave publica
                     #data.update({'public_key':api_key,'test': test})

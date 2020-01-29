@@ -35,6 +35,7 @@ class Token(Resource):
             self.epayco.test,
             False,
             self.epayco.lang,
+            False
         )
 
 
@@ -59,7 +60,8 @@ class Customers(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -77,7 +79,8 @@ class Customers(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -94,7 +97,8 @@ class Customers(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     def update(self,uid,options):
@@ -107,7 +111,8 @@ class Customers(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
         
     def delete(self,options):
@@ -120,7 +125,8 @@ class Customers(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
 """
@@ -143,7 +149,8 @@ class Charge(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     def get(self, uid):
@@ -156,7 +163,8 @@ class Charge(Resource):
             self.epayco.private_key,
             self.epayco.test,
             True,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 """
  * Plan methods
@@ -179,7 +187,8 @@ class Plan(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -198,7 +207,8 @@ class Plan(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -217,7 +227,8 @@ class Plan(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -236,7 +247,8 @@ class Plan(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     def delete(self,uid):
@@ -249,7 +261,8 @@ class Plan(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
 """
@@ -273,7 +286,8 @@ class Subscriptions(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -292,7 +306,8 @@ class Subscriptions(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -311,7 +326,8 @@ class Subscriptions(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -332,7 +348,8 @@ class Subscriptions(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     def charge(self, options=None):
@@ -345,7 +362,8 @@ class Subscriptions(Resource):
             self.epayco.private_key,
             self.epayco.test,
             False,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
 """
@@ -368,7 +386,8 @@ class Bank(Resource):
             self.epayco.private_key,
             self.epayco.test,
             True,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -386,7 +405,8 @@ class Bank(Resource):
             self.epayco.private_key,
             self.epayco.test,
             True,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     """
@@ -404,7 +424,8 @@ class Bank(Resource):
             self.epayco.private_key,
             self.epayco.test,
             True,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 
     def get(self, uid):
@@ -417,7 +438,8 @@ class Bank(Resource):
             self.epayco.private_key,
             self.epayco.test,
             True,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
 """
  * Cash payment methods
@@ -436,11 +458,15 @@ class Cash(Resource):
 
         url = None
         if (type == "efecty"):
-            url = "restpagos/pagos/efecties.json"
+            url = "restpagos/v2/efectivo/efecty"
         elif (type == "baloto"):
-            url = "restpagos/pagos/balotos.json"
+            url = "restpagos/v2/efectivo/baloto"
         elif (type == "gana"):
-            url = "restpagos/pagos/ganas.json"
+            url = "restpagos/v2/efectivo/gana"
+        elif (type == "redservi"):
+            url = "restpagos/v2/efectivo/redservi"
+        elif (type == "puntored"):
+            url = "restpagos/v2/efectivo/puntored"
         else:
             raise errors.ErrorException(self.epayco.lang, 109)
 
@@ -452,7 +478,8 @@ class Cash(Resource):
             self.epayco.private_key,
             self.epayco.test,
             True,
-            self.epayco.lang
+            self.epayco.lang,
+            True,
         )
 
     def get(self, uid):
@@ -465,5 +492,6 @@ class Cash(Resource):
             self.epayco.private_key,
             self.epayco.test,
             True,
-            self.epayco.lang
+            self.epayco.lang,
+            False
         )
