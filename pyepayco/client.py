@@ -8,7 +8,7 @@ from Crypto.Cipher import AES
 import requests
 import pyepayco.errors as errors
 #import os
-
+import sys
 from requests.exceptions import ConnectionError
 from pathlib import Path
 
@@ -21,6 +21,7 @@ unpad = lambda s : s[0:-(s[-1])]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('pyepayco/utils/key_lang.json'))
+EPAYCO_KEY_LANG_FILES = str(BASE_DIR.joinpath('pyepayco/utils/key_langs.json'))
 #Dir = os.path.join(EPAYCO_KEY_LANG_FILE, 'key_lang.json')
 
 
@@ -53,17 +54,30 @@ class AESCipher:
 
 class Util():
 
-    def setKeys(self, array={}):
+    def setKeys(self, array={},sp=''):
+        #print('/setKeys/',sp)
+        #sys.exit()
+        if(sp):
+            file = open(EPAYCO_KEY_LANG_FILES, 'r').read()
+            values = json.loads(file)
+            aux = {}
+            for key, value in array.items():
+                if key in values:
+                    aux[values[key]] = value
+                else:
+                    aux[key] = value
+            return aux
 
-        file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
-        values = json.loads(file)
-        aux = {}
-        for key, value in array.items():
-            if key in values:
-                aux[values[key]] = value
-            else:
-                aux[key] = value
-        return aux
+        else:
+            file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
+            values = json.loads(file)
+            aux = {}
+            for key, value in array.items():
+                if key in values:
+                    aux[values[key]] = value
+                else:
+                    aux[key] = value
+            return aux
 
 class Client:
 
@@ -94,13 +108,18 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="" ):
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",sp="" ):
         dataSet = None
 
         if (switch and hasattr(data, "__len__")):
-            util = Util()
-            data = util.setKeys(data)
-           
+            if (sp):
+                util = Util()
+                data = util.setKeys(data,sp)
+            else:
+                util = Util()
+                data = util.setKeys(data)
+
+
         self.SWITCH=switch
 
         headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk'}
@@ -160,6 +179,7 @@ class Client:
                         enddata.update(addData)
                         data=enddata
                         #print('//',data)
+                        #sys.exit()
                         response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
                         #response = enddata
                         #print('/////////////////////////////////////////////////')
@@ -181,6 +201,8 @@ class Client:
                         enddata.update(encryptData)
                         enddata.update(addData)
                         data=enddata
+                        #print('//',data)
+                        #sys.exit()
                         response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
                         #response = enddata
                         #print('***************************************')

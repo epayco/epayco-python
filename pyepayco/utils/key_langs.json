@@ -1,0 +1,16 @@
+{
+    "name": "nombres",
+    "last_name": "apellidos",
+    "invoice": "factura",
+    "description": "descripcion",
+    "value": "valor",
+    "tax": "iva",
+    "tax_base": "baseiva",
+    "currency": "moneda",
+    "email": "email",
+    "end_date": "end_date",
+    "url_response": "url_respuesta",
+    "url_confirmation": "url_confirmacion",
+    "method_confirmation": "metodoconfirmacion"
+
+}

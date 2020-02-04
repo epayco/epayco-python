@@ -6,6 +6,7 @@ from pyepayco.resources import Subscriptions
 from pyepayco.resources import Bank
 from pyepayco.resources import Cash
 from pyepayco.resources import Charge
+from pyepayco.resources import Safetypay
 
 class Epayco:
 
@@ -27,3 +28,4 @@ class Epayco:
         self.bank = Bank(self)
         self.cash = Cash(self)
         self.charge=Charge(self)
+        self.safetypay=Safetypay(self)

@@ -480,6 +480,7 @@ class Cash(Resource):
             True,
             self.epayco.lang,
             True,
+            False
         )
 
     def get(self, uid):
@@ -494,4 +495,29 @@ class Cash(Resource):
             True,
             self.epayco.lang,
             False
+        )
+"""
+ * Safetypay methods
+"""
+
+
+class Safetypay(Resource):
+    """
+     * Create transaction in SafetyPay
+     * @param  Object $options data transaction
+     * @return object
+    """
+
+    def create(self, options=None):
+        return self.request(
+            "POST",
+            "restpagos/pagos/safetypays.json",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang,
+            False,
+            True
         )

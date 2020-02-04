@@ -195,7 +195,7 @@ Pay Subscription
       "token_card": "eXj5Wdqgj7xzvC7AR",
       "doc_type": "CC",
       "doc_number": "1000000",
-      "ip":"190.000.000.000"  // This is the client's IP, it is required
+      "ip":"190.000.000.000"  #This is the client's IP, it is required
 
     }
 
@@ -287,7 +287,7 @@ Create
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
         "cell_phone": "3010000001",
-        "end_date": "2019-12-05",
+        "end_date": "2020-12-05",
         "ip": "186.116.10.133",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
@@ -296,8 +296,10 @@ Create
     }
 
     cash = objepayco.cash.create('efecty',cash_info)
-    cash = objepayco.cash.create('baloto',cash_info)
     cash = objepayco.cash.create('gana',cash_info)
+    cash = objepayco.cash.create('baloto',cash_info) #expiration date can not be longer than 30 days
+    cash = objepayco.cash.create('redservi',cash_info) #expiration date can not be longer than 30 days
+    cash = objepayco.cash.create('puntored',cash_info) #expiration date can not be longer than 30 days
 
 Retrieve
 *****
@@ -350,7 +352,7 @@ Create
       "tax_base": "100000",
       "currency": "COP",
       "dues": "12",
-      "ip":"190.000.000.000"  // This is the client's IP, it is required
+      "ip":"190.000.000.000"  #This is the client's IP, it is required
     }
 
     pay = objepayco.charge.create(payment_info)
@@ -382,3 +384,31 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
+
+
+
+SafetyPay
+####
+
+Create
+*****
+.. code-block:: python
+
+    safetypay_info = {
+      "name": "testing",
+      "last_name": "PAYCO",
+      "invoice": "1472050778",
+      "description": "pay test",
+      "value": "10000",
+      "tax": "0",
+      "tax_base": "0",
+      "currency": "COP",
+      "email": "no-responder@payco.co",
+      "end_date": "2020-12-05",
+      "url_response": "https://tudominio.com/respuesta.php",
+      "url_confirmation": "https://tudominio.com/confirmacion.php",
+      "method_confirmation": "GET",
+
+    }
+
+    pse = objepayco.safetyPay.create(safetypay_info)
