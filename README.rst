@@ -224,10 +224,10 @@ Create
       "email": "no-responder@payco.co",
       "country": "CO",
       "cell_phone": "3010000001",
-      "ip": "186.116.10.133",
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
       "method_confirmation": "GET",
+      "ip": "190.000.000.000"  #This is the client's IP, it is required,
       #Extra params: These params are optional and can be used by the commerce
       "extra1": "",
       "extra2": "",
@@ -288,10 +288,19 @@ Create
         "email": "test@mailinator.com",
         "cell_phone": "3010000001",
         "end_date": "2020-12-05",
-        "ip": "186.116.10.133",
+        
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "method_confirmation": "GET",
+        "ip": "190.000.000.000"  #This is the client's IP, it is required,
+        #Extra params: These params are optional and can be used by the commerce
+        "extra1": "",
+        "extra2": "",
+        "extra3": "",
+        "extra4": "",
+        "extra5": "",  
+        "extra6": "",
+        "extra7": ""
 
     }
 
@@ -353,6 +362,15 @@ Create
       "currency": "COP",
       "dues": "12",
       "ip":"190.000.000.000"  #This is the client's IP, it is required
+      #Extra params: These params are optional and can be used by the commerce
+      "use_default_card_customer":True # if the user wants to be charged with the card that the customer currently has as default = true
+      "extra1": "",
+      "extra2": "",
+      "extra3": "",
+      "extra4": "",
+      "extra5": "",  
+      "extra6": "",
+      "extra7": ""
     }
 
     pay = objepayco.charge.create(payment_info)
@@ -386,3 +404,29 @@ Previous requirements https://docs.epayco.co/tools/split-payment
     pay_split = objepayco.charge.create(payment_info)
 
 
+
+SafetyPay
+*****
+
+Create
+*****
+.. code-block:: python
+
+    safetypay_info = {
+      "name": "testing",
+      "last_name": "PAYCO",
+      "invoice": "1472050778",
+      "description": "pay test",
+      "value": "10000",
+      "tax": "0",
+      "tax_base": "0",
+      "currency": "COP",
+      "email": "no-responder@payco.co",
+      "end_date": "2020-12-05",
+      "url_response": "https://tudominio.com/respuesta.php",
+      "url_confirmation": "https://tudominio.com/confirmacion.php",
+      "method_confirmation": "GET",
+
+    }
+
+    safetypay = objepayco.safetyPay.create(safetypay_info)
