@@ -113,13 +113,13 @@ Add new token default to card existed
 ******
 .. code-block:: python
 
-customer_info = {
-    "customer_id":"id_client",
-    "token": "**********Q2ZLD9",
-    "franchise":"visa",
-    "mask":"457562******0326"
-  }
-customer=objepayco.customer.addDefaultCard(customer_info)
+    customer_info = {
+        "customer_id":"id_client",
+        "token": "**********Q2ZLD9",
+        "franchise":"visa",
+        "mask":"457562******0326"
+    }
+    customer=objepayco.customer.addDefaultCard(customer_info)
 
 
 
@@ -421,5 +421,4 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
-
 
