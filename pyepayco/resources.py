@@ -129,6 +129,23 @@ class Customers(Resource):
             False
         )
 
+    def addDefaultCard(self,options):
+
+        return self.request(
+            "POST",
+            "/payment/v1/customer/reasign/card/default",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
+        )
+
+        
 """
  * Class Charge
 """

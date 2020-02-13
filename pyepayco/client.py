@@ -108,7 +108,7 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",sp="" ):
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",sp="",dt="" ):
         dataSet = None
 
         if (switch and hasattr(data, "__len__")):
@@ -212,14 +212,23 @@ class Client:
                 else:
                     #Agregamos la llave publica
                     #data.update({'public_key':api_key,'test': test})
-                    data.update({'test': test})
-                    data=json.dumps(data)
-                    response = requests.post(
-                        self.build_url(url),
-                        data=data,
-                        auth=(api_key, ''),
-                        headers=headers
-                    )
+                    if(dt):
+                        data=json.dumps(data)
+                        response = requests.post(
+                            self.build_url(url),
+                            data=data,
+                            auth=(api_key, ''),
+                            headers=headers
+                        )
+                    else: 
+                        data.update({'test': test})
+                        data=json.dumps(data)
+                        response = requests.post(
+                            self.build_url(url),
+                            data=data,
+                            auth=(api_key, ''),
+                            headers=headers
+                        )  
 
             elif (method == "PATCH"):
                 response = requests.request(
