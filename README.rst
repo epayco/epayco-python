@@ -241,10 +241,10 @@ Create
       "email": "no-responder@payco.co",
       "country": "CO",
       "cell_phone": "3010000001",
+      "ip": "190.000.000.000"  #This is the client's IP, it is required,
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
       "method_confirmation": "GET",
-      "ip": "190.000.000.000"  #This is the client's IP, it is required,
       #Extra params: These params are optional and can be used by the commerce
       "extra1": "",
       "extra2": "",
@@ -305,10 +305,10 @@ Create
         "email": "test@mailinator.com",
         "cell_phone": "3010000001",
         "end_date": "2020-12-05",
+        "ip": "190.000.000.000"  #This is the client's IP, it is required,
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "method_confirmation": "GET",
-        "ip": "190.000.000.000"  #This is the client's IP, it is required,
         #Extra params: These params are optional and can be used by the commerce
         "extra1": "",
         "extra2": "",
@@ -377,10 +377,10 @@ Create
       "tax_base": "100000",
       "currency": "COP",
       "dues": "12",
+      "ip":"190.000.000.000"  #This is the client's IP, it is required
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
       "method_confirmation": "GET",
-      "ip":"190.000.000.000"  #This is the client's IP, it is required
       #Extra params: These params are optional and can be used by the commerce
       "use_default_card_customer":True, # if the user wants to be charged with the card that the customer currently has as default = true
       "extra1": "",
@@ -421,4 +421,5 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
+
 
