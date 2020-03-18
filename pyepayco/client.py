@@ -79,6 +79,34 @@ class Util():
                     aux[key] = value
             return aux
 
+
+class Auth:
+    def __init__( self, api_key, private_key ):
+        self.api_key = api_key
+        self.private_key = private_key
+
+    def make(self):
+        send_data = {
+            "public_key":self.private_key,
+            "private_key":self.api_key
+        }
+        url = "https://api.secure.payco.co/v1/auth/login"
+        payload = "{\"public_key\":\""+self.private_key+"\",\"private_key\":\""+self.api_key+"\"}"
+        headers = {
+            'Content-Type': 'application/json',
+            'type': 'sdk-jwt',
+            'Accept': 'application/json'
+        }
+        response = requests.request("POST", url, headers=headers, data = payload)
+        data=response.text.encode('utf8')
+        # print(data)
+        # sys.exit()
+        json_data=json.loads(data)
+        bearer_token=json_data['bearer_token']
+        return bearer_token
+        
+
+
 class Client:
 
     BASE_URL = "https://api.secure.payco.co";
@@ -110,6 +138,9 @@ class Client:
 
     def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",sp="",dt="" ):
         dataSet = None
+        auth = Auth(private_key,api_key)
+        authentication = auth.make()
+        token_bearer = 'Bearer '+authentication
 
         if (switch and hasattr(data, "__len__")):
             if (sp):
@@ -119,11 +150,13 @@ class Client:
                 util = Util()
                 data = util.setKeys(data)
 
-
-        self.SWITCH=switch
-
-        headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk'}
-
+        self.SWITCH=switch  
+        #headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk-jwt'}
+        headers = {
+            'Content-Type': 'application/json',
+            'type': 'sdk-jwt',
+            'Authorization': token_bearer
+        }
 
         try:
             if (method == "GET"):
@@ -146,27 +179,33 @@ class Client:
 
                     url_params = addData
                     url_params.update(data)
+                    # print('get')
+                    # sys.exit()
                     response=requests.get(self.build_url(url), data={},params=url_params,auth=(api_key, ""),headers=headers)
 
                 else:
                     url_params=data
+                    payload = {}
                     #url_params.update({"public_key":api_key,'test':test})
-                    response=requests.get(self.build_url(url),data={},params=url_params,auth=(api_key,""),headers=headers)
-
+                    response = requests.request("GET", self.build_url(url), headers=headers, data = payload)
+                    #response=requests.get(self.build_url(url),data={},params=url_params,auth=(api_key,""),headers=headers)
+                    # print(response)
+                    # sys.exit()
+                 
             elif (method == "POST"):
                 if (switch):
                     if(test):
                         test= "TRUE"
                     else:
                         test= "FALSE"
-
-                    
+   
                     if(cashdata):
                         aes = AESCipher(private_key,self.IV)
                         enpruebas = aes.encrypt(test)
 
                         encryptData = data
                         #encryptData = aes.encryptArray(data)
+
                         addData = {
                             "public_key": api_key,
                             "i": base64.b64encode(self.IV.encode('ascii')),
@@ -178,16 +217,17 @@ class Client:
                         enddata.update(encryptData)
                         enddata.update(addData)
                         data=enddata
-                        #print('//',data)
-                        #sys.exit()
+                        #payload = "{\"factura\":\""+encryptData['factura']+"\",\"descripcion\":\""+encryptData['descripcion']+"\",\"valor\":\""+encryptData['valor']+"\",\"iva\":\""+encryptData['iva']+"\",\"baseiva\":\""+encryptData['baseiva']+"\",\"moneda\":\""+encryptData['moneda']+"\",\"tipo_persona\":\""+encryptData['tipo_persona']+"\",\"tipo_doc\":\""+encryptData['tipo_doc']+"\",\"documento\":\""+encryptData['documento']+"\",\"nombres\":\""+encryptData['nombres']+"\",\"apellidos\":\""+encryptData['apellidos']+"\",\"email\":\""+encryptData['email']+"\",\"pais\":\""+encryptData['pais']+"\",\"depto\":\""+encryptData['depto']+"\",\"ciudad\":\""+encryptData['ciudad']+"\",\"celular\":\""+encryptData['celular']+"\",\"direccion\":\""+encryptData['direccion']+"\",\"ip\":\""+encryptData['ip']+"\",\"url_respuesta\":\""+encryptData['url_respuesta']+"\",\"url_confirmacion\":\""+encryptData['url_confirmacion']+"\",\"metodoconfirmacion\":\""+encryptData['metodoconfirmacion']+"\",\"fechaexpiracion\":\""+encryptData['fechaexpiracion']+"\",\"test\":\""+test+"\",\"public_key\":\""+api_key+"\",\"i\":\"MDAwMDAwMDAwMDAwMDAwMA==\",\"enpruebas\":\"''\",\"lenguaje\":\"python\",\"p\":\"\"}"
+                        #response = requests.request("POST", self.build_url(url), headers=headers, data = payload)
                         response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-                        #response = enddata
-                        #print('/////////////////////////////////////////////////')
+                        # print(response)
+                        # sys.exit()
+
+
                        
                     else:
                         aes = AESCipher(private_key,self.IV)
                         enpruebas = aes.encrypt(test)
-
                         encryptData = None
                         encryptData = aes.encryptArray(data)
                         addData = {
@@ -197,15 +237,16 @@ class Client:
                             'lenguaje': self.LANGUAGE,
                             'p': ''
                         }
+
                         enddata = {}
                         enddata.update(encryptData)
                         enddata.update(addData)
                         data=enddata
-                        #print('//',data)
-                        #sys.exit()
+                        #payload = "{\"banco\":\""+str(encryptData['banco'])+"\",\"factura\":\""+str(encryptData['factura'])+"\",\"descripcion\":\""+str(encryptData['descripcion'])+"\",\"valor\":\""+str(encryptData['valor'])+"\",\"iva\":\""+str(encryptData['iva'])+"\",\"baseiva\":\""+str(encryptData['baseiva'])+"\",\"moneda\":\""+str(encryptData['moneda'])+"\",\"tipo_persona\":\""+str(encryptData['tipo_persona'])+"\",\"tipo_doc\":\""+str(encryptData['tipo_doc'])+"\",\"documento\":\""+str(encryptData['documento'])+"\",\"nombres\":\""+str(encryptData['nombres'])+"\",\"apellidos\":\""+str(encryptData['apellidos'])+"\",\"email\":\""+str(encryptData['email'])+"\",\"pais\":\""+str(encryptData['pais'])+"\",\"celular\":\""+str(encryptData['celular'])+"\",\"url_respuesta\":\""+str(encryptData['url_respuesta'])+"\",\"url_confirmacion\":\""+str(encryptData['url_confirmacion'])+"\",\"metodoconfirmacion\":\""+str(encryptData['metodoconfirmacion'])+"\",\"ip\":\""+str(encryptData['ip'])+"\",\"test\":\""+test+"\",\"public_key\":\""+api_key+"\",\"i\":\""+str(addData['i'])+"\",\"enpruebas\":\""+str(addData['enpruebas'])+"\",\"lenguaje\":\"python\",\"p\":\"\"}"
                         response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-                        #response = enddata
-                        #print('***************************************')
+                        #response = requests.request("POST", self.build_url(url), headers=headers, data = data)
+                        # print(response)
+                        # sys.exit()
 
 
 
@@ -214,28 +255,19 @@ class Client:
                     #data.update({'public_key':api_key,'test': test})
                     if(dt):
                         data=json.dumps(data)
-                        response = requests.post(
-                            self.build_url(url),
-                            data=data,
-                            auth=(api_key, ''),
-                            headers=headers
-                        )
-                    else: 
+                        response = requests.request("POST", self.build_url(url), headers=headers, data = data)
+                    else:
                         data.update({'test': test})
                         data=json.dumps(data)
-                        response = requests.post(
-                            self.build_url(url),
-                            data=data,
-                            auth=(api_key, ''),
-                            headers=headers
-                        )  
+                        response = requests.request("POST", self.build_url(url), headers=headers, data = data)
+
 
             elif (method == "PATCH"):
                 response = requests.request(
                     method,
                     self.build_url(url),
                     data=json.dumps(data),
-                    auth=(api_key, ""),
+                    auth=(token_bearer, ""),
                     headers=headers
                 )
             elif (method == "DELETE"):
@@ -243,7 +275,7 @@ class Client:
                     method,
                     self.build_url(url),
                     data=json.dumps(data),
-                    auth=(api_key, ""),
+                    auth=(token_bearer, ""),
                     headers=headers
                 )
         except Exception:
