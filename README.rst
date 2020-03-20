@@ -23,7 +23,7 @@ Run the file setup.py
 
 Install from Packages
 ****
-   $ pip install pyepayco
+   $ pip install epaycosdk
 
    
 Usage
@@ -421,6 +421,4 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
-
-
 
