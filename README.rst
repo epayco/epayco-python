@@ -178,7 +178,7 @@ Create
     "doc_type": "CC",
     "doc_number": "5234567",
     #Optional parameter: if these parameter it's not send, system get ePayco dashboard's url_confirmation
-    "url_confirmation": "https:/secure.payco.co/restpagos/testRest/endpagopse.php",
+    "url_confirmation": "https://tudominio.com/confirmacion.php",
     "method_confirmation": "POST"
     }
 
@@ -421,4 +421,5 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
+
 
