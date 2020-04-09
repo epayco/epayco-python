@@ -105,7 +105,7 @@ Delete Token
       "customer_id":"id_client"
     }
 
-    customer =test.customer.delete(delete_customer_info)
+    customer =objepayco.customer.delete(delete_customer_info)
 
 
 
@@ -432,5 +432,4 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
-
 
