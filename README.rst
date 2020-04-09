@@ -93,7 +93,7 @@ Update
       "name": "Alex"
     }
 
-    customer =test.customer.update("id_client",update_customer_info)
+    customer =objepayco.customer.update("id_client",update_customer_info)
 
 Delete Token
 ******
@@ -432,4 +432,5 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
+
 
