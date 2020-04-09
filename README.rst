@@ -122,6 +122,17 @@ Add new token default to card existed
     customer=objepayco.customer.addDefaultCard(customer_info)
 
 
+Add new token to customer existed
+******
+.. code-block:: python
+
+    customer_info = {
+        "token_card": "6tWRMjsiDGPds2Krb",
+        "customer_id":"id_client"
+    }
+    customer=objepayco.customer.addNewToken(customer_info)
+
+
 
 
 Plans
@@ -423,3 +434,29 @@ Previous requirements https://docs.epayco.co/tools/split-payment
     pay_split = objepayco.charge.create(payment_info)
 
 
+
+SafetyPay
+*****
+
+Create
+*****
+.. code-block:: python
+
+    safetypay_info = {
+      "name": "testing",
+      "last_name": "PAYCO",
+      "invoice": "1472050778",
+      "description": "pay test",
+      "value": "10000",
+      "tax": "0",
+      "tax_base": "0",
+      "currency": "COP",
+      "email": "no-responder@payco.co",
+      "end_date": "2020-12-05",
+      "url_response": "https://tudominio.com/respuesta.php",
+      "url_confirmation": "https://tudominio.com/confirmacion.php",
+      "method_confirmation": "GET",
+
+    }
+
+    safetypay = objepayco.safetyPay.create(safetypay_info)

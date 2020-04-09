@@ -130,7 +130,6 @@ class Customers(Resource):
         )
 
     def addDefaultCard(self,options):
-
         return self.request(
             "POST",
             "/payment/v1/customer/reasign/card/default",
@@ -145,7 +144,22 @@ class Customers(Resource):
             True
         )
 
+    def addNewToken(self,options):
+        return self.request(
+            "POST",
+            "/v1/customer/add/token",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
+        )
         
+
 """
  * Class Charge
 """
@@ -512,29 +526,4 @@ class Cash(Resource):
             True,
             self.epayco.lang,
             False
-        )
-"""
- * Safetypay methods
-"""
-
-
-class Safetypay(Resource):
-    """
-     * Create transaction in SafetyPay
-     * @param  Object $options data transaction
-     * @return object
-    """
-
-    def create(self, options=None):
-        return self.request(
-            "POST",
-            "restpagos/pagos/safetypays.json",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False,
-            True
         )
