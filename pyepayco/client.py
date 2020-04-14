@@ -155,6 +155,7 @@ class Client:
         headers = {
             'Content-Type': 'application/json',
             'type': 'sdk-jwt',
+            'lang': 'PYTHON',
             'Authorization': token_bearer
         }
 
