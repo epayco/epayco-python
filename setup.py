@@ -3,11 +3,11 @@
 from distutils.core import setup
 
 setup(
-    name="pyepayco",
-    version="1.0.0",
+    name="epaycosdk",
+    version="2.0.0",
     author="ePayco Development Team",
-    author_email="desarrollo@epayco.co",
-    packages=['pyepayco'],
+    author_email="ricardo.saldarriaga@epayco.co",
+    packages=['epaycosdk'],
     url='https://epayco.co/',
     download_url="https://github.com/epayco/epayco-python",
     license="MIT",

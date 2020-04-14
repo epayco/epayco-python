@@ -1,12 +1,12 @@
-import pyepayco.resources
-from pyepayco.resources import Token
-from pyepayco.resources import Customers
-from pyepayco.resources import Plan
-from pyepayco.resources import Subscriptions
-from pyepayco.resources import Bank
-from pyepayco.resources import Cash
-from pyepayco.resources import Charge
-from pyepayco.resources import Safetypay
+import epaycosdk.resources
+from epaycosdk.resources import Token
+from epaycosdk.resources import Customers
+from epaycosdk.resources import Plan
+from epaycosdk.resources import Subscriptions
+from epaycosdk.resources import Bank
+from epaycosdk.resources import Cash
+from epaycosdk.resources import Charge
+#from epaycosdk.resources import Safetypay
 
 class Epayco:
 
@@ -28,4 +28,4 @@ class Epayco:
         self.bank = Bank(self)
         self.cash = Cash(self)
         self.charge=Charge(self)
-        self.safetypay=Safetypay(self)
+        #self.safetypay=Safetypay(self)

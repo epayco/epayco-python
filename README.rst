@@ -31,7 +31,7 @@ Usage
 
 .. code-block:: python
 
-    import pyepayco.epayco as epayco
+    import epaycosdk.epayco as epayco
 
     apiKey = "491d6a0b6e992cf924edd8d3d088aff1"
     privateKey = "268c8e0162990cf2ce97fa7ade2eff5a"
@@ -432,5 +432,6 @@ Previous requirements https://docs.epayco.co/tools/split-payment
      }
 
     pay_split = objepayco.charge.create(payment_info)
+
 
 

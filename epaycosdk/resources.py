@@ -1,5 +1,5 @@
-from pyepayco.client import Client
-import pyepayco.errors as errors
+from epaycosdk.client import Client
+import epaycosdk.errors as errors
 
 class Resource(Client):
     """
