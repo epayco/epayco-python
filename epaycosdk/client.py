@@ -20,8 +20,8 @@ pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
 unpad = lambda s : s[0:-(s[-1])]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('pyepayco/utils/key_lang.json'))
-EPAYCO_KEY_LANG_FILES = str(BASE_DIR.joinpath('pyepayco/utils/key_langs.json'))
+EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
+EPAYCO_KEY_LANG_FILES = str(BASE_DIR.joinpath('epaycosdk/utils/key_langs.json'))
 #Dir = os.path.join(EPAYCO_KEY_LANG_FILE, 'key_lang.json')
 
 

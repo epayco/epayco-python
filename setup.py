@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name="epaycosdk",
     version="3.0.1",
+    include_package_data=True,
     author="ePayco Development Team",
     author_email="ricardo.saldarriaga@epayco.co",
     packages=['epaycosdk'],
