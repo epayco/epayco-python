@@ -33,8 +33,8 @@ Usage
 
     import epaycosdk.epayco as epayco
 
-    apiKey = "491d6a0b6e992cf924edd8d3d088aff1"
-    privateKey = "268c8e0162990cf2ce97fa7ade2eff5a"
+    apiKey = "PUBLIC_KEY"
+    privateKey = "PRIVATE_KEY"
     lenguage = "ES"
     test = True
     options={"apiKey":apiKey,"privateKey":privateKey,"test":test,"lenguage":lenguage}
@@ -187,7 +187,7 @@ Create
     "customer": "9xRxhaJ2YmLTkT5uz",
     "token_card": "eXj5Wdqgj7xzvC7AR",
     "doc_type": "CC",
-    "doc_number": "5234567",
+    "doc_number": "0000000000",
     #Optional parameter: if these parameter it's not send, system get ePayco dashboard's url_confirmation
     "url_confirmation": "https://tudominio.com/confirmacion.php",
     "method_confirmation": "POST"
@@ -240,9 +240,9 @@ Create
       "bank": "1007",
       "invoice": "1472050778",
       "description": "pay test",
-      "value": "10000",
-      "tax": "0",
-      "tax_base": "0",
+      "value": "116000",
+      "tax": "16000",
+      "tax_base": "100000",
       "currency": "COP",
       "type_person": "0",
       "doc_type": "CC",
@@ -287,9 +287,12 @@ Previous requirements: https://docs.epayco.co/tools/split-payment
       "splitpayment":"true",
        "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
        "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "02",
+       "split_type" : "01",
        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-       "split_primary_receiver_fee":"10"
+       "split_primary_receiver_fee":"80000"
+       "split_receivers":[
+          {"id":"P_CUST_ID_CLIENTE","total":"116000","iva":"16000","base_iva":"100000", "fee":"20000"}
+        ]
      }
 
     pse_split = objepayco.bank.create(pse_info)
@@ -304,9 +307,9 @@ Create
     cash_info = {
         "invoice": "1472050778",
         "description": "pay test",
-        "value": "20000",
-        "tax": "0",
-        "tax_base": "0",
+        "value": "116000",
+        "tax": "16000",
+        "tax_base": "100000",
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
@@ -358,9 +361,12 @@ Previous requirements: https://docs.epayco.co/tools/split-payment
       "splitpayment":"true",
        "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
        "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "02",
+       "split_type" : "01",
        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-       "split_primary_receiver_fee":"10"
+       "split_primary_receiver_fee":"80000"
+       "split_receivers":[
+          {"id":"P_CUST_ID_CLIENTE","total":"116000","iva":"16000","base_iva":"100000", "fee":"20000"}
+       ]
      }
   
     cash_info_split = objepayco.cash.create('efecty',cash_info)
@@ -383,8 +389,8 @@ Create
       "ip": "192.198.2.114",
       "bill": "OR-1234",
       "description": "Test Payment",
-      "value": "119000",
-      "tax": "19000",
+      "value": "116000",
+      "tax": "16000",
       "tax_base": "100000",
       "currency": "COP",
       "dues": "12",
@@ -426,9 +432,13 @@ Previous requirements https://docs.epayco.co/tools/split-payment
       "splitpayment":"true",
        "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
        "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "02",
+       "split_type" : "01",
        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-       "split_primary_receiver_fee":"10"
+       "split_primary_receiver_fee":"80000"
+       "split_rule":'multiple',
+       "split_receivers":[
+          {"id":"P_CUST_ID_CLIENTE","total":"116000","iva":"16000","base_iva":"100000", "fee":"20000"}
+        ]
      }
 
     pay_split = objepayco.charge.create(payment_info)
