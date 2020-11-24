@@ -423,8 +423,9 @@ Split Payments
 *****
 
 Previous requirements https://docs.epayco.co/tools/split-payment
-*****
 
+Split 1-1
+****
 .. code-block:: python
 
     payment_info = {
@@ -432,16 +433,35 @@ Previous requirements https://docs.epayco.co/tools/split-payment
       "splitpayment":"true",
        "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
        "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "01",
-       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-       "split_primary_receiver_fee":"80000"
-       "split_rule":'multiple',
-       "split_receivers":[
-          {"id":"P_CUST_ID_CLIENTE","total":"116000","iva":"16000","base_iva":"100000", "fee":"20000"}
-        ]
+       "split_type" : "02",
+       "split_primary_receiver" : "P_CUST_ID_CLIENTE RECEIVER",
+       "split_primary_receiver_fee":"10"
      }
 
     pay_split = objepayco.charge.create(payment_info)
 
+Split Multiple:
+****
+
+use the following attributes in case you need to do a dispersion with multiple providers
+
+.. code-block:: python
+
+    payment_info = {
+    #Other customary parameters...
+        "splitpayment":"true",
+        "split_app_id":"30085",
+        "split_merchant_id":"30085",
+        "split_type" : "02",
+        "split_primary_receiver" : "30085",
+        "split_primary_receiver_fee":"0",
+        "split_rule":'multiple',
+        "split_receivers":str(json.dumps([
+                {"id":"69205","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
+                {"id":"75470","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
+        ]))
+        }
+
+    pay_split = objepayco.charge.create(payment_info)
 
 
