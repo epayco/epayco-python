@@ -339,6 +339,7 @@ Create
     cash = objepayco.cash.create('baloto',cash_info) #expiration date can not be longer than 30 days
     cash = objepayco.cash.create('redservi',cash_info) #expiration date can not be longer than 30 days
     cash = objepayco.cash.create('puntored',cash_info) #expiration date can not be longer than 30 days
+    cash = objepayco.cash.create('sured',cash_info) #expiration date can not be longer than 30 days
 
 Retrieve
 *****

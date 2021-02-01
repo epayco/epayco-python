@@ -498,6 +498,8 @@ class Cash(Resource):
             url = "restpagos/v2/efectivo/redservi"
         elif (type == "puntored"):
             url = "restpagos/v2/efectivo/puntored"
+        elif (type == "sured"):
+            url = "restpagos/v2/efectivo/sured"
         else:
             raise errors.ErrorException(self.epayco.lang, 109)
 

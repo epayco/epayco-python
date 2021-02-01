@@ -15,6 +15,6 @@ setup(
     long_description="Basic python library to interact with ePayco Payment API",
     install_requires=[
         "requests >= 2.4.3",
-        "pycrypto >= 2.3"
+        "pycrypto >= 2.6.1"
     ],
 )
