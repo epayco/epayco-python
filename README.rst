@@ -272,7 +272,7 @@ Retrieve
 *****
 .. code-block:: python
 
-    pse = objepayco.bank.pseTransaction("transactionID")
+    pse = objepayco.bank.pseTransaction("codigo_recibo")
 
 Split Payments
 *****
