@@ -280,6 +280,26 @@ Split Payments
 Previous requirements: https://docs.epayco.co/tools/split-payment
 *****
 
+Split 1-1
+*****
+
+.. code-block:: python
+
+    pse_info = {
+    #Other customary parameters...
+      "splitpayment":"true",
+       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
+       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
+       "split_type" : "01",
+       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
+       "split_primary_receiver_fee":"80000"       
+     }
+
+    pse_split = objepayco.bank.create(pse_info)
+
+Split Multiple
+*****
+
 .. code-block:: python
 
     pse_info = {
@@ -290,12 +310,14 @@ Previous requirements: https://docs.epayco.co/tools/split-payment
        "split_type" : "01",
        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
        "split_primary_receiver_fee":"80000"
-       "split_receivers":[
-          {"id":"P_CUST_ID_CLIENTE","total":"116000","iva":"16000","base_iva":"100000", "fee":"20000"}
-        ]
+       "split_receivers":str(json.dumps([
+                {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
+                {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
+        ]))
      }
 
     pse_split = objepayco.bank.create(pse_info)
+
 
 Cash
 ####
