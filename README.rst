@@ -8,7 +8,7 @@ Description
 ########
 
 API to interact with Epayco
-https://epayco.co/docs/api/
+https://api.epayco.co
 
 Installation
 ****
@@ -437,7 +437,6 @@ Create
       "name": "John",
       "last_name": "Doe",
       "email": "example@email.com",
-      "ip": "192.198.2.114",
       "bill": "OR-1234",
       "description": "Test Payment",
       "value": "116000",
