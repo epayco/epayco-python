@@ -68,7 +68,7 @@ Create
       "last_name": "Doe", #This parameter is optional
       "email": "joe@payco.co",
       "phone": "3005234321",
-      "default": true
+      "default": True
       }
 
     customer=objepayco.customer.create(customer_info)
