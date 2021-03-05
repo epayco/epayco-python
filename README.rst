@@ -252,7 +252,7 @@ Create
       "email": "no-responder@payco.co",
       "country": "CO",
       "cell_phone": "3010000001",
-      "ip": "190.000.000.000"  #This is the client's IP, it is required,
+      "ip": "190.000.000.000", #This is the client's IP, it is required,
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
       "method_confirmation": "GET",
