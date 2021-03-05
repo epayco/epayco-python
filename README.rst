@@ -341,7 +341,7 @@ Create
         "email": "test@mailinator.com",
         "cell_phone": "3010000001",
         "end_date": "2020-12-05",
-        "ip": "190.000.000.000"  #This is the client's IP, it is required,
+        "ip": "190.000.000.000",  #This is the client's IP, it is required,
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "method_confirmation": "GET",
@@ -444,7 +444,7 @@ Create
       "tax_base": "100000",
       "currency": "COP",
       "dues": "12",
-      "ip":"190.000.000.000"  #This is the client's IP, it is required
+      "ip":"190.000.000.000",  #This is the client's IP, it is required
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
       "method_confirmation": "GET",
