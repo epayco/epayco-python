@@ -310,10 +310,10 @@ Split Multiple
        "split_type" : "01",
        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
        "split_primary_receiver_fee":"80000"
-       "split_receivers":str(json.dumps([
+       "split_receivers":[
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ]))
+        ]
      }
 
     pse_split = objepayco.bank.create(pse_info)
@@ -410,10 +410,10 @@ use the following attributes in case you need to do a dispersion with multiple p
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
         "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":str(json.dumps([
+        "split_receivers":[
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ])) #campo obligatorio sí se envía split_rule
+        ] #campo obligatorio sí se envía split_rule
         }
 
      cash_info_split = objepayco.cash.create('efecty',cash_info)
@@ -506,10 +506,10 @@ use the following attributes in case you need to do a dispersion with multiple p
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
         "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":str(json.dumps([
+        "split_receivers":[
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ])) #campo obligatorio sí se envía split_rule
+        ] #campo obligatorio sí se envía split_rule
         }
 
     pay_split = objepayco.charge.create(payment_info)
