@@ -48,7 +48,8 @@ class AESCipher:
     def encryptArray(self,data):
         aux = {}
         for key, value in data.items():
-            aux[key] = self.encrypt(value)
+            valueToEncrypt = json.dumps(value) if isinstance(value, list) else value
+            aux[key] = self.encrypt(valueToEncrypt)
         return aux
 
 class Util():
