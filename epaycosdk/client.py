@@ -7,7 +7,6 @@ import hashlib
 from Crypto.Cipher import AES
 import requests
 import epaycosdk.errors as errors
-#import os
 import sys
 from requests.exceptions import ConnectionError
 from pathlib import Path
