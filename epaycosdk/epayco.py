@@ -18,7 +18,7 @@ class Epayco:
     def __init__(self, options):
         self.api_key = options["apiKey"]
         self.private_key = options["privateKey"]
-        self.test = options["test"]
+        self.test = "true" if options["test"] else "false"
         self.lang = options["lenguage"]
 
         self.token = Token(self)
