@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from setuptools  import setup, find_packages
+import platform
 
 setup(
     name="epaycosdk",
@@ -16,6 +17,6 @@ setup(
     long_description="Basic python library to interact with ePayco Payment API",
     install_requires=[
         "requests >= 2.4.3",
-        "pycryptodome >= 2.6.1"
+        "pycryptodome >= 2.6.1" if platform.system() == "Windows" else "pycrypto >= 2.6.1"
     ],
 )
