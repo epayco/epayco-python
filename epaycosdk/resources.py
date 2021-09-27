@@ -252,7 +252,7 @@ class Plan(Resource):
 
         return self.request(
             "GET",
-            "recurring/v1/plans/" + self.epayco.api_key + "/",
+            "recurring/v1/plans/" + self.epayco.api_key,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
