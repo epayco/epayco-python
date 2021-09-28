@@ -252,7 +252,7 @@ class Plan(Resource):
 
         return self.request(
             "GET",
-            "recurring/v1/plans/" + self.epayco.api_key + "/",
+            "recurring/v1/plans/" + self.epayco.api_key,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -286,7 +286,7 @@ class Plan(Resource):
         options={}
         return self.request(
             "POST",
-            "recurring/v1/plan/remove/" + self.epayco.api_key + "/" + uid + "/",
+            "recurring/v1/plan/remove/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             options,
             self.epayco.private_key,

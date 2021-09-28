@@ -22,6 +22,13 @@
     "ip": "ip",
     "url_response": "url_respuesta",
     "url_confirmation": "url_confirmacion",
-    "method_confirmation": "metodoconfirmacion"
-
+    "method_confirmation": "metodoconfirmacion",
+    "splitpayment": "splitpayment",
+    "split_app_id": "split_app_id",
+    "split_merchant_id": "split_merchant_id",
+    "split_type": "split_type",
+    "split_primary_receiver": "split_primary_receiver",
+    "split_primary_receiver_fee": "split_primary_receiver_fee",
+    "split_rule": "split_rule",
+    "split_receivers": "split_receivers"
 }
