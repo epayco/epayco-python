@@ -162,7 +162,7 @@ class Client:
         try:
             if (method == "GET"):
                 if (switch):
-                    if (test):
+                    if (test == True):
                         test = "TRUE"
                     else:
                         test = "FALSE"

@@ -1,0 +1,4 @@
+include setup.py README.rst epaycosdk/utils/key_lang.json epaycosdk/utils/key_langs.json
+recursive-include epaycosdk/*.*
+recursive-include epaycosdk/utils/*.*
+recursive-include epaycosdk/test/*.*

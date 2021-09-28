@@ -255,9 +255,9 @@ Create
       "ip": "190.000.000.000", #This is the client's IP, it is required,
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
-      "method_confirmation": "GET",
-      #Extra params: These params are optional and can be used by the commerce
-      "extra1": "",
+      "metodoconfirmacion": "GET",      
+      #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
+      "extra1": "",      
       "extra2": "",
       "extra3": "",
       "extra4": "",
@@ -280,27 +280,12 @@ Split Payments
 Previous requirements: https://docs.epayco.co/tools/split-payment
 *****
 
-Split 1-1
+
+Split payment
 *****
 
 .. code-block:: python
-
-    pse_info = {
-    #Other customary parameters...
-      "splitpayment":"true",
-       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "01",
-       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-       "split_primary_receiver_fee":"80000"       
-     }
-
-    pse_split = objepayco.bank.create(pse_info)
-
-Split Multiple
-*****
-
-.. code-block:: python
+    import json
 
     pse_info = {
     #Other customary parameters...
@@ -310,10 +295,10 @@ Split Multiple
        "split_type" : "01",
        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
        "split_primary_receiver_fee":"80000"
-       "split_receivers":[
+       "split_receivers": json.dumps([
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ]
+        ])
      }
 
     pse_split = objepayco.bank.create(pse_info)
@@ -345,7 +330,7 @@ Create
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "method_confirmation": "GET",
-        #Extra params: These params are optional and can be used by the commerce
+        #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
         "extra1": "",
         "extra2": "",
         "extra3": "",
@@ -376,30 +361,15 @@ Split Payments
 
 Previous requirements: https://docs.epayco.co/tools/split-payment
 
-Split 1-1
+
+
+Split payment:
 ****
 
-.. code-block:: python
-
-    cash_info = {
-    #Other customary parameters...
-      "splitpayment":"true",
-       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "02",
-       "split_primary_receiver" : "P_CUST_ID_CLIENTE RECEIVER",
-       "split_primary_receiver_fee":"10"
-     }
-  
-    cash_info_split = objepayco.cash.create('efecty',cash_info)
-
-
-Split Multiple:
-****
-
-use the following attributes in case you need to do a dispersion with multiple providers
+use the following attributes in case you need to do a dispersion with one or multiple providers
 
 .. code-block:: python
+    import json 
 
     payment_info = {
     #Other customary parameters...
@@ -410,10 +380,10 @@ use the following attributes in case you need to do a dispersion with multiple p
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
         "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":[
+        "split_receivers":json.dumps([
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ] #campo obligatorio sí se envía split_rule
+        ]) #campo obligatorio sí se envía split_rule
         }
 
      cash_info_split = objepayco.cash.create('efecty',cash_info)
@@ -448,8 +418,8 @@ Create
       "url_response": "https://tudominio.com/respuesta.php",
       "url_confirmation": "https://tudominio.com/confirmacion.php",
       "method_confirmation": "GET",
-      #Extra params: These params are optional and can be used by the commerce
       "use_default_card_customer":True, # if the user wants to be charged with the card that the customer currently has as default = true
+      #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
       "extra1": "",
       "extra2": "",
       "extra3": "",
@@ -474,29 +444,15 @@ Split Payments
 
 Previous requirements https://docs.epayco.co/tools/split-payment
 
-Split 1-1
-****
-.. code-block:: python
 
-    payment_info = {
-    #Other customary parameters...
-      "splitpayment":"true",
-       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "02",
-       "split_primary_receiver" : "P_CUST_ID_CLIENTE RECEIVER",
-       "split_primary_receiver_fee":"10"
-     }
-
-    pay_split = objepayco.charge.create(payment_info)
-
-Split Multiple:
+Split payment
 ****
 
-use the following attributes in case you need to do a dispersion with multiple providers
+use the following attributes in case you need to do a dispersion with one or multiple providers
 
 .. code-block:: python
-
+    import json
+    
     payment_info = {
     #Other customary parameters...
         "splitpayment":"true",
@@ -506,10 +462,10 @@ use the following attributes in case you need to do a dispersion with multiple p
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
         "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":[
+        "split_receivers":json.dumps([
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ] #campo obligatorio sí se envía split_rule
+        ]) #campo obligatorio sí se envía split_rule
         }
 
     pay_split = objepayco.charge.create(payment_info)
