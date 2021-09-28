@@ -285,6 +285,7 @@ Split payment
 *****
 
 .. code-block:: python
+    import json
 
     pse_info = {
     #Other customary parameters...
@@ -294,10 +295,10 @@ Split payment
        "split_type" : "01",
        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
        "split_primary_receiver_fee":"80000"
-       "split_receivers":[
+       "split_receivers": json.dumps([
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ]
+        ])
      }
 
     pse_split = objepayco.bank.create(pse_info)
@@ -368,6 +369,7 @@ Split payment:
 use the following attributes in case you need to do a dispersion with one or multiple providers
 
 .. code-block:: python
+    import json 
 
     payment_info = {
     #Other customary parameters...
@@ -378,10 +380,10 @@ use the following attributes in case you need to do a dispersion with one or mul
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
         "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":[
+        "split_receivers":json.dumps([
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ] #campo obligatorio sí se envía split_rule
+        ]) #campo obligatorio sí se envía split_rule
         }
 
      cash_info_split = objepayco.cash.create('efecty',cash_info)
@@ -449,7 +451,8 @@ Split payment
 use the following attributes in case you need to do a dispersion with one or multiple providers
 
 .. code-block:: python
-
+    import json
+    
     payment_info = {
     #Other customary parameters...
         "splitpayment":"true",
@@ -459,10 +462,10 @@ use the following attributes in case you need to do a dispersion with one or mul
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
         "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":[
+        "split_receivers":json.dumps([
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ] #campo obligatorio sí se envía split_rule
+        ]) #campo obligatorio sí se envía split_rule
         }
 
     pay_split = objepayco.charge.create(payment_info)
