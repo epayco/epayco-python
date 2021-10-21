@@ -7,5 +7,11 @@ test*.py
 #Ignore build
 build/*
 
+#Ignore dist
+dist/*
+
 #Ignore idea
 idea/*
+
+epaycosdk_win.egg-info
+epaycosdk.egg-info
