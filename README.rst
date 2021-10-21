@@ -21,9 +21,13 @@ Run the file setup.py
 
     $ sudo python3 setup.py install
 
-Install from Packages
+Install from Packages (Linux), Pyhton = 3.7
 ****
    $ pip install epaycosdk
+
+Install from Packages (Windows)  Pyhton = 3.7
+****
+   $ pip install epaycosdk-win
 
    
 Usage
