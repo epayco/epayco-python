@@ -7,7 +7,7 @@ import hashlib
 from Crypto.Cipher import AES
 import requests
 import epaycosdk.errors as errors
-#import os
+import os
 import sys
 from requests.exceptions import ConnectionError
 from pathlib import Path
@@ -109,8 +109,9 @@ class Auth:
 
 class Client:
 
-    BASE_URL = "https://api.secure.payco.co";
-    BASE_URL_SECURE = "https://secure.payco.co";
+    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co";
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co";
+    ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
     IV = "0000000000000000";
     LANGUAGE = "python";
     SWITCH= False
@@ -320,13 +321,13 @@ class Client:
             :return: String with complete URL, ex: https://api.secure.payco.co/v1/charges/
             """
             if(self.SWITCH):
-                return "{base_url}/{endpoint}".format(
+                return "{base_url}{entorno}{endpoint}".format(
                     base_url=self.BASE_URL_SECURE,
+                    entorno=self.ENTORNO,
                     endpoint=endpoint
                 )
             else:
                 return "{base_url}/{endpoint}".format(
                     base_url=self.BASE_URL,
-                    endpoint=endpoint
-                    
+                    endpoint=endpoint   
                 )
