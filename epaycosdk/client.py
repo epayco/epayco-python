@@ -11,6 +11,9 @@ import os
 import sys
 from requests.exceptions import ConnectionError
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv() 
 
 # No verificar el certifcado para los request
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -21,7 +24,7 @@ unpad = lambda s : s[0:-(s[-1])]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
-EPAYCO_KEY_LANG_FILES = str(BASE_DIR.joinpath('epaycosdk/utils/key_langs.json'))
+EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
 #Dir = os.path.join(EPAYCO_KEY_LANG_FILE, 'key_lang.json')
 
 
@@ -31,8 +34,6 @@ class AESCipher:
         self.iv = iv    
 
     def encrypt( self, row ):
-          
-    
         raw = pad(row).encode("utf8")
         cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
         enc = cipher.encrypt(raw)
@@ -55,29 +56,26 @@ class AESCipher:
 class Util():
 
     def setKeys(self, array={},sp=''):
-        #print('/setKeys/',sp)
-        #sys.exit()
-        if(sp):
-            file = open(EPAYCO_KEY_LANG_FILES, 'r').read()
-            values = json.loads(file)
-            aux = {}
-            for key, value in array.items():
-                if key in values:
-                    aux[values[key]] = value
-                else:
-                    aux[key] = value
-            return aux
+        file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
+        values = json.loads(file)
+        aux = {}
+        for key, value in array.items():
+            if key in values:
+                aux[values[key]] = value
+            else:
+                aux[key] = value
+        return aux
 
-        else:
-            file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
-            values = json.loads(file)
-            aux = {}
-            for key, value in array.items():
-                if key in values:
-                    aux[values[key]] = value
-                else:
-                    aux[key] = value
-            return aux
+    def setKeys_apify(self, array={}):
+        file = open(EPAYCO_KEY_LANG_FILE_APIFY, 'r').read()
+        values = json.loads(file)
+        aux = {}
+        for key, value in array.items():
+            if key in values:
+                aux[values[key]] = value
+            else:
+                aux[key] = value
+        return aux
 
 
 class Auth:
@@ -85,12 +83,12 @@ class Auth:
         self.api_key = api_key
         self.private_key = private_key
 
-    def make(self):
+    def make(self, BASE_URL):
         send_data = {
             "public_key":self.private_key,
             "private_key":self.api_key
         }
-        url = "https://api.secure.payco.co/v1/auth/login"
+        url = BASE_URL + "/v1/auth/login"
         payload = "{\"public_key\":\""+self.private_key+"\",\"private_key\":\""+self.api_key+"\"}"
         headers = {
             'Content-Type': 'application/json',
@@ -109,9 +107,10 @@ class Auth:
 
 class Client:
 
-    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co";
-    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co";
+    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
     ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
+    BASE_URL_APIFY = os.getenv("BASE_URL_APIF") if os.getenv("BASE_URL_APIF") else "https://apify.epayco.co"
     IV = "0000000000000000";
     LANGUAGE = "python";
     SWITCH= False
@@ -137,19 +136,15 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",sp="",dt="" ):
-        dataSet = None
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
         auth = Auth(private_key,api_key)
-        authentication = auth.make()
+        authentication = auth.make(self.BASE_URL)
         token_bearer = 'Bearer '+authentication
-
-        if (switch and hasattr(data, "__len__")):
-            if (sp):
-                util = Util()
-                data = util.setKeys(data,sp)
-            else:
-                util = Util()
-                data = util.setKeys(data)
+        util = Util()
+        if(apify):
+            data = util.setKeys_apify(data)
+        elif (hasattr(data, "__len__")):
+            data = util.setKeys(data)
 
         self.SWITCH=switch  
         #headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk-jwt'}

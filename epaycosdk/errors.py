@@ -5,7 +5,7 @@ import json
 ssl._create_default_https_context = ssl._create_unverified_context
 # Se Extiende de la clase Exception y se inicializa la url en s3
 class EpaycoException(Exception):
-    ERRORS_URL = "https://s3-us-west-2.amazonaws.com/epayco/message_api/errors.json"
+    ERRORS_URL = "https://multimedia.epayco.co/message-api/errors.json"
     pass
 
 class ErrorException(EpaycoException):
