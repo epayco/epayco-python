@@ -111,8 +111,8 @@ class Client:
     BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
     ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
     BASE_URL_APIFY = os.getenv("BASE_URL_APIF") if os.getenv("BASE_URL_APIF") else "https://apify.epayco.co"
-    IV = "0000000000000000";
-    LANGUAGE = "python";
+    IV = "0000000000000000"
+    LANGUAGE = "python"
     SWITCH= False
 
     def __init__(self):
@@ -280,14 +280,11 @@ class Client:
 
         if (response.status_code >= 200 and response.status_code <= 206):
             if (method == "DELETE"):
-                return response.status_code == 204 or response.status_code == 200;
+                return response.status_code == 204 or response.status_code == 200
 
             return response.json()
 
         if (response.status_code == 400):
-            code = 0;
-            message = "";
-
             raise errors.ErrorException(lang, 103)
 
         if (response.status_code == 401):
