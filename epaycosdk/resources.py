@@ -529,3 +529,52 @@ class Cash(Resource):
             self.epayco.lang,
             False
         )
+
+class Daviplata(Resource):
+    def create(self, options = None):
+        return self.request(
+            "POST",
+            "/payment/process/daviplata",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False, # safetypay
+            False,
+            True # apify
+        )
+
+    def confirm(self, options = None):  
+        return self.request(
+            "POST",
+            "payment/confirm/daviplata",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
+        )
+
+
+class Safetypay(Resource):
+    def create(self, options = None):
+        return self.request(
+            "POST",
+            "/payment/process/safetypay",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
+        )

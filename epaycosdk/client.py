@@ -21,7 +21,7 @@ unpad = lambda s : s[0:-(s[-1])]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
-EPAYCO_KEY_LANG_FILES = str(BASE_DIR.joinpath('epaycosdk/utils/key_langs.json'))
+EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
 #Dir = os.path.join(EPAYCO_KEY_LANG_FILE, 'key_lang.json')
 
 
@@ -31,8 +31,6 @@ class AESCipher:
         self.iv = iv    
 
     def encrypt( self, row ):
-          
-    
         raw = pad(row).encode("utf8")
         cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
         enc = cipher.encrypt(raw)
@@ -55,29 +53,26 @@ class AESCipher:
 class Util():
 
     def setKeys(self, array={},sp=''):
-        #print('/setKeys/',sp)
-        #sys.exit()
-        if(sp):
-            file = open(EPAYCO_KEY_LANG_FILES, 'r').read()
-            values = json.loads(file)
-            aux = {}
-            for key, value in array.items():
-                if key in values:
-                    aux[values[key]] = value
-                else:
-                    aux[key] = value
-            return aux
+        file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
+        values = json.loads(file)
+        aux = {}
+        for key, value in array.items():
+            if key in values:
+                aux[values[key]] = value
+            else:
+                aux[key] = value
+        return aux
 
-        else:
-            file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
-            values = json.loads(file)
-            aux = {}
-            for key, value in array.items():
-                if key in values:
-                    aux[values[key]] = value
-                else:
-                    aux[key] = value
-            return aux
+    def setKeys_apify(self, array={}):
+        file = open(EPAYCO_KEY_LANG_FILE_APIFY, 'r').read()
+        values = json.loads(file)
+        aux = {}
+        for key, value in array.items():
+            if key in values:
+                aux[values[key]] = value
+            else:
+                aux[key] = value
+        return aux
 
 
 class Auth:
@@ -109,10 +104,11 @@ class Auth:
 
 class Client:
 
-    BASE_URL = "https://api.secure.payco.co";
-    BASE_URL_SECURE = "https://secure.payco.co";
-    IV = "0000000000000000";
-    LANGUAGE = "python";
+    BASE_URL = "https://api.secure.payco.co"
+    BASE_URL_SECURE = "https://secure.payco.co"
+    BASE_URL_APIFY = "https://apify.epayco.co"
+    IV = "0000000000000000"
+    LANGUAGE = "python"
     SWITCH= False
 
     def __init__(self):
@@ -136,19 +132,15 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",sp="",dt="" ):
-        dataSet = None
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
         auth = Auth(private_key,api_key)
         authentication = auth.make()
         token_bearer = 'Bearer '+authentication
-
-        if (switch and hasattr(data, "__len__")):
-            if (sp):
-                util = Util()
-                data = util.setKeys(data,sp)
-            else:
-                util = Util()
-                data = util.setKeys(data)
+        util = Util()
+        if(apify):
+            data = util.setKeys_apify(data)
+        elif (hasattr(data, "__len__")):
+            data = util.setKeys(data)
 
         self.SWITCH=switch  
         #headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk-jwt'}
