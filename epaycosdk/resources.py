@@ -542,7 +542,6 @@ class Daviplata(Resource):
             False,
             self.epayco.lang,
             False,
-            False, # safetypay
             False,
             True # apify
         )
