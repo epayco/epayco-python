@@ -89,6 +89,7 @@ class Auth:
             "private_key":self.api_key
         }
         url = BASE_URL + "/v1/auth/login"
+        print("URL " + url)
         payload = "{\"public_key\":\""+self.private_key+"\",\"private_key\":\""+self.api_key+"\"}"
         headers = {
             'Content-Type': 'application/json',
