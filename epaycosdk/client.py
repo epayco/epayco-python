@@ -106,7 +106,7 @@ class Auth:
         # print(data)
         # sys.exit()
         json_data=json.loads(data)
-        bearer_token=json_data['bearer_token'] or json_data['token']
+        bearer_token=json_data['token'] if apify else json_data['bearer_token']
         return bearer_token
         
 
@@ -145,7 +145,7 @@ class Client:
     def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
         auth = Auth(api_key, private_key)
         authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
-        token_bearer = ('Basic 'if apify else 'Bearer ') +authentication
+        token_bearer = 'Bearer ' +authentication
         util = Util()
         if(apify):
             data = util.setKeys_apify(data)
@@ -153,6 +153,7 @@ class Client:
             data = util.setKeys(data)
 
         self.SWITCH=switch  
+        self.APIFY=apify
         #headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk-jwt'}
         headers = {
             'Content-Type': 'application/json',
@@ -318,7 +319,12 @@ class Client:
             :param endpoint: String with the endpoint, ex: /v1/charges/
             :return: String with complete URL, ex: https://api.secure.payco.co/v1/charges/
             """
-            if(self.SWITCH):
+            if(self.APIFY):
+                return "{base_url}{endpoint}".format(
+                    base_url=self.BASE_URL_APIFY,
+                    endpoint=endpoint
+                )
+            elif(self.SWITCH):
                 return "{base_url}{entorno}{endpoint}".format(
                     base_url=self.BASE_URL_SECURE,
                     entorno=self.ENTORNO,
