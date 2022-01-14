@@ -83,25 +83,30 @@ class Auth:
         self.api_key = api_key
         self.private_key = private_key
 
-    def make(self, BASE_URL):
-        send_data = {
-            "public_key":self.private_key,
-            "private_key":self.api_key
-        }
-        url = BASE_URL + "/v1/auth/login"
-        print("URL " + url)
-        payload = "{\"public_key\":\""+self.private_key+"\",\"private_key\":\""+self.api_key+"\"}"
+    def make(self, BASE_URL, BASE_URL_APIFY, apify):
+        url = BASE_URL_APIFY + "/login" if apify else BASE_URL + "/v1/auth/login"
+        payload = "{\"public_key\":\""+self.api_key+"\",\"private_key\":\""+self.private_key+"\"}"
         headers = {
             'Content-Type': 'application/json',
             'type': 'sdk-jwt',
             'Accept': 'application/json'
         }
+
+        if (apify):
+            text = "{public}:{private}".format(
+                    public=self.api_key,
+                    private=self.private_key
+                )
+            encode = base64.b64encode(text.encode("utf-8"))
+            token = str(encode, "utf-8")
+            headers["Authorization"] = "Basic {token}".format(token=token)
+            payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
         data=response.text.encode('utf8')
         # print(data)
         # sys.exit()
         json_data=json.loads(data)
-        bearer_token=json_data['bearer_token']
+        bearer_token=json_data['bearer_token'] or json_data['token']
         return bearer_token
         
 
@@ -138,9 +143,9 @@ class Client:
 
 
     def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
-        auth = Auth(private_key,api_key)
-        authentication = auth.make(self.BASE_URL)
-        token_bearer = 'Bearer '+authentication
+        auth = Auth(api_key, private_key)
+        authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
+        token_bearer = ('Basic 'if apify else 'Bearer ') +authentication
         util = Util()
         if(apify):
             data = util.setKeys_apify(data)
