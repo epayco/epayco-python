@@ -80,24 +80,30 @@ class Auth:
         self.api_key = api_key
         self.private_key = private_key
 
-    def make(self):
-        send_data = {
-            "public_key":self.private_key,
-            "private_key":self.api_key
-        }
-        url = "https://api.secure.payco.co/v1/auth/login"
-        payload = "{\"public_key\":\""+self.private_key+"\",\"private_key\":\""+self.api_key+"\"}"
+    def make(self, apify):
+        url = "https://apify.epayco.co" if apify else "https://api.secure.payco.co/v1/auth/login"
+        payload = "{\"public_key\":\""+self.api_key+"\",\"private_key\":\""+self.private_key+"\"}"
         headers = {
             'Content-Type': 'application/json',
             'type': 'sdk-jwt',
             'Accept': 'application/json'
         }
+
+        if (apify):
+            text = "{public}:{private}".format(
+                    public=self.api_key,
+                    private=self.private_key
+                )
+            encode = base64.b64encode(text.encode("utf-8"))
+            token = str(encode, "utf-8")
+            headers["Authorization"] = "Basic {token}".format(token=token)
+            payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
         data=response.text.encode('utf8')
         # print(data)
         # sys.exit()
         json_data=json.loads(data)
-        bearer_token=json_data['bearer_token']
+        bearer_token=json_data['token'] if apify else json_data['bearer_token']
         return bearer_token
         
 
@@ -133,9 +139,9 @@ class Client:
 
 
     def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
-        auth = Auth(private_key,api_key)
-        authentication = auth.make()
-        token_bearer = 'Bearer '+authentication
+        auth = Auth(api_key, private_key)
+        authentication = auth.make(apify)
+        token_bearer = 'Bearer ' +authentication
         util = Util()
         if(apify):
             data = util.setKeys_apify(data)
@@ -143,6 +149,7 @@ class Client:
             data = util.setKeys(data)
 
         self.SWITCH=switch  
+        self.APIFY=apify
         #headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk-jwt'}
         headers = {
             'Content-Type': 'application/json',
@@ -281,9 +288,6 @@ class Client:
             return response.json()
 
         if (response.status_code == 400):
-            code = 0;
-            message = "";
-
             raise errors.ErrorException(lang, 103)
 
         if (response.status_code == 401):
@@ -311,7 +315,12 @@ class Client:
             :param endpoint: String with the endpoint, ex: /v1/charges/
             :return: String with complete URL, ex: https://api.secure.payco.co/v1/charges/
             """
-            if(self.SWITCH):
+            if(self.APIFY):
+                return "{base_url}{endpoint}".format(
+                    base_url=self.BASE_URL_APIFY,
+                    endpoint=endpoint
+                )
+            elif(self.SWITCH):
                 return "{base_url}/{endpoint}".format(
                     base_url=self.BASE_URL_SECURE,
                     endpoint=endpoint
