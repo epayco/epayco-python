@@ -12,6 +12,7 @@ import sys
 from requests.exceptions import ConnectionError
 from pathlib import Path
 from dotenv import load_dotenv
+from requests import Session
 
 load_dotenv() 
 
@@ -109,7 +110,13 @@ class Auth:
         bearer_token=json_data['token'] if apify else json_data['bearer_token']
         return bearer_token
         
-
+class NoRebuildAuthSession(Session):
+    def rebuild_auth(self, prepared_request, response):
+        """
+        No code here means requests will always preserve the Authorization
+        header when redirected.
+        Be careful not to leak your credentials to untrusted hosts!
+        """
 
 class Client:
 
@@ -190,11 +197,9 @@ class Client:
                 else:
                     url_params=data
                     payload = {}
-                    #url_params.update({"public_key":api_key,'test':test})
-                    response = requests.request("GET", self.build_url(url), headers=headers, data = payload)
-                    #response=requests.get(self.build_url(url),data={},params=url_params,auth=(api_key,""),headers=headers)
-                    # print(response)
-                    # sys.exit()
+                    session = NoRebuildAuthSession()
+                    response = session.get(self.build_url(url), headers=headers, data = payload, params=url_params)
+                    
                  
             elif (method == "POST"):
                 if (switch):
