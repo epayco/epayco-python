@@ -325,7 +325,7 @@ class Client:
             :return: String with complete URL, ex: https://api.secure.payco.co/v1/charges/
             """
             if(self.APIFY):
-                return "{base_url}{endpoint}".format(
+                return "{base_url}/{endpoint}".format(
                     base_url=self.BASE_URL_APIFY,
                     endpoint=endpoint
                 )
