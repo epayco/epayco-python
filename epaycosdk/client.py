@@ -81,7 +81,7 @@ class Auth:
         self.private_key = private_key
 
     def make(self, apify):
-        url = "https://apify.epayco.co" if apify else "https://api.secure.payco.co/v1/auth/login"
+        url = "https://apify.epayco.co/login" if apify else "https://api.secure.payco.co/v1/auth/login"
         payload = "{\"public_key\":\""+self.api_key+"\",\"private_key\":\""+self.private_key+"\"}"
         headers = {
             'Content-Type': 'application/json',
@@ -316,7 +316,7 @@ class Client:
             :return: String with complete URL, ex: https://api.secure.payco.co/v1/charges/
             """
             if(self.APIFY):
-                return "{base_url}{endpoint}".format(
+                return "{base_url}/{endpoint}".format(
                     base_url=self.BASE_URL_APIFY,
                     endpoint=endpoint
                 )
