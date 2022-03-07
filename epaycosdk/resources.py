@@ -119,7 +119,7 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "/v1/remove/token",
+            "v1/remove/token",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -132,7 +132,7 @@ class Customers(Resource):
     def addDefaultCard(self,options):
         return self.request(
             "POST",
-            "/payment/v1/customer/reasign/card/default",
+            "payment/v1/customer/reasign/card/default",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -147,7 +147,7 @@ class Customers(Resource):
     def addNewToken(self,options):
         return self.request(
             "POST",
-            "/v1/customer/add/token",
+            "v1/customer/add/token",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -534,7 +534,7 @@ class Daviplata(Resource):
     def create(self, options = None):
         return self.request(
             "POST",
-            "/payment/process/daviplata",
+            "payment/process/daviplata",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -566,7 +566,7 @@ class Safetypay(Resource):
     def create(self, options = None):
         return self.request(
             "POST",
-            "/payment/process/safetypay",
+            "payment/process/safetypay",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
