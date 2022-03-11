@@ -334,7 +334,7 @@ Create
         "ip": "190.000.000.000",  #This is the client's IP, it is required,
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
-        "method_confirmation": "GET",
+        "metodoconfirmacion": "GET",
         #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
         "extra1": "",
         "extra2": "",
