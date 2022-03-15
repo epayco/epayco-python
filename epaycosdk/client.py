@@ -11,7 +11,7 @@ import epaycosdk.errors as errors
 import sys
 from requests.exceptions import ConnectionError
 from pathlib import Path
-
+from requests import Session
 # No verificar el certifcado para los request
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -21,7 +21,7 @@ unpad = lambda s : s[0:-(s[-1])]
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
-EPAYCO_KEY_LANG_FILES = str(BASE_DIR.joinpath('epaycosdk/utils/key_langs.json'))
+EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
 #Dir = os.path.join(EPAYCO_KEY_LANG_FILE, 'key_lang.json')
 
 
@@ -31,8 +31,6 @@ class AESCipher:
         self.iv = iv    
 
     def encrypt( self, row ):
-          
-    
         raw = pad(row).encode("utf8")
         cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
         enc = cipher.encrypt(raw)
@@ -55,29 +53,26 @@ class AESCipher:
 class Util():
 
     def setKeys(self, array={},sp=''):
-        #print('/setKeys/',sp)
-        #sys.exit()
-        if(sp):
-            file = open(EPAYCO_KEY_LANG_FILES, 'r').read()
-            values = json.loads(file)
-            aux = {}
-            for key, value in array.items():
-                if key in values:
-                    aux[values[key]] = value
-                else:
-                    aux[key] = value
-            return aux
+        file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
+        values = json.loads(file)
+        aux = {}
+        for key, value in array.items():
+            if key in values:
+                aux[values[key]] = value
+            else:
+                aux[key] = value
+        return aux
 
-        else:
-            file = open(EPAYCO_KEY_LANG_FILE, 'r').read()
-            values = json.loads(file)
-            aux = {}
-            for key, value in array.items():
-                if key in values:
-                    aux[values[key]] = value
-                else:
-                    aux[key] = value
-            return aux
+    def setKeys_apify(self, array={}):
+        file = open(EPAYCO_KEY_LANG_FILE_APIFY, 'r').read()
+        values = json.loads(file)
+        aux = {}
+        for key, value in array.items():
+            if key in values:
+                aux[values[key]] = value
+            else:
+                aux[key] = value
+        return aux
 
 
 class Auth:
@@ -85,34 +80,47 @@ class Auth:
         self.api_key = api_key
         self.private_key = private_key
 
-    def make(self):
-        send_data = {
-            "public_key":self.private_key,
-            "private_key":self.api_key
-        }
-        url = "https://api.secure.payco.co/v1/auth/login"
-        payload = "{\"public_key\":\""+self.private_key+"\",\"private_key\":\""+self.api_key+"\"}"
+    def make(self, apify):
+        url = "https://apify.epayco.co/login" if apify else "https://api.secure.payco.co/v1/auth/login"
+        payload = "{\"public_key\":\""+self.api_key+"\",\"private_key\":\""+self.private_key+"\"}"
         headers = {
             'Content-Type': 'application/json',
             'type': 'sdk-jwt',
             'Accept': 'application/json'
         }
+
+        if (apify):
+            text = "{public}:{private}".format(
+                    public=self.api_key,
+                    private=self.private_key
+                )
+            encode = base64.b64encode(text.encode("utf-8"))
+            token = str(encode, "utf-8")
+            headers["Authorization"] = "Basic {token}".format(token=token)
+            payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
         data=response.text.encode('utf8')
         # print(data)
         # sys.exit()
         json_data=json.loads(data)
-        bearer_token=json_data['bearer_token']
+        bearer_token=json_data['token'] if apify else json_data['bearer_token']
         return bearer_token
         
-
+class NoRebuildAuthSession(Session):
+    def rebuild_auth(self, prepared_request, response):
+        """
+        No code here means requests will always preserve the Authorization
+        header when redirected.
+        Be careful not to leak your credentials to untrusted hosts!
+        """
 
 class Client:
 
-    BASE_URL = "https://api.secure.payco.co";
-    BASE_URL_SECURE = "https://secure.payco.co";
-    IV = "0000000000000000";
-    LANGUAGE = "python";
+    BASE_URL = "https://api.secure.payco.co"
+    BASE_URL_SECURE = "https://secure.payco.co"
+    BASE_URL_APIFY = "https://apify.epayco.co"
+    IV = "0000000000000000"
+    LANGUAGE = "python"
     SWITCH= False
 
     def __init__(self):
@@ -136,21 +144,18 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",sp="",dt="" ):
-        dataSet = None
-        auth = Auth(private_key,api_key)
-        authentication = auth.make()
-        token_bearer = 'Bearer '+authentication
-
-        if (switch and hasattr(data, "__len__")):
-            if (sp):
-                util = Util()
-                data = util.setKeys(data,sp)
-            else:
-                util = Util()
-                data = util.setKeys(data)
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
+        auth = Auth(api_key, private_key)
+        authentication = auth.make(apify)
+        token_bearer = 'Bearer ' +authentication
+        util = Util()
+        if(apify):
+            data = util.setKeys_apify(data)
+        elif (hasattr(data, "__len__")):
+            data = util.setKeys(data)
 
         self.SWITCH=switch  
+        self.APIFY=apify
         #headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk-jwt'}
         headers = {
             'Content-Type': 'application/json',
@@ -187,11 +192,9 @@ class Client:
                 else:
                     url_params=data
                     payload = {}
-                    #url_params.update({"public_key":api_key,'test':test})
-                    response = requests.request("GET", self.build_url(url), headers=headers, data = payload)
-                    #response=requests.get(self.build_url(url),data={},params=url_params,auth=(api_key,""),headers=headers)
-                    # print(response)
-                    # sys.exit()
+                    session = NoRebuildAuthSession()
+                    response = session.get(self.build_url(url), headers=headers, data = payload)
+                    
                  
             elif (method == "POST"):
                 if (switch):
@@ -289,9 +292,6 @@ class Client:
             return response.json()
 
         if (response.status_code == 400):
-            code = 0;
-            message = "";
-
             raise errors.ErrorException(lang, 103)
 
         if (response.status_code == 401):
@@ -319,7 +319,12 @@ class Client:
             :param endpoint: String with the endpoint, ex: /v1/charges/
             :return: String with complete URL, ex: https://api.secure.payco.co/v1/charges/
             """
-            if(self.SWITCH):
+            if(self.APIFY):
+                return "{base_url}/{endpoint}".format(
+                    base_url=self.BASE_URL_APIFY,
+                    endpoint=endpoint
+                )
+            elif(self.SWITCH):
                 return "{base_url}/{endpoint}".format(
                     base_url=self.BASE_URL_SECURE,
                     endpoint=endpoint

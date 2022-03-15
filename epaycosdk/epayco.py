@@ -6,7 +6,8 @@ from epaycosdk.resources import Subscriptions
 from epaycosdk.resources import Bank
 from epaycosdk.resources import Cash
 from epaycosdk.resources import Charge
-#from epaycosdk.resources import Safetypay
+from epaycosdk.resources import Safetypay
+from epaycosdk.resources import Daviplata
 
 class Epayco:
 
@@ -27,5 +28,6 @@ class Epayco:
         self.subscriptions = Subscriptions(self)
         self.bank = Bank(self)
         self.cash = Cash(self)
-        self.charge=Charge(self)
-        #self.safetypay=Safetypay(self)
+        self.charge = Charge(self)
+        self.safetypay = Safetypay(self)
+        self.daviplata = Daviplata(self)
