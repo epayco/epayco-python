@@ -141,7 +141,7 @@ class Customers(Resource):
             self.epayco.lang,
             False,
             False,
-            True
+            False
         )
 
     def addNewToken(self,options):
@@ -156,7 +156,7 @@ class Customers(Resource):
             self.epayco.lang,
             False,
             False,
-            True
+            False
         )
         
 
