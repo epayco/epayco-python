@@ -119,7 +119,7 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "/v1/remove/token",
+            "v1/remove/token",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -132,7 +132,7 @@ class Customers(Resource):
     def addDefaultCard(self,options):
         return self.request(
             "POST",
-            "/payment/v1/customer/reasign/card/default",
+            "payment/v1/customer/reasign/card/default",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -141,13 +141,13 @@ class Customers(Resource):
             self.epayco.lang,
             False,
             False,
-            True
+            False
         )
 
     def addNewToken(self,options):
         return self.request(
             "POST",
-            "/v1/customer/add/token",
+            "v1/customer/add/token",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -156,7 +156,7 @@ class Customers(Resource):
             self.epayco.lang,
             False,
             False,
-            True
+            False
         )
         
 
@@ -188,7 +188,7 @@ class Charge(Resource):
 
         return self.request(
             "GET",
-            "restpagos/transaction/response.json",
+            "/transaction/response.json",
             self.epayco.api_key,
             {'ref_payco': uid},
             self.epayco.private_key,
@@ -411,7 +411,7 @@ class Bank(Resource):
     def pseBank(self,options = None):
         return self.request(
             "GET",
-            "restpagos/pse/bancos.json",
+            "/pse/bancos.json",
             self.epayco.api_key,
             {'public_key':self.epayco.api_key},
             self.epayco.private_key,
@@ -430,7 +430,7 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "restpagos/pagos/debitos.json",
+            "/pagos/debitos.json",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -449,7 +449,7 @@ class Bank(Resource):
     def pseTransaction(self, uid):
         return self.request(
             "GET",
-            "restpagos/pse/transactioninfomation.json",
+            "/pse/transactioninfomation.json",
             self.epayco.api_key,
             {'transactionID':uid},
             self.epayco.private_key,
@@ -463,7 +463,7 @@ class Bank(Resource):
 
         return self.request(
             "GET",
-            "restpagos/transaction/response.json",
+            "/transaction/response.json",
             self.epayco.api_key,
             {'ref_payco': uid},
             self.epayco.private_key,
@@ -489,17 +489,17 @@ class Cash(Resource):
 
         url = None
         if (type == "efecty"):
-            url = "restpagos/v2/efectivo/efecty"
+            url = "/v2/efectivo/efecty"
         elif (type == "baloto"):
-            url = "restpagos/v2/efectivo/baloto"
+            url = "/v2/efectivo/baloto"
         elif (type == "gana"):
-            url = "restpagos/v2/efectivo/gana"
+            url = "/v2/efectivo/gana"
         elif (type == "redservi"):
-            url = "restpagos/v2/efectivo/redservi"
+            url = "/v2/efectivo/redservi"
         elif (type == "puntored"):
-            url = "restpagos/v2/efectivo/puntored"
+            url = "/v2/efectivo/puntored"
         elif (type == "sured"):
-            url = "restpagos/v2/efectivo/sured"
+            url = "/v2/efectivo/sured"
         else:
             raise errors.ErrorException(self.epayco.lang, 109)
 
@@ -520,7 +520,7 @@ class Cash(Resource):
 
         return self.request(
             "GET",
-            "restpagos/transaction/response.json",
+            "/transaction/response.json",
             self.epayco.api_key,
             {'ref_payco': uid},
             self.epayco.private_key,
@@ -528,4 +528,52 @@ class Cash(Resource):
             True,
             self.epayco.lang,
             False
+        )
+
+class Daviplata(Resource):
+    def create(self, options = None):
+        return self.request(
+            "POST",
+            "payment/process/daviplata",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True # apify
+        )
+
+    def confirm(self, options = None):  
+        return self.request(
+            "POST",
+            "payment/confirm/daviplata",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
+        )
+
+
+class Safetypay(Resource):
+    def create(self, options = None):
+        return self.request(
+            "POST",
+            "payment/process/safetypay",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
         )

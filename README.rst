@@ -21,9 +21,13 @@ Run the file setup.py
 
     $ sudo python3 setup.py install
 
-Install from Packages
+Install from Packages (Linux), Pyhton = 3.7
 ****
    $ pip install epaycosdk
+
+Install from Packages (Windows)  Pyhton = 3.7
+****
+   $ pip install epaycosdk-win
 
    
 Usage
@@ -285,6 +289,7 @@ Split payment
 *****
 
 .. code-block:: python
+
     import json
 
     pse_info = {
@@ -302,7 +307,7 @@ Split payment
      }
 
     pse_split = objepayco.bank.create(pse_info)
-
+    
 
 Cash
 ####
@@ -369,6 +374,7 @@ Split payment:
 use the following attributes in case you need to do a dispersion with one or multiple providers
 
 .. code-block:: python
+
     import json 
 
     payment_info = {
@@ -451,6 +457,7 @@ Split payment
 use the following attributes in case you need to do a dispersion with one or multiple providers
 
 .. code-block:: python
+
     import json
     
     payment_info = {
@@ -462,12 +469,87 @@ use the following attributes in case you need to do a dispersion with one or mul
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
         "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":json.dumps([
+        "split_receivers":[
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ]) #campo obligatorio sí se envía split_rule
+        ] #campo obligatorio sí se envía split_rule
         }
 
     pay_split = objepayco.charge.create(payment_info)
 
 
+Daviplata
+*****
+
+Create
+*****
+
+.. code-block:: python
+    payment_info = {
+        doc_type: "CC",
+        document: "1053814580414720",
+        name: "Testing",
+        last_name: "PAYCO",
+        email: "exmaple@epayco.co",
+        ind_country: "CO",
+        phone: "314853222200033",
+        country: "CO",
+        city: "bogota",
+        address: "Calle de prueba",
+        ip: "189.176.0.1",
+        currency: "COP",
+        description: "ejemplo de transaccion con daviplata",
+        value: "100",
+        tax: "0",
+        ico: "0"
+        tax_base: "0",
+        method_confirmation: ""
+    }
+
+    daviplata = objepayco.daviplata.create(payment_info)
+
+confirm transaccion
+*****
+
+.. code-block:: python
+    confirm = {
+        ref_payco: "45508846", // It is obtained from the create response
+        id_session_token: "45081749", // It is obtained from the create response
+        otp: "2580"
+    }
+   
+    daviplata = objepayco.daviplata.confirm(payment_info)
+
+Safetypay
+*****
+
+Create
+*****
+
+.. code-block:: python
+    payment_info = {
+        cash: "1",
+        expirationDate: "2021-08-05",
+        docType: "CC",
+        document: "123456789",
+        name: "Jhon",
+        lastName: "doe",
+        email: "jhon.doe@yopmail.com",
+        indCountry: "57",
+        phone: "3003003434",
+        country: "CO",
+        invoice: "fac-01", // opcional
+        city: "N/A",
+        address: "N/A",
+        ip: "192.168.100.100",
+        currency: "COP",
+        description: "Thu Jun 17 2021 11:37:01 GMT-0400 (hora de Venezuela)",
+        value: 100000,
+        tax: 0,
+        ico: 0,
+        taxBase: 0,
+        urlConfirmation: "",
+        methodConfirmation: ""
+    }
+
+    daviplata = objepayco.daviplata.create(payment_info)
