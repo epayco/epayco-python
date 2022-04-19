@@ -163,7 +163,7 @@ class Client:
         try:
             if (method == "GET"):
                 if (switch):
-                    if (test == True):
+                    if test == True or test == "true":
                         test = "TRUE"
                     else:
                         test = "FALSE"
@@ -190,7 +190,7 @@ class Client:
                  
             elif (method == "POST"):
                 if (switch):
-                    if(test):
+                    if test == True or test == "true":
                         test= "TRUE"
                     else:
                         test= "FALSE"
