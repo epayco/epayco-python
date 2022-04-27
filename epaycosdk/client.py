@@ -7,11 +7,15 @@ import hashlib
 from Crypto.Cipher import AES
 import requests
 import epaycosdk.errors as errors
-#import os
+import os
 import sys
 from requests.exceptions import ConnectionError
 from pathlib import Path
+from dotenv import load_dotenv
 from requests import Session
+
+load_dotenv() 
+
 # No verificar el certifcado para los request
 ssl._create_default_https_context = ssl._create_unverified_context
 
@@ -22,8 +26,6 @@ unpad = lambda s : s[0:-(s[-1])]
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
 EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
-#Dir = os.path.join(EPAYCO_KEY_LANG_FILE, 'key_lang.json')
-
 
 class AESCipher:
     def __init__( self, key,iv  ):
@@ -35,8 +37,6 @@ class AESCipher:
         cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
         enc = cipher.encrypt(raw)
         return base64.b64encode(enc)
-        #         cipher = AES.new( raw.encode("utf8"), AES.MODE_CBC, iv().encode("utf8") )
-        # return base64.b64encode(cipher.encrypt( pad(raw) ) ).strip()
     def decrypt( self, enc ):
        
         enc = base64.b64decode(enc)
@@ -80,8 +80,8 @@ class Auth:
         self.api_key = api_key
         self.private_key = private_key
 
-    def make(self, apify):
-        url = "https://apify.epayco.co/login" if apify else "https://api.secure.payco.co/v1/auth/login"
+    def make(self, BASE_URL, BASE_URL_APIFY, apify):
+        url = BASE_URL_APIFY + "/login" if apify else BASE_URL + "/v1/auth/login"
         payload = "{\"public_key\":\""+self.api_key+"\",\"private_key\":\""+self.private_key+"\"}"
         headers = {
             'Content-Type': 'application/json',
@@ -100,8 +100,6 @@ class Auth:
             payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
         data=response.text.encode('utf8')
-        # print(data)
-        # sys.exit()
         json_data=json.loads(data)
         bearer_token=json_data['token'] if apify else json_data['bearer_token']
         return bearer_token
@@ -116,18 +114,16 @@ class NoRebuildAuthSession(Session):
 
 class Client:
 
-    BASE_URL = "https://api.secure.payco.co"
-    BASE_URL_SECURE = "https://secure.payco.co"
-    BASE_URL_APIFY = "https://apify.epayco.co"
+    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
+    ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
+    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
     IV = "0000000000000000"
     LANGUAGE = "python"
     SWITCH= False
 
     def __init__(self):
-
         pass
-
-
 
     """
     Make request and return a Python object from the JSON response. If
@@ -146,17 +142,17 @@ class Client:
 
     def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
         auth = Auth(api_key, private_key)
-        authentication = auth.make(apify)
+        authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
         token_bearer = 'Bearer ' +authentication
         util = Util()
         if(apify):
             data = util.setKeys_apify(data)
         elif (hasattr(data, "__len__")):
-            data = util.setKeys(data)
+            if(switch):
+                data = util.setKeys(data)
 
         self.SWITCH=switch  
         self.APIFY=apify
-        #headers = {'Content-Type':'application/json','Accept' : "application/json" ,'type':'sdk-jwt'}
         headers = {
             'Content-Type': 'application/json',
             'type': 'sdk-jwt',
@@ -167,7 +163,7 @@ class Client:
         try:
             if (method == "GET"):
                 if (switch):
-                    if (test == True):
+                    if test == True or test == "true":
                         test = "TRUE"
                     else:
                         test = "FALSE"
@@ -175,88 +171,52 @@ class Client:
                     #Encriptamos el enpruebas
                     aes = AESCipher(private_key,self.IV)
                     enpruebas=aes.encrypt(test)
-
                     addData = {
                         'public_key': api_key,
                         'i': base64.b64encode(self.IV.encode('ascii')),
                         'lenguaje': self.LANGUAGE,
                         'enpruebas': enpruebas,
                     }
-
                     url_params = addData
                     url_params.update(data)
-                    # print('get')
-                    # sys.exit()
                     response=requests.get(self.build_url(url), data={},params=url_params,auth=(api_key, ""),headers=headers)
 
                 else:
                     url_params=data
                     payload = {}
                     session = NoRebuildAuthSession()
-                    response = session.get(self.build_url(url), headers=headers, data = payload)
+                    response = session.get(self.build_url(url), headers=headers, data = payload, params=url_params)
                     
                  
             elif (method == "POST"):
                 if (switch):
-                    if(test):
+                    if test == True or test == "true":
                         test= "TRUE"
                     else:
                         test= "FALSE"
    
+                    aes = AESCipher(private_key, self.IV)
+                    enpruebas = aes.encrypt(test)
                     if(cashdata):
-                        aes = AESCipher(private_key,self.IV)
-                        enpruebas = aes.encrypt(test)
-
-                        encryptData = data
-                        #encryptData = aes.encryptArray(data)
-
-                        addData = {
-                            "public_key": api_key,
-                            "i": base64.b64encode(self.IV.encode('ascii')),
-                            "enpruebas": enpruebas,
-                            "lenguaje": self.LANGUAGE,
-                            "p": ""
-                        }
-                        enddata = {}
-                        enddata.update(encryptData)
-                        enddata.update(addData)
-                        data=enddata
-                        #payload = "{\"factura\":\""+encryptData['factura']+"\",\"descripcion\":\""+encryptData['descripcion']+"\",\"valor\":\""+encryptData['valor']+"\",\"iva\":\""+encryptData['iva']+"\",\"baseiva\":\""+encryptData['baseiva']+"\",\"moneda\":\""+encryptData['moneda']+"\",\"tipo_persona\":\""+encryptData['tipo_persona']+"\",\"tipo_doc\":\""+encryptData['tipo_doc']+"\",\"documento\":\""+encryptData['documento']+"\",\"nombres\":\""+encryptData['nombres']+"\",\"apellidos\":\""+encryptData['apellidos']+"\",\"email\":\""+encryptData['email']+"\",\"pais\":\""+encryptData['pais']+"\",\"depto\":\""+encryptData['depto']+"\",\"ciudad\":\""+encryptData['ciudad']+"\",\"celular\":\""+encryptData['celular']+"\",\"direccion\":\""+encryptData['direccion']+"\",\"ip\":\""+encryptData['ip']+"\",\"url_respuesta\":\""+encryptData['url_respuesta']+"\",\"url_confirmacion\":\""+encryptData['url_confirmacion']+"\",\"metodoconfirmacion\":\""+encryptData['metodoconfirmacion']+"\",\"fechaexpiracion\":\""+encryptData['fechaexpiracion']+"\",\"test\":\""+test+"\",\"public_key\":\""+api_key+"\",\"i\":\"MDAwMDAwMDAwMDAwMDAwMA==\",\"enpruebas\":\"''\",\"lenguaje\":\"python\",\"p\":\"\"}"
-                        #response = requests.request("POST", self.build_url(url), headers=headers, data = payload)
-                        response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-                        # print(response)
-                        # sys.exit()
-
-
-                       
+                        encryptData = data  
                     else:
-                        aes = AESCipher(private_key,self.IV)
-                        enpruebas = aes.encrypt(test)
-                        encryptData = None
                         encryptData = aes.encryptArray(data)
-                        addData = {
-                            'public_key': api_key,
-                            'i': base64.b64encode(self.IV.encode('ascii')),
-                            'enpruebas': enpruebas,
-                            'lenguaje': self.LANGUAGE,
-                            'p': ''
-                        }
 
-                        enddata = {}
-                        enddata.update(encryptData)
-                        enddata.update(addData)
-                        data=enddata
-                        #payload = "{\"banco\":\""+str(encryptData['banco'])+"\",\"factura\":\""+str(encryptData['factura'])+"\",\"descripcion\":\""+str(encryptData['descripcion'])+"\",\"valor\":\""+str(encryptData['valor'])+"\",\"iva\":\""+str(encryptData['iva'])+"\",\"baseiva\":\""+str(encryptData['baseiva'])+"\",\"moneda\":\""+str(encryptData['moneda'])+"\",\"tipo_persona\":\""+str(encryptData['tipo_persona'])+"\",\"tipo_doc\":\""+str(encryptData['tipo_doc'])+"\",\"documento\":\""+str(encryptData['documento'])+"\",\"nombres\":\""+str(encryptData['nombres'])+"\",\"apellidos\":\""+str(encryptData['apellidos'])+"\",\"email\":\""+str(encryptData['email'])+"\",\"pais\":\""+str(encryptData['pais'])+"\",\"celular\":\""+str(encryptData['celular'])+"\",\"url_respuesta\":\""+str(encryptData['url_respuesta'])+"\",\"url_confirmacion\":\""+str(encryptData['url_confirmacion'])+"\",\"metodoconfirmacion\":\""+str(encryptData['metodoconfirmacion'])+"\",\"ip\":\""+str(encryptData['ip'])+"\",\"test\":\""+test+"\",\"public_key\":\""+api_key+"\",\"i\":\""+str(addData['i'])+"\",\"enpruebas\":\""+str(addData['enpruebas'])+"\",\"lenguaje\":\"python\",\"p\":\"\"}"
-                        response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-                        #response = requests.request("POST", self.build_url(url), headers=headers, data = data)
-                        # print(response)
-                        # sys.exit()
-
-
+                    addData = {
+                        'public_key': api_key,
+                        'i': base64.b64encode(self.IV.encode('ascii')),
+                        'enpruebas': enpruebas,
+                        'lenguaje': self.LANGUAGE,
+                        'p': ''
+                    }
+                    enddata = {}
+                    enddata.update(encryptData)
+                    enddata.update(addData)
+                    data=enddata
+                    response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
 
                 else:
                     #Agregamos la llave publica
-                    #data.update({'public_key':api_key,'test': test})
                     if(dt):
                         data=json.dumps(data)
                         response = requests.request("POST", self.build_url(url), headers=headers, data = data)
@@ -287,7 +247,7 @@ class Client:
 
         if (response.status_code >= 200 and response.status_code <= 206):
             if (method == "DELETE"):
-                return response.status_code == 204 or response.status_code == 200;
+                return response.status_code == 204 or response.status_code == 200
 
             return response.json()
 
@@ -295,21 +255,16 @@ class Client:
             raise errors.ErrorException(lang, 103)
 
         if (response.status_code == 401):
-
             raise errors.ErrorException(lang, 104)
 
         if (response.status_code == 404):
-
             raise errors.ErrorException(lang, 105)
 
         if (response.status_code == 403):
-
             raise errors.ErrorException(lang, 106)
 
         if (response.status_code == 405):
-
             raise errors.ErrorException(lang, 107)
-
 
         raise errors.ErrorException(lang, 102)
 
@@ -325,13 +280,13 @@ class Client:
                     endpoint=endpoint
                 )
             elif(self.SWITCH):
-                return "{base_url}/{endpoint}".format(
+                return "{base_url}{entorno}{endpoint}".format(
                     base_url=self.BASE_URL_SECURE,
+                    entorno=self.ENTORNO,
                     endpoint=endpoint
                 )
             else:
                 return "{base_url}/{endpoint}".format(
                     base_url=self.BASE_URL,
-                    endpoint=endpoint
-                    
+                    endpoint=endpoint   
                 )
