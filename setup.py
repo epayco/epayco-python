@@ -5,7 +5,7 @@ import platform
 
 setup(
     name="epaycosdk",
-    version="3.1.1",
+    version="3.1.2",
     include_package_data=True,
     author="ePayco Development Team",
     author_email="ricardo.saldarriaga@epayco.co",
@@ -18,6 +18,5 @@ setup(
     install_requires=[
         "requests >= 2.4.3",
         "pycryptodome >= 2.6.1" if platform.system() == "Windows" else "pycrypto >= 2.6.1",
-        "python-dotenv >= 0.19.2"
     ],
 )

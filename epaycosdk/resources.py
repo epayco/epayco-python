@@ -73,7 +73,7 @@ class Customers(Resource):
     def get(self, uid):
         return self.request(
             "GET",
-            "payment/v1/customer/" + self.epayco.api_key + "/" + uid + "/",
+            "payment/v1/customer/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             None,
             self.epayco.private_key,
@@ -91,7 +91,7 @@ class Customers(Resource):
     def getlist(self):
         return self.request(
             "GET",
-            "payment/v1/customers/" + self.epayco.api_key + "/",
+            "payment/v1/customers/" + self.epayco.api_key,
             self.epayco.api_key,
             None,
             self.epayco.private_key,
@@ -105,7 +105,7 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "payment/v1/customer/edit/" + self.epayco.api_key + "/" + uid + "/",
+            "payment/v1/customer/edit/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -272,7 +272,7 @@ class Plan(Resource):
     def update(self, uid, options=None):
         return self.request(
             "POST",
-            "recurring/v1/plan/edit/" + self.epayco.api_key + "/" + uid + "/",
+            "recurring/v1/plan/edit/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -351,7 +351,7 @@ class Subscriptions(Resource):
 
         return self.request(
             "GET",
-            "recurring/v1/subscriptions/" + self.epayco.api_key + "/",
+            "recurring/v1/subscriptions/" + self.epayco.api_key,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -487,25 +487,29 @@ class Cash(Resource):
 
     def create(self, type=None, options=None):
 
-        url = None
-        if (type == "efecty"):
-            url = "/v2/efectivo/efecty"
-        elif (type == "baloto"):
-            url = "/v2/efectivo/baloto"
-        elif (type == "gana"):
-            url = "/v2/efectivo/gana"
-        elif (type == "redservi"):
-            url = "/v2/efectivo/redservi"
-        elif (type == "puntored"):
-            url = "/v2/efectivo/puntored"
-        elif (type == "sured"):
-            url = "/v2/efectivo/sured"
-        else:
+        methods_payment = self.request(
+            "GET",
+            "/payment/cash/entities",
+            self.epayco.api_key,
+            None,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
+        )
+        if(not methods_payment.get("data") and not isinstance(methods_payment["data"], list)):
+            raise errors.ErrorException(self.epayco.lang, 106)
+
+        entities = list(map(lambda item: item["name"].lower(), methods_payment["data"]))
+        if((type.lower() not in entities)):
             raise errors.ErrorException(self.epayco.lang, 109)
 
         return self.request(
             "POST",
-            url,
+            "/v2/efectivo/{type}".format(type=type),
             self.epayco.api_key,
             options,
             self.epayco.private_key,
