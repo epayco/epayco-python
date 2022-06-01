@@ -500,16 +500,19 @@ class Cash(Resource):
             False,
             True
         )
-        if(not methods_payment.get("data") and not isinstance(methods_payment["data"], list)):
+        medio = type.lower()
+        if(medio == "baloto"):
+            raise errors.ErrorException(self.epayco.lang, 109)
+        if(not methods_payment.get("data") or not isinstance(methods_payment["data"], list) or len(methods_payment["data"]) == 0):
             raise errors.ErrorException(self.epayco.lang, 106)
 
-        entities = list(map(lambda item: item["name"].lower(), methods_payment["data"]))
-        if((type.lower() not in entities)):
+        entities = list(map(lambda item: item["name"].lower().replace(" ", ""), methods_payment["data"]))
+        if((medio not in entities)):
             raise errors.ErrorException(self.epayco.lang, 109)
 
         return self.request(
             "POST",
-            "/v2/efectivo/{type}".format(type=type),
+            "/v2/efectivo/{type}".format(type=medio),
             self.epayco.api_key,
             options,
             self.epayco.private_key,
