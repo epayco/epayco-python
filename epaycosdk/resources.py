@@ -507,7 +507,7 @@ class Cash(Resource):
             raise errors.ErrorException(self.epayco.lang, 106)
 
         entities = list(map(lambda item: item["name"].lower().replace(" ", ""), methods_payment["data"]))
-        if((type not in entities)):
+        if((medio not in entities)):
             raise errors.ErrorException(self.epayco.lang, 109)
 
         return self.request(
