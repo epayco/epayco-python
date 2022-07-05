@@ -521,8 +521,6 @@ Create
         "extra8": "",
         "extra9": "",
         "extra10": ""
-
-
     }
 
     daviplata = objepayco.daviplata.create(payment_info)
@@ -582,4 +580,4 @@ Create
         "extra10": ""
     }
 
-    daviplata = objepayco.daviplata.create(payment_info)
+    safetypay = objepayco.safetypay.create(payment_info)
