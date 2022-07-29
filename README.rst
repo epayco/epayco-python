@@ -239,8 +239,8 @@ PSE
 List Banks
 *****
 .. code-block:: python
-    banks = objepayco.bank.pseBank()
 
+    banks = objepayco.bank.pseBank()
 
 Create
 *****
@@ -408,7 +408,7 @@ use the following attributes in case you need to do a dispersion with one or mul
 
 
 Payment
-*****
+####
 
 Create
 *****
@@ -490,12 +490,13 @@ use the following attributes in case you need to do a dispersion with one or mul
 
 
 Daviplata
-*****
+####
 
 Create
 *****
 
 .. code-block:: python
+
     payment_info = {
         "doc_type": "CC",
         "document": "1053814580414720",
@@ -535,6 +536,7 @@ confirm transaccion
 *****
 
 .. code-block:: python
+
     confirm = {
         "ref_payco": "45508846", # It is obtained from the create response
         "id_session_token": "45081749", # It is obtained from the create response
@@ -544,12 +546,13 @@ confirm transaccion
     daviplata = objepayco.daviplata.confirm(payment_info)
 
 Safetypay
-*****
+####
 
 Create
 *****
 
 .. code-block:: python
+
     payment_info = {
         "cash": "1",
         "end_date": "2021-08-05",
