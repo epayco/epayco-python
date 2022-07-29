@@ -236,6 +236,12 @@ Pay Subscription
 PSE
 ####
 
+List Banks
+*****
+.. code-block:: python
+    banks = objepayco.bank.pseBank()
+
+
 Create
 *****
 .. code-block:: python
