@@ -3,18 +3,11 @@ import urllib.parse
 import ssl
 import json
 import base64
-import hashlib
 from Crypto.Cipher import AES
 import requests
 import epaycosdk.errors as errors
-import os
-import sys
-from requests.exceptions import ConnectionError
 from pathlib import Path
-from dotenv import load_dotenv
 from requests import Session
-
-load_dotenv() 
 
 # No verificar el certifcado para los request
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -104,20 +97,13 @@ class Auth:
         bearer_token=json_data['token'] if apify else json_data['bearer_token']
         return bearer_token
         
-class NoRebuildAuthSession(Session):
-    def rebuild_auth(self, prepared_request, response):
-        """
-        No code here means requests will always preserve the Authorization
-        header when redirected.
-        Be careful not to leak your credentials to untrusted hosts!
-        """
 
 class Client:
 
-    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
-    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
-    ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
-    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
+    BASE_URL = "https://api.secure.payco.co"
+    BASE_URL_SECURE = "https://secure.payco.co"
+    ENTORNO = "/restpagos"
+    BASE_URL_APIFY = "https://apify.epayco.co"
     IV = "0000000000000000"
     LANGUAGE = "python"
     SWITCH= False
@@ -145,10 +131,10 @@ class Client:
         authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
         token_bearer = 'Bearer ' +authentication
         util = Util()
-        if(apify):
-            data = util.setKeys_apify(data)
-        elif (hasattr(data, "__len__")):
-            if(switch):
+        if(hasattr(data, "__len__")):
+            if(apify):
+                data = util.setKeys_apify(data)
+            elif(switch):
                 data = util.setKeys(data)
 
         self.SWITCH=switch  
@@ -162,7 +148,9 @@ class Client:
 
         try:
             if (method == "GET"):
-                if (switch):
+                if(apify):
+                    response=requests.get(self.build_url(url), data={},headers=headers)
+                elif (switch):
                     if test == True or test == "true":
                         test = "TRUE"
                     else:
@@ -184,8 +172,7 @@ class Client:
                 else:
                     url_params=data
                     payload = {}
-                    session = NoRebuildAuthSession()
-                    response = session.get(self.build_url(url), headers=headers, data = payload, params=url_params)
+                    response = requests.get(self.build_url(url), headers=headers, data = payload, params=url_params)
                     
                  
             elif (method == "POST"):

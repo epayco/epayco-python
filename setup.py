@@ -18,6 +18,5 @@ setup(
     install_requires=[
         "requests >= 2.4.3",
         "pycryptodome >= 2.6.1" if platform.system() == "Windows" else "pycrypto >= 2.6.1",
-        "python-dotenv >= 0.19.2"
     ],
 )
