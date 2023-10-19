@@ -49,7 +49,7 @@ class AESCipher:
         values = {"extras_epayco":"extras_epayco"}
         for key, value in data.items():
             if key in values:
-                aux[values[key]] = value
+                aux[values[key]] = json.dumps({'extra5':json.loads(value)["extra5"].__str__()})
             else:
                 aux[key] = self.encrypt(value)
         return aux
@@ -193,7 +193,7 @@ class Client:
                     
                  
             elif (method == "POST"):
-                data["extras_epayco"] = "{\"extra5\":\"" "P43" "\"}"
+                data["extras_epayco"] = json.dumps({"extra5":"P43"})
                 if (switch):
                     if test == True or test == "true":
                         test= "TRUE"
