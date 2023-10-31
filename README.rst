@@ -54,7 +54,8 @@ Create Token
       "card[number]": "4575623182290326",
       "card[exp_year]": "2025",
       "card[exp_month]": "19",
-      "card[cvc]": "123"
+      "card[cvc]": "123",
+      "hasCvv": True #// hasCvv: validar codigo de seguridad en la transacción
       }
 
     token=objepayco.token.create(credit_info)

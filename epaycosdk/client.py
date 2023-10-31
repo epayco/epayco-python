@@ -42,8 +42,12 @@ class AESCipher:
 
     def encryptArray(self,data):
         aux = {}
+        values = {"extras_epayco":"extras_epayco"}
         for key, value in data.items():
-            aux[key] = self.encrypt(value)
+            if key in values:
+                aux[values[key]] = json.dumps({'extra5':json.loads(value)["extra5"].__str__()})
+            else:
+                aux[key] = self.encrypt(value)
         return aux
 
 class Util():
@@ -187,12 +191,12 @@ class Client:
                     
                  
             elif (method == "POST"):
+                data["extras_epayco"] = json.dumps({"extra5":"P43"})
                 if (switch):
                     if test == True or test == "true":
                         test= "TRUE"
                     else:
                         test= "FALSE"
-   
                     aes = AESCipher(private_key, self.IV)
                     enpruebas = aes.encrypt(test)
                     if(cashdata):
@@ -219,9 +223,11 @@ class Client:
                         data=json.dumps(data)
                         response = requests.request("POST", self.build_url(url), headers=headers, data = data)
                     else:
+                        enddata = {}
                         data.update({'test': test})
-                        data=json.dumps(data)
-                        response = requests.request("POST", self.build_url(url), headers=headers, data = data)
+                        enddata.update(data)
+                        data = enddata
+                        response = requests.post(self.build_url(url), params=data, headers=headers)
 
 
             elif (method == "PATCH"):
