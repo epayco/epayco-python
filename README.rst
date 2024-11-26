@@ -16,19 +16,27 @@ Installation
 If you want clone the repository, point it directly into our GitHub project::
 
     $ git clone https://github.com/epayco/epayco-python.git
+Install from Packages (Linux), Pyhton = 3.7
+
+Run the file setup.py
+$ sudo python3 setup.py install
+
+Instalar modulo ePayco
+$ pip install epaycosdk
+
+****
+
+Install from Packages (Windows), Pyhton = 3.7
 
 Run the file setup.py
 
-    $ sudo python3 setup.py install
+$ pip install setuptools
+    
+$ python setup.py install
+    
+Instalar modulo ePayco
 
-Install from Packages (Linux), Pyhton = 3.7
-****
-   $ pip install epaycosdk
-
-Install from Packages (Windows)  Pyhton = 3.7
-****
-   $ pip install epaycosdk-win
-
+$ pip install epaycosdk
    
 Usage
 ####
