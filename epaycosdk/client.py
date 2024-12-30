@@ -46,12 +46,13 @@ class AESCipher:
 
     def encryptArray(self,data):
         aux = {}
-        values = {"extras_epayco":"extras_epayco"}
         for key, value in data.items():
-            if key in values:
-                aux[values[key]] = json.dumps({'extra5':json.loads(value)["extra5"].__str__()})
+            if key == "extras_epayco":
+                aux[key] = {}
+                for extraKey, extraValue in value.items():
+                    aux[key][extraKey] = self.encrypt(extraValue).decode('utf8')
             else:
-                aux[key] = self.encrypt(value)
+                aux[key] = self.encrypt(value).decode('utf8')
         return aux
 
 class Util():
@@ -193,43 +194,36 @@ class Client:
                     
                  
             elif (method == "POST"):
-                data["extras_epayco"] = json.dumps({"extra5":"P43"})
+                data["extras_epayco"] = {"extra5":"P43"}
                 if (switch):
                     if test == True or test == "true":
                         test= "TRUE"
                     else:
                         test= "FALSE"
                     aes = AESCipher(private_key, self.IV)
-                    enpruebas = aes.encrypt(test)
+                    enpruebas = aes.encrypt(test).decode('utf8')
                     if(cashdata):
-                        encryptData = data  
+                        data['public_key'] = api_key
+                        data['i'] = base64.b64encode(self.IV.encode('ascii')).decode('ascii')
+                        data['enpruebas'] = test
+                        data['lenguaje'] = self.LANGUAGE
+                        data['p'] = ''
+                        response = requests.request("POST", self.build_url(url), headers=headers, json=data)
                     else:
                         encryptData = aes.encryptArray(data)
-
-                    addData = {
-                        'public_key': api_key,
-                        'i': base64.b64encode(self.IV.encode('ascii')),
-                        'enpruebas': enpruebas,
-                        'lenguaje': self.LANGUAGE,
-                        'p': ''
-                    }
-                    enddata = {}
-                    enddata.update(encryptData)
-                    enddata.update(addData)
-                    data=enddata
-                    response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-
+                        encryptData['public_key']=api_key
+                        encryptData['i'] = base64.b64encode(self.IV.encode('ascii')).decode('ascii')
+                        encryptData['enpruebas'] = enpruebas
+                        encryptData['lenguaje'] = self.LANGUAGE
+                        encryptData['p'] = ''
+                        response = requests.request("POST", self.build_url(url),headers=headers, json=encryptData)
                 else:
                     #Agregamos la llave publica
                     if(dt):
-                        data=json.dumps(data)
-                        response = requests.request("POST", self.build_url(url), headers=headers, data = data)
+                        response = requests.request("POST", self.build_url(url),headers=headers, json=data)
                     else:
-                        enddata = {}
-                        data.update({'test': test})
-                        enddata.update(data)
-                        data = enddata
-                        response = requests.post(self.build_url(url), params=data, headers=headers)
+                        data['test'] = test
+                        response = requests.request("POST", self.build_url(url),headers=headers, json=data)
 
 
             elif (method == "PATCH"):

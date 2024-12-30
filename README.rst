@@ -12,24 +12,47 @@ https://api.epayco.co
 
 Installation
 ****
+Installation
+============
 
-If you want clone the repository, point it directly into our GitHub project::
+If you want to clone the repository, point it directly into our GitHub project:
+
+.. code-block:: bash
 
     $ git clone https://github.com/epayco/epayco-python.git
 
-Run the file setup.py
+Install from Packages (Linux), Python = 3.7
+-------------------------------------------
+
+Run the file `setup.py`:
+
+.. code-block:: bash
 
     $ sudo python3 setup.py install
 
-Install from Packages (Linux), Pyhton = 3.7
-****
-   $ pip install epaycosdk
+Install the ePayco module:
 
-Install from Packages (Windows)  Pyhton = 3.7
-****
-   $ pip install epaycosdk-win
+.. code-block:: bash
 
-   
+    $ pip install epaycosdk
+
+Install from Packages (Windows), Python = 3.7
+---------------------------------------------
+
+Run the file `setup.py`:
+
+.. code-block:: bash
+
+    $ pip install setuptools
+    $ python setup.py install
+
+Install the ePayco module:
+
+.. code-block:: bash
+
+    $ pip install epaycosdk
+
+
 Usage
 ####
 
