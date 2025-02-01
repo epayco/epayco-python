@@ -73,7 +73,7 @@ class Customers(Resource):
     def get(self, uid):
         return self.request(
             "GET",
-            "payment/v1/customer/" + self.epayco.api_key + "/" + uid + "/",
+            "payment/v1/customer/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             None,
             self.epayco.private_key,
@@ -91,7 +91,7 @@ class Customers(Resource):
     def getlist(self):
         return self.request(
             "GET",
-            "payment/v1/customers/" + self.epayco.api_key + "/",
+            "payment/v1/customers/" + self.epayco.api_key,
             self.epayco.api_key,
             None,
             self.epayco.private_key,
@@ -274,7 +274,7 @@ class Plan(Resource):
     def update(self, uid, options=None):
         return self.request(
             "POST",
-            "recurring/v1/plan/edit/" + self.epayco.api_key + "/" + uid + "/",
+            "recurring/v1/plan/edit/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -353,7 +353,7 @@ class Subscriptions(Resource):
 
         return self.request(
             "GET",
-            "recurring/v1/subscriptions/" + self.epayco.api_key + "/",
+            "recurring/v1/subscriptions/" + self.epayco.api_key,
             self.epayco.api_key,
             options,
             self.epayco.private_key,

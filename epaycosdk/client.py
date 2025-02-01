@@ -11,10 +11,10 @@ import sys
 import traceback
 from requests.exceptions import ConnectionError
 from pathlib import Path
-from dotenv import load_dotenv
 from requests import Session
-
-load_dotenv() 
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # No verificar el certifcado para los request
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -123,10 +123,10 @@ class Client:
         authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
         token_bearer = 'Bearer ' +authentication
         util = Util()
-        if(apify):
-            data = util.setKeys_apify(data)
-        elif (hasattr(data, "__len__")):
-            if(switch):
+        if(hasattr(data, "__len__")):
+            if(apify):
+                data = util.setKeys_apify(data)
+            elif(switch):
                 data = util.setKeys(data)
 
         self.SWITCH=switch  
@@ -140,7 +140,9 @@ class Client:
 
         try:
             if (method == "GET"):
-                if (switch):
+                if(apify):
+                    response=requests.get(self.build_url(url), data={},headers=headers)
+                elif (switch):
                     if test == True or test == "true":
                         test = "TRUE"
                     else:
@@ -158,7 +160,7 @@ class Client:
                 else:
                     url_params=data
                     payload = {}
-                    session = NoRebuildAuthSession()
+                   # session = NoRebuildAuthSession()
                     response = session.get(self.build_url(url), headers=headers, data = payload, params=url_params)
             elif (method == "POST"):
                 for key, value in data.items():
