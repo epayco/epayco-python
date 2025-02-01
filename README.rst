@@ -95,10 +95,11 @@ Update
 .. code-block:: python
 
     update_customer_info = {
+      "customerId": "id_client",
       "name": "Alex"
     }
 
-    customer =objepayco.customer.update("id_client",update_customer_info)
+    customer =objepayco.customer.update(update_customer_info)
 
 Delete Token
 ******
@@ -188,14 +189,14 @@ Create
 .. code-block:: python
 
     subscription_info = {
-    "id_plan": "coursereact2",
-    "customer": "9xRxhaJ2YmLTkT5uz",
-    "token_card": "eXj5Wdqgj7xzvC7AR",
-    "doc_type": "CC",
-    "doc_number": "0000000000",
-    #Optional parameter: if these parameter it's not send, system get ePayco dashboard's url_confirmation
-    "url_confirmation": "https://tudominio.com/confirmacion.php",
-    "method_confirmation": "POST"
+        "id_plan": "coursereact2",
+        "customer": "9xRxhaJ2YmLTkT5uz",
+        "token_card": "eXj5Wdqgj7xzvC7AR",
+        "doc_type": "CC",
+        "doc_number": "0000000000",
+        #Optional parameter: if these parameter it's not send, system get ePayco dashboard's url_confirmation
+        "url_confirmation": "https://tudominio.com/confirmacion.php",
+        "method_confirmation": "POST"
     }
 
     sub=objepayco.subscriptions.create(subscription_info)
@@ -237,38 +238,44 @@ Pay Subscription
 PSE
 ####
 
+List Banks
+*****
+.. code-block:: python
+
+    banks = objepayco.bank.pseBank()
+
 Create
 *****
 .. code-block:: python
 
     pse_info = {
-      "bank": "1007",
-      "invoice": "1472050778",
-      "description": "pay test",
-      "value": "116000",
-      "tax": "16000",
-      "tax_base": "100000",
-      "currency": "COP",
-      "type_person": "0",
-      "doc_type": "CC",
-      "doc_number": "10000000",
-      "name": "testing",
-      "last_name": "PAYCO",
-      "email": "no-responder@payco.co",
-      "country": "CO",
-      "cell_phone": "3010000001",
-      "ip": "190.000.000.000", #This is the client's IP, it is required,
-      "url_response": "https://tudominio.com/respuesta.php",
-      "url_confirmation": "https://tudominio.com/confirmacion.php",
-      "metodoconfirmacion": "GET",      
-      #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
-      "extra1": "",      
-      "extra2": "",
-      "extra3": "",
-      "extra4": "",
-      "extra5": "",  
-      "extra6": "",
-      "extra7": ""
+        "bank": "1007",
+        "invoice": "147205",
+        "description": "pay test",
+        "value": "116000",
+        "tax": float("16000"),
+        "tax_base": float("100000"),
+        "currency": "COP",
+        "type_person": "0",
+        "doc_type": "CC",
+        "docNumber": "10000000",
+        "name": "testing",
+        "last_name": "PAYCO",
+        "email": "no-responder@payco.co",
+        "country": "CO",
+        "cellPhone": "3010000001",
+        "ip": "190.000.000.000",  # This is the client's IP, it is required,
+        "url_response": "https://tudominio.com/respuesta.php",
+        "url_confirmation": "https://tudominio.com/confirmacion.php",
+        "metodoconfirmacion": "GET",
+        # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
+        "extra1": "",
+        "extra2": "",
+        "extra3": "",
+        "extra4": "",
+        "extra5": "",
+        "extra6": "",
+        "extra7": ""
     }
 
     pse = objepayco.bank.create(pse_info)
@@ -317,7 +324,9 @@ Create
 *****
 .. code-block:: python
 
-    cash_info = {
+        # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
+        cash_info = {
+        "paymentMethod" :"EF",
         "invoice": "1472050778",
         "description": "pay test",
         "value": "116000",
@@ -326,33 +335,27 @@ Create
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
-        "doc_number": "100000",
+        "docNumber": "100000",
         "name": "testing",
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
-        "cell_phone": "3010000001",
-        "end_date": "2020-12-05",
-        "ip": "190.000.000.000",  #This is the client's IP, it is required,
+        "cellPhone": "3010000001",
+        "end_date": "2025-02-05",
+        "ip": "190.000.000.000",  # This is the client's IP, it is required,
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "metodoconfirmacion": "GET",
-        #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
+        # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
         "extra1": "",
         "extra2": "",
         "extra3": "",
         "extra4": "",
-        "extra5": "",  
+        "extra5": "",
         "extra6": "",
         "extra7": ""
-
     }
 
-    cash = objepayco.cash.create('efecty',cash_info)
-    cash = objepayco.cash.create('gana',cash_info)
-    cash = objepayco.cash.create('baloto',cash_info) #expiration date can not be longer than 30 days
-    cash = objepayco.cash.create('redservi',cash_info) #expiration date can not be longer than 30 days
-    cash = objepayco.cash.create('puntored',cash_info) #expiration date can not be longer than 30 days
-    cash = objepayco.cash.create('sured',cash_info) #expiration date can not be longer than 30 days
+    cash = objepayco.cash.create(cash_info)
 
 Retrieve
 *****
@@ -400,7 +403,7 @@ use the following attributes in case you need to do a dispersion with one or mul
 
 
 Payment
-*****
+####
 
 Create
 *****
@@ -416,6 +419,8 @@ Create
       "email": "example@email.com",
       "bill": "OR-1234",
       "description": "Test Payment",
+      "country": "CO",
+      "city": "bogota",
       "value": "116000",
       "tax": "16000",
       "tax_base": "100000",
@@ -480,31 +485,44 @@ use the following attributes in case you need to do a dispersion with one or mul
 
 
 Daviplata
-*****
+####
 
 Create
 *****
 
 .. code-block:: python
+
     payment_info = {
-        doc_type: "CC",
-        document: "1053814580414720",
-        name: "Testing",
-        last_name: "PAYCO",
-        email: "exmaple@epayco.co",
-        ind_country: "CO",
-        phone: "314853222200033",
-        country: "CO",
-        city: "bogota",
-        address: "Calle de prueba",
-        ip: "189.176.0.1",
-        currency: "COP",
-        description: "ejemplo de transaccion con daviplata",
-        value: "100",
-        tax: "0",
-        ico: "0"
-        tax_base: "0",
-        method_confirmation: ""
+        "doc_type": "CC",
+        "document": "1053814580414720",
+        "name": "Testing",
+        "last_name": "PAYCO",
+        "email": "exmaple@epayco.co",
+        "ind_country": "57",
+        "phone": "314853222200033",
+        "country": "CO",
+        "city": "bogota",
+        "address": "Calle de prueba",
+        "ip": "189.176.0.1",
+        "currency": "COP",
+        "description": "ejemplo de transaccion con daviplata",
+        "value": "100",
+        "tax": "0",
+        "ico": "0"
+        "tax_base": "0",
+        "method_confirmation": "GET",
+        "url_response": "https://tudominio.com/respuesta.php",
+        "url_confirmation": "https://tudominio.com/confirmacion.php",
+        "extra1": "",      
+        "extra2": "",
+        "extra3": "",
+        "extra4": "",
+        "extra5": "",  
+        "extra6": "",
+        "extra7": "",
+        "extra8": "",
+        "extra9": "",
+        "extra10": ""
     }
 
     daviplata = objepayco.daviplata.create(payment_info)
@@ -513,44 +531,57 @@ confirm transaccion
 *****
 
 .. code-block:: python
+
     confirm = {
-        ref_payco: "45508846", // It is obtained from the create response
-        id_session_token: "45081749", // It is obtained from the create response
-        otp: "2580"
+        "ref_payco": "45508846", # It is obtained from the create response
+        "id_session_token": "45081749", # It is obtained from the create response
+        "otp": "2580"
     }
    
     daviplata = objepayco.daviplata.confirm(payment_info)
 
 Safetypay
-*****
+####
 
 Create
 *****
 
 .. code-block:: python
+
     payment_info = {
-        cash: "1",
-        expirationDate: "2021-08-05",
-        docType: "CC",
-        document: "123456789",
-        name: "Jhon",
-        lastName: "doe",
-        email: "jhon.doe@yopmail.com",
-        indCountry: "57",
-        phone: "3003003434",
-        country: "CO",
-        invoice: "fac-01", // opcional
-        city: "N/A",
-        address: "N/A",
-        ip: "192.168.100.100",
-        currency: "COP",
-        description: "Thu Jun 17 2021 11:37:01 GMT-0400 (hora de Venezuela)",
-        value: 100000,
-        tax: 0,
-        ico: 0,
-        taxBase: 0,
-        urlConfirmation: "",
-        methodConfirmation: ""
+        "cash": "1",
+        "end_date": "2021-08-05",
+        "doc_type": "CC",
+        "document"": "123456789",
+        "name": "Jhon",
+        "last_name": "doe",
+        "email": "jhon.doe@yopmail.com",
+        "ind_country": "57",
+        "phone": "3003003434",
+        "country": "CO",
+        "invoice": "fac-01", # opcional
+        "city": "N/A",
+        "address": "N/A",
+        "ip": "192.168.100.100",
+        "currency": "COP",
+        "description": "Thu Jun 17 2021 11:37:01 GMT-0400 (hora de Venezuela)",
+        "value": 100000,
+        "tax": 0,
+        "ico": 0,
+        "tax_base": 0,
+        "url_confirmation": "https://tudominio.com/respuesta.php",
+        "url_response": "https://tudominio.com/respuesta.php",
+        "method_confirmation": "POST",
+        "extra1": "",      
+        "extra2": "",
+        "extra3": "",
+        "extra4": "",
+        "extra5": "",  
+        "extra6": "",
+        "extra7": "",
+        "extra8": "",
+        "extra9": "",
+        "extra10": ""
     }
 
-    daviplata = objepayco.daviplata.create(payment_info)
+    safetypay = objepayco.safetypay.create(payment_info)
