@@ -105,14 +105,16 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "payment/v1/customer/edit/" + self.epayco.api_key + "/" + uid,
+            "subscriptions/customer/update",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             False,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
         
     def delete(self,options):
@@ -434,14 +436,16 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "/pagos/debitos.json",
+            "payment/process/pse",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
 
     """
@@ -489,42 +493,19 @@ class Cash(Resource):
     * @return object
     """
 
-    def create(self, type=None, options=None):
-
-        methods_payment = self.request(
-            "GET",
-            "/payment/cash/entities",
-            self.epayco.api_key,
-            None,
-            self.epayco.private_key,
-            self.epayco.test,
-            False,
-            self.epayco.lang,
-            False,
-            False,
-            True
-        )
-        medio = type.lower()
-        if(medio == "baloto"):
-            raise errors.ErrorException(self.epayco.lang, 109)
-        if(not methods_payment.get("data") or not isinstance(methods_payment["data"], list) or len(methods_payment["data"]) == 0):
-            raise errors.ErrorException(self.epayco.lang, 106)
-
-        entities = list(map(lambda item: item["name"].lower().replace(" ", ""), methods_payment["data"]))
-        if((medio not in entities)):
-            raise errors.ErrorException(self.epayco.lang, 109)
-
+    def create(self, options=None):
         return self.request(
             "POST",
-            "/v2/efectivo/{type}".format(type=medio),
+            "payment/process/cash",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            True,
-            False
+            False,
+            False,
+            True
         )
 
     def get(self, uid):

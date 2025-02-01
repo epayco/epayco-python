@@ -95,10 +95,11 @@ Update
 .. code-block:: python
 
     update_customer_info = {
+      "customerId": "id_client",
       "name": "Alex"
     }
 
-    customer =objepayco.customer.update("id_client",update_customer_info)
+    customer =objepayco.customer.update(update_customer_info)
 
 Delete Token
 ******
@@ -188,14 +189,14 @@ Create
 .. code-block:: python
 
     subscription_info = {
-    "id_plan": "coursereact2",
-    "customer": "9xRxhaJ2YmLTkT5uz",
-    "token_card": "eXj5Wdqgj7xzvC7AR",
-    "doc_type": "CC",
-    "doc_number": "0000000000",
-    #Optional parameter: if these parameter it's not send, system get ePayco dashboard's url_confirmation
-    "url_confirmation": "https://tudominio.com/confirmacion.php",
-    "method_confirmation": "POST"
+        "id_plan": "coursereact2",
+        "customer": "9xRxhaJ2YmLTkT5uz",
+        "token_card": "eXj5Wdqgj7xzvC7AR",
+        "doc_type": "CC",
+        "doc_number": "0000000000",
+        #Optional parameter: if these parameter it's not send, system get ePayco dashboard's url_confirmation
+        "url_confirmation": "https://tudominio.com/confirmacion.php",
+        "method_confirmation": "POST"
     }
 
     sub=objepayco.subscriptions.create(subscription_info)
@@ -248,34 +249,33 @@ Create
 .. code-block:: python
 
     pse_info = {
-      "bank": "1007",
-      "invoice": "1472050778",
-      "description": "pay test",
-      "value": "116000",
-      "tax": "16000",
-      "tax_base": "100000",
-      "currency": "COP",
-      "type_person": "0",
-      "doc_type": "CC",
-      "doc_number": "10000000",
-      "name": "testing",
-      "last_name": "PAYCO",
-      "email": "no-responder@payco.co",
-      "country": "CO",
-      "city": "bogota",
-      "cell_phone": "3010000001",
-      "ip": "190.000.000.000", #This is the client's IP, it is required,
-      "url_response": "https://tudominio.com/respuesta.php",
-      "url_confirmation": "https://tudominio.com/confirmacion.php",
-      "metodoconfirmacion": "GET",      
-      #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
-      "extra1": "",      
-      "extra2": "",
-      "extra3": "",
-      "extra4": "",
-      "extra5": "",  
-      "extra6": "",
-      "extra7": ""
+        "bank": "1007",
+        "invoice": "147205",
+        "description": "pay test",
+        "value": "116000",
+        "tax": float("16000"),
+        "tax_base": float("100000"),
+        "currency": "COP",
+        "type_person": "0",
+        "doc_type": "CC",
+        "docNumber": "10000000",
+        "name": "testing",
+        "last_name": "PAYCO",
+        "email": "no-responder@payco.co",
+        "country": "CO",
+        "cellPhone": "3010000001",
+        "ip": "190.000.000.000",  # This is the client's IP, it is required,
+        "url_response": "https://tudominio.com/respuesta.php",
+        "url_confirmation": "https://tudominio.com/confirmacion.php",
+        "metodoconfirmacion": "GET",
+        # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
+        "extra1": "",
+        "extra2": "",
+        "extra3": "",
+        "extra4": "",
+        "extra5": "",
+        "extra6": "",
+        "extra7": ""
     }
 
     pse = objepayco.bank.create(pse_info)
@@ -324,7 +324,9 @@ Create
 *****
 .. code-block:: python
 
-    cash_info = {
+        # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
+        cash_info = {
+        "paymentMethod" :"EF",
         "invoice": "1472050778",
         "description": "pay test",
         "value": "116000",
@@ -333,35 +335,27 @@ Create
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
-        "doc_number": "100000",
+        "docNumber": "100000",
         "name": "testing",
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
-        "country": "CO",
-        "city": "bogota",
-        "cell_phone": "3010000001",
-        "end_date": "2020-12-05",
-        "ip": "190.000.000.000",  #This is the client's IP, it is required,
+        "cellPhone": "3010000001",
+        "end_date": "2025-02-05",
+        "ip": "190.000.000.000",  # This is the client's IP, it is required,
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "metodoconfirmacion": "GET",
-        #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
+        # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
         "extra1": "",
         "extra2": "",
         "extra3": "",
         "extra4": "",
-        "extra5": "",  
+        "extra5": "",
         "extra6": "",
         "extra7": ""
-
     }
 
-    cash = objepayco.cash.create('efecty',cash_info)
-    cash = objepayco.cash.create('gana',cash_info)
-    cash = objepayco.cash.create('baloto',cash_info) #expiration date can not be longer than 30 days
-    cash = objepayco.cash.create('redservi',cash_info) #expiration date can not be longer than 30 days
-    cash = objepayco.cash.create('puntored',cash_info) #expiration date can not be longer than 30 days
-    cash = objepayco.cash.create('sured',cash_info) #expiration date can not be longer than 30 days
+    cash = objepayco.cash.create(cash_info)
 
 Retrieve
 *****
