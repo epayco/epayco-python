@@ -105,14 +105,16 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "payment/v1/customer/edit/" + self.epayco.api_key + "/" + uid + "/",
+            "subscriptions/customer/update",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             False,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
         
     def delete(self,options):
@@ -434,14 +436,16 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "/pagos/debitos.json",
+            "payment/process/pse",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
 
     """
@@ -489,35 +493,19 @@ class Cash(Resource):
     * @return object
     """
 
-    def create(self, type=None, options=None):
-
-        url = None
-        if (type == "efecty"):
-            url = "/v2/efectivo/efecty"
-        elif (type == "baloto"):
-            url = "/v2/efectivo/baloto"
-        elif (type == "gana"):
-            url = "/v2/efectivo/gana"
-        elif (type == "redservi"):
-            url = "/v2/efectivo/redservi"
-        elif (type == "puntored"):
-            url = "/v2/efectivo/puntored"
-        elif (type == "sured"):
-            url = "/v2/efectivo/sured"
-        else:
-            raise errors.ErrorException(self.epayco.lang, 109)
-
+    def create(self, options=None):
         return self.request(
             "POST",
-            url,
+            "payment/process/cash",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            True,
-            False
+            False,
+            False,
+            True
         )
 
     def get(self, uid):

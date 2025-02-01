@@ -4,11 +4,11 @@ import ssl
 import json
 import base64
 import hashlib
-from Crypto.Cipher import AES
 import requests
 import epaycosdk.errors as errors
 import os
 import sys
+import traceback
 from requests.exceptions import ConnectionError
 from pathlib import Path
 from dotenv import load_dotenv
@@ -27,32 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
 EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
 
-class AESCipher:
-    def __init__( self, key,iv  ):
-        self.key = key
-        self.iv = iv    
-
-    def encrypt( self, row ):
-        raw = pad(row).encode("utf8")
-        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
-        enc = cipher.encrypt(raw)
-        return base64.b64encode(enc)
-    def decrypt( self, enc ):
-       
-        enc = base64.b64decode(enc)
-        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
-        dec = cipher.decrypt(enc)
-        return unpad(dec).decode('utf-8')
-
-    def encryptArray(self,data):
-        aux = {}
-        values = {"extras_epayco":"extras_epayco"}
-        for key, value in data.items():
-            if key in values:
-                aux[values[key]] = json.dumps({'extra5':json.loads(value)["extra5"].__str__()})
-            else:
-                aux[key] = self.encrypt(value)
-        return aux
 
 class Util():
 
@@ -171,15 +145,11 @@ class Client:
                         test = "TRUE"
                     else:
                         test = "FALSE"
-
-                    #Encriptamos el enpruebas
-                    aes = AESCipher(private_key,self.IV)
-                    enpruebas=aes.encrypt(test)
                     addData = {
                         'public_key': api_key,
-                        'i': base64.b64encode(self.IV.encode('ascii')),
+                        #'i': base64.b64encode(self.IV.encode('ascii')),
                         'lenguaje': self.LANGUAGE,
-                        'enpruebas': enpruebas,
+                        'enpruebas': test,
                     }
                     url_params = addData
                     url_params.update(data)
@@ -190,35 +160,30 @@ class Client:
                     payload = {}
                     session = NoRebuildAuthSession()
                     response = session.get(self.build_url(url), headers=headers, data = payload, params=url_params)
-                    
-                 
             elif (method == "POST"):
+                for key, value in data.items():
+                    if isinstance(value, bytes):
+                        data[key] = value.decode('utf-8')
                 data["extras_epayco"] = json.dumps({"extra5":"P43"})
                 if (switch):
                     if test == True or test == "true":
                         test= "TRUE"
                     else:
                         test= "FALSE"
-                    aes = AESCipher(private_key, self.IV)
-                    enpruebas = aes.encrypt(test)
-                    if(cashdata):
-                        encryptData = data  
-                    else:
-                        encryptData = aes.encryptArray(data)
-
                     addData = {
                         'public_key': api_key,
-                        'i': base64.b64encode(self.IV.encode('ascii')),
-                        'enpruebas': enpruebas,
+                        #'i': base64.b64encode(self.IV.encode('ascii')),
+                        'enpruebas': test,
                         'lenguaje': self.LANGUAGE,
                         'p': ''
                     }
                     enddata = {}
-                    enddata.update(encryptData)
+                    enddata.update(data)
                     enddata.update(addData)
                     data=enddata
-                    response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-
+                    payload = json.dumps(data)
+                    #response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
+                    response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
                 else:
                     #Agregamos la llave publica
                     if(dt):
@@ -229,9 +194,9 @@ class Client:
                         data.update({'test': test})
                         enddata.update(data)
                         data = enddata
-                        response = requests.post(self.build_url(url), params=data, headers=headers)
-
-
+                        payload = json.dumps(data)
+                        # response = requests.post(self.build_url(url), params=data, headers=headers)
+                        response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
             elif (method == "PATCH"):
                 response = requests.request(
                     method,
@@ -248,7 +213,9 @@ class Client:
                     auth=(token_bearer, ""),
                     headers=headers
                 )
-        except Exception:
+        except Exception as e:
+            print(f"Se ha producido un error: {e}")
+            #traceback.print_exc()
             raise  errors.ErrorException(lang, 101)
 
         if (response.status_code >= 200 and response.status_code <= 206):
