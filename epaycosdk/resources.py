@@ -73,7 +73,7 @@ class Customers(Resource):
     def get(self, uid):
         return self.request(
             "GET",
-            "payment/v1/customer/" + self.epayco.api_key + "/" + uid + "/",
+            "payment/v1/customer/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             None,
             self.epayco.private_key,
@@ -91,7 +91,7 @@ class Customers(Resource):
     def getlist(self):
         return self.request(
             "GET",
-            "payment/v1/customers/" + self.epayco.api_key + "/",
+            "payment/v1/customers/" + self.epayco.api_key,
             self.epayco.api_key,
             None,
             self.epayco.private_key,
@@ -105,14 +105,16 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "payment/v1/customer/edit/" + self.epayco.api_key + "/" + uid + "/",
+            "subscriptions/customer/update",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             False,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
         
     def delete(self,options):
@@ -272,7 +274,7 @@ class Plan(Resource):
     def update(self, uid, options=None):
         return self.request(
             "POST",
-            "recurring/v1/plan/edit/" + self.epayco.api_key + "/" + uid + "/",
+            "recurring/v1/plan/edit/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -351,7 +353,7 @@ class Subscriptions(Resource):
 
         return self.request(
             "GET",
-            "recurring/v1/subscriptions/" + self.epayco.api_key + "/",
+            "recurring/v1/subscriptions/" + self.epayco.api_key,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -434,14 +436,16 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "/pagos/debitos.json",
+            "payment/process/pse",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
 
     """
@@ -489,35 +493,19 @@ class Cash(Resource):
     * @return object
     """
 
-    def create(self, type=None, options=None):
-
-        url = None
-        if (type == "efecty"):
-            url = "/v2/efectivo/efecty"
-        elif (type == "baloto"):
-            url = "/v2/efectivo/baloto"
-        elif (type == "gana"):
-            url = "/v2/efectivo/gana"
-        elif (type == "redservi"):
-            url = "/v2/efectivo/redservi"
-        elif (type == "puntored"):
-            url = "/v2/efectivo/puntored"
-        elif (type == "sured"):
-            url = "/v2/efectivo/sured"
-        else:
-            raise errors.ErrorException(self.epayco.lang, 109)
-
+    def create(self, options=None):
         return self.request(
             "POST",
-            url,
+            "payment/process/cash",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            True,
-            False
+            False,
+            False,
+            True
         )
 
     def get(self, uid):
