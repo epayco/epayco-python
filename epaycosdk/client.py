@@ -189,8 +189,7 @@ class Client:
                 else:
                     #Agregamos la llave publica
                     if(dt):
-                        data=json.dumps(data)
-                        response = requests.request("POST", self.build_url(url), headers=headers, data = data)
+                        response = requests.request("POST", self.build_url(url),headers=headers, json=data)
                     else:
                         enddata = {}
                         data.update({'test': test})
