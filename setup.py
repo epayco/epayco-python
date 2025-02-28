@@ -5,7 +5,7 @@ import platform
 
 setup(
     name="epaycosdk",
-    version="3.2.0",
+    version="3.2.1",
     include_package_data=True,
     author="ePayco Development Team",
     author_email="ricardo.saldarriaga@epayco.co",
