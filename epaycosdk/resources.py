@@ -88,12 +88,12 @@ class Customers(Resource):
      * @return object
     """
 
-    def getlist(self):
+    def getlist(self, options=None):
         return self.request(
             "GET",
-            "payment/v1/customers/" + self.epayco.api_key,
+            "payment/v1/customers",
             self.epayco.api_key,
-            None,
+            options,
             self.epayco.private_key,
             self.epayco.test,
             False,
@@ -274,7 +274,7 @@ class Plan(Resource):
     def update(self, uid, options=None):
         return self.request(
             "POST",
-            "recurring/v1/plan/edit/" + self.epayco.api_key + "/" + uid,
+            "recurring/v1/plan/edit/" + uid,
             self.epayco.api_key,
             options,
             self.epayco.private_key,
