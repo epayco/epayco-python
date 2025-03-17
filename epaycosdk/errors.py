@@ -15,13 +15,16 @@ class ErrorException(EpaycoException):
             self.message = idioma
     # Se carga el json de la url se parsea y de devuelve el código del error de acuerdo al idioma
     def __str__(self):
-        # Se carga el json de la url
-        request = urllib.request.Request(self.ERRORS_URL)
-        # Se abre el json de la url
-        response = urllib.request.urlopen(request)
-        # Se decodifica en utf8
-        encoding = response.info().get_content_charset('utf8')
-        # Se carga el json en la variable errors
-        errors = json.loads(response.read().decode(encoding))
-        # Se retorna el error de acuerdo al idioma y código pasado
-        return "ErrorException:{"+errors[str(self.code)][self.message]+"}\n"
+        try:
+            # Se carga el json de la url
+            request = urllib.request.Request(self.ERRORS_URL)
+            # Se abre el json de la url
+            response = urllib.request.urlopen(request)
+            # Se decodifica en utf8
+            encoding = response.info().get_content_charset('utf8')
+            errors = json.loads(response.read().decode(encoding))
+            # Se retorna el error de acuerdo al idioma y código pasado
+
+            return f"ErrorException: {errors[str(self.code)][self.message]}"
+        except Exception as e:
+            return f"Error al obtener el mensaje: {str(e)}"

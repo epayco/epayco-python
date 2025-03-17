@@ -96,7 +96,11 @@ Create
       "last_name": "Doe", #This parameter is optional
       "email": "joe@payco.co",
       "phone": "3005234321",
-      "default": True
+      "default": True,
+      "city": "Bogota",
+      "address": "Cr 4 # 55 36",
+      "phone": "3005234321",
+      "cell_phone": "3010000001"
       }
 
     customer=objepayco.customer.create(customer_info)
@@ -111,7 +115,11 @@ List
 ******
 .. code-block:: python
 
-    customers = objepayco.customer.getlist()
+    customer_info = {
+        "page": 1, #number of pages
+        "perPage": 5 #number of customers per page
+    }
+    customers = objepayco.customer.getlist(customer_info)
 
 Update
 ******
@@ -176,11 +184,24 @@ Create
       "id_plan": "coursereact",
       "name": "Course react js",
       "description": "Course react and redux",
-      "amount": 30000,
+      "amount": 35700,
       "currency": "cop",
       "interval": "month",
       "interval_count": 1,
-      "trial_days": 30
+      "trial_days": 30,
+      "ip": "000.00.000.000",
+      "iva": 5700,
+      "ico": 0,
+      "planLink":"https://github.com/epayco",
+      "greetMessage":"discounted react and redux course",
+      "linkExpirationDate":"2025-03-11",
+      "subscriptionLimit": 10, #Subscription limit between 0 and 10000
+      "imgUrl":"https://epayco.com/wp-content/uploads/2023/04/logo-blanco.svg",
+      "discountValue":5000, #discount value
+      "discountPercentage":19, #discount percentage
+      "transactionalLimit": 2, #transactional Limit
+      "additionalChargePercentage":0.0, #Additional charge percentage limit
+      "firstPaymentAdditionalCost":45700  #Installation Cost
     }
 
     plan = objepayco.plan.create(plan_info)
@@ -203,6 +224,27 @@ Remove
 .. code-block:: python
 
     plan = objepayco.plan.delete("coursereact")
+
+Upadate
+******
+.. code-block:: python
+
+    plan_info_update = {
+        "name": "Course react js",
+        "description": "Course react and redux",
+        "amount": 35700,
+        "currency": "cop",
+        "interval": "month",
+        "interval_count": 1,
+        "trial_days": 30,
+        "ip": "170.00.000.000",
+        "iva": 1900,
+        "ico": 0,
+        #"transactionalLimit": 3,
+        #"additionalChargePercentage":0.0,
+        #"afterPayment":"message after paying"
+    }
+    plan = objepayco.plan.update(id_plan, plan_info_update)
 
 Subscriptions
 ####
