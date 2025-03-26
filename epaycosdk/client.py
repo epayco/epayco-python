@@ -161,7 +161,7 @@ class Client:
                     url_params=data
                     payload = {}
                    # session = NoRebuildAuthSession()
-                    response = session.get(self.build_url(url), headers=headers, data = payload, params=url_params)
+                    response = requests.get(self.build_url(url), headers=headers, data = payload, params=url_params)
             elif (method == "POST"):
                 for key, value in data.items():
                     if isinstance(value, bytes):
@@ -189,6 +189,7 @@ class Client:
                 else:
                     #Agregamos la llave publica
                     if(dt):
+                        data=json.dumps(data)
                         response = requests.request("POST", self.build_url(url),headers=headers, json=data)
                     else:
                         enddata = {}
@@ -226,21 +227,39 @@ class Client:
             return response.json()
 
         if (response.status_code == 400):
-            raise errors.ErrorException(lang, 103)
+            try:
+                raise errors.ErrorException(lang, 103)
+            except errors.ErrorException as e:
+                print(e)
 
         if (response.status_code == 401):
-            raise errors.ErrorException(lang, 104)
+            try:
+                raise errors.ErrorException(lang, 104)
+            except errors.ErrorException as e:
+                print(e)
 
         if (response.status_code == 404):
-            raise errors.ErrorException(lang, 105)
+            try:
+                raise errors.ErrorException(lang, 105)
+            except errors.ErrorException as e:
+                print(e)
 
         if (response.status_code == 403):
-            raise errors.ErrorException(lang, 106)
+            try:
+                raise errors.ErrorException(lang, 106)
+            except errors.ErrorException as e:
+                print(e)
 
         if (response.status_code == 405):
-            raise errors.ErrorException(lang, 107)
+            try:
+                raise errors.ErrorException(lang, 107)
+            except errors.ErrorException as e:
+                print(e)
 
-        raise errors.ErrorException(lang, 102)
+        try:
+            raise errors.ErrorException(lang, 102)
+        except errors.ErrorException as e:
+            print(e)
 
     def build_url(self,endpoint):
             """
