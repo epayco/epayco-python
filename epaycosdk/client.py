@@ -228,7 +228,7 @@ class Client:
 
         if (response.status_code == 400):
             try:
-                return response.text
+                return response.json()
                 raise errors.ErrorException(lang, 103)
             except errors.ErrorException as e:
                 print(e)
