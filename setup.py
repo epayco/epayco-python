@@ -5,7 +5,7 @@ import platform
 
 setup(
     name="epaycosdk",
-    version="3.3.0",
+    version="3.3.2",
     include_package_data=True,
     author="ePayco Development Team",
     author_email="ricardo.saldarriaga@epayco.co",
@@ -17,7 +17,7 @@ setup(
     long_description="Basic python library to interact with ePayco Payment API",
     install_requires=[
         "requests >= 2.4.3",
-        "pycryptodome >= 2.6.1" if platform.system() == "Windows" else "pycrypto >= 2.6.1",
+        "pycryptodome >= 2.6.1",
         "python-dotenv >= 0.19.2"
     ],
 )
