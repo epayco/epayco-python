@@ -549,6 +549,20 @@ class Cash(Resource):
             self.epayco.lang,
             True
         )
+        
+    def get(self, uid):
+        return self.request(
+            "GET",
+            "/transaction/response.json",
+            self.epayco.api_key,
+            {'ref_payco': uid},
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang,
+            False
+        )
+
 
 class Daviplata(Resource):
     def create(self, options = None):
