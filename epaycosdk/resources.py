@@ -105,16 +105,14 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "subscriptions/customer/update",
+            "payment/v1/customer/edit/"+self.epayco.api_key+ "/" + uid + "/",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             False,
             self.epayco.lang,
-            False,
-            False,
-            True
+            False
         )
         
     def delete(self,options):
@@ -436,16 +434,14 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "payment/process/pse",
+            "/pagos/debitos.json",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            False,
-            False,
-            True
+            False
         )
 
     """
@@ -493,7 +489,9 @@ class Cash(Resource):
     * @return object
     """
 
-    def create(self, options=None):
+    def create(self, type=None, options=None):
+        medio = type.lower() if type else None
+        """
         return self.request(
             "POST",
             "payment/process/cash",
@@ -508,18 +506,48 @@ class Cash(Resource):
             True
         )
 
-    def get(self, uid):
+        if medio == "baloto":
+            raise errors.ErrorException(self.epayco.lang, 109)
 
-        return self.request(
+        methods_payment = self.request(
             "GET",
-            "/transaction/response.json",
+            "/payment/cash/entities",
             self.epayco.api_key,
-            {'ref_payco': uid},
+            None,
+            self.epayco.private_key,
+            self.epayco.test,
+            False,
+            self.epayco.lang,
+            False,
+            False,
+            True
+        )
+
+        if not methods_payment or not hasattr(methods_payment, 'data') or not isinstance(methods_payment.data, list) or len(methods_payment.data) == 0:
+            try:
+                raise errors.ErrorException(self.epayco.lang, 106)
+            except errors.ErrorException as e:
+                print(e)*/
+            
+
+        entities = [item.name.lower().replace(" ", "") for item in methods_payment.data]
+
+        if medio not in entities:
+            try:
+                raise errors.ErrorException(self.epayco.lang, 109)
+            except errors.ErrorException as e:
+                print(e)
+        """
+        return self.request(
+            "POST",
+            f"/v2/efectivo/{medio}",
+            self.epayco.api_key,
+            options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
-            False
+            True
         )
 
 class Daviplata(Resource):
