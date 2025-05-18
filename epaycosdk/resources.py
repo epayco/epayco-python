@@ -102,17 +102,22 @@ class Customers(Resource):
         )
 
     def update(self,uid,options):
-
+        enddata = {
+            "customerId": uid
+        }
+        enddata.update(options)
         return self.request(
             "POST",
-            "payment/v1/customer/edit/"+self.epayco.api_key+ "/" + uid + "/",
+            "subscriptions/customer/update",
             self.epayco.api_key,
-            options,
+            enddata,
             self.epayco.private_key,
             self.epayco.test,
             False,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
         
     def delete(self,options):
@@ -434,14 +439,16 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "/pagos/debitos.json",
+            "payment/process/pse",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
-            True,
+            False,
             self.epayco.lang,
-            False
+            False,
+            False,
+            True
         )
 
     """
@@ -492,20 +499,6 @@ class Cash(Resource):
     def create(self, type=None, options=None):
         medio = type.lower() if type else None
         """
-        return self.request(
-            "POST",
-            "payment/process/cash",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False,
-            False,
-            True
-        )
-
         if medio == "baloto":
             raise errors.ErrorException(self.epayco.lang, 109)
 
@@ -548,6 +541,19 @@ class Cash(Resource):
             True,
             self.epayco.lang,
             True
+        )
+
+    def get(self, uid):
+        return self.request(
+            "GET",
+            "/transaction/response.json",
+            self.epayco.api_key,
+            {'ref_payco': uid},
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang,
+            False
         )
 
 class Daviplata(Resource):

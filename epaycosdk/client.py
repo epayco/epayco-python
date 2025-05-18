@@ -194,7 +194,7 @@ class Client:
                 for key, value in data.items():
                     if isinstance(value, bytes):
                         data[key] = value.decode('utf-8')
-                data["extras_epayco"] = json.dumps({"extra5":"P43"})
+                #data["extras_epayco"] = json.dumps({"extra5":"P43"})
                 if (switch):
                     if test == True or test == "true":
                         test= "TRUE"
@@ -234,7 +234,7 @@ class Client:
                         enddata.update(data)
                         data = enddata
                         payload = json.dumps(data)
-                        response = requests.post(self.build_url(url), params=data, headers=headers)
+                        response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
                         #response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
             elif (method == "PATCH"):
                 response = requests.request(
