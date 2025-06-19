@@ -263,38 +263,11 @@ class Client:
 
             return response.json()
 
-        if (response.status_code == 400):
-            try:
-                raise errors.ErrorException(lang, 103)
-            except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 401):
-            try:
-                raise errors.ErrorException(lang, 104)
-            except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 404):
-            try:
-                raise errors.ErrorException(lang, 105)
-            except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 403):
-            try:
-                raise errors.ErrorException(lang, 106)
-            except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 405):
-            try:
-                raise errors.ErrorException(lang, 107)
-            except errors.ErrorException as e:
-                print(e)
+        else:
+            return response.json()
 
         try:
-            raise errors.ErrorException(lang, 102)
+            raise errors.ErrorException(lang, response.json())
         except errors.ErrorException as e:
             print(e)
 
