@@ -105,7 +105,7 @@ class Customers(Resource):
 
         return self.request(
             "POST",
-            "subscriptions/customer/update",
+            "/subscriptions/customer/update/",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
@@ -234,7 +234,7 @@ class Plan(Resource):
         options = None
         return self.request(
             "GET",
-            "recurring/v1/plan/" + self.epayco.api_key + "/"+uid,
+            "recurring/v1/plan/" + self.epayco.api_key + "/" + uid,
             self.epayco.api_key,
             options,
             self.epayco.private_key,

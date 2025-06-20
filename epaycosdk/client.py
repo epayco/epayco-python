@@ -92,13 +92,13 @@ class NoRebuildAuthSession(Session):
 
 class Client:
 
-    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
-    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"ttps://secure.payco.co"
-    ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
-    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
+    BASE_URL = os.getenv("BASE_URL_SDK") or "https://eks-subscription-api-lumen-service.epayco.io"
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") or "https://eks-rest-pagos-service.epayco.io"
+    ENTORNO = os.getenv("ENTORNO_SDK") or "/restpagos"
+    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") or "https://eks-apify-service.epayco.io"
     IV = "0000000000000000"
     LANGUAGE = "python"
-    SWITCH= False
+    SWITCH = False
 
     def __init__(self):
         pass
