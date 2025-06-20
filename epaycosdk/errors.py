@@ -8,23 +8,14 @@ class EpaycoException(Exception):
     ERRORS_URL = "https://multimedia.epayco.co/message-api/errors.json"
     pass
 
-class ErrorException(EpaycoException):
-    # Se inicializa pasando los argmentos codigo e idioma
-    def __init__(self, idioma,code):
-            self.code=code
-            self.message = idioma
-    # Se carga el json de la url se parsea y de devuelve el código del error de acuerdo al idioma
+class ErrorException(Exception):
+    def __init__(self, code, details=None):
+        self.code = code
+        self.details = details
+        super().__init__(f"Error {code} : {details}")
+
     def __str__(self):
         try:
-            # Se carga el json de la url
-            request = urllib.request.Request(self.ERRORS_URL)
-            # Se abre el json de la url
-            response = urllib.request.urlopen(request)
-            # Se decodifica en utf8
-            encoding = response.info().get_content_charset('utf8')
-            errors = json.loads(response.read().decode(encoding))
-            # Se retorna el error de acuerdo al idioma y código pasado
-
-            return f"ErrorException: {errors[str(self.code)][self.message]}"
+            return f"Error {self.code} {self.details.get('message', '')}"
         except Exception as e:
             return f"Error al obtener el mensaje: {str(e)}"
