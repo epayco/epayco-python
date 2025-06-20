@@ -21,7 +21,6 @@ class Epayco:
         self.private_key = options["privateKey"]
         self.test = "true" if options["test"] else "false"
         self.lang = options["lenguage"]
-
         self.token = Token(self)
         self.customer = Customers(self)
         self.plan = Plan(self)

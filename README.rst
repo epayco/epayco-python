@@ -426,7 +426,7 @@ Retrieve
 *****
 .. code-block:: python
 
-    cash = epayco.cash.get("ref_payco")
+    cash = objepayco.cash.get("ref_payco")
 
 
 
@@ -571,9 +571,9 @@ Create
         "ip": "189.176.0.1",
         "currency": "COP",
         "description": "ejemplo de transaccion con daviplata",
-        "value": "100",
+        "value": "100000",
         "tax": "0",
-        "ico": "0"
+        "ico": "0",
         "tax_base": "0",
         "method_confirmation": "GET",
         "url_response": "https://tudominio.com/respuesta.php",
@@ -617,7 +617,7 @@ Create
         "cash": "1",
         "end_date": "2021-08-05",
         "doc_type": "CC",
-        "document"": "123456789",
+        "document": "123456789",
         "name": "Jhon",
         "last_name": "doe",
         "email": "jhon.doe@yopmail.com",
