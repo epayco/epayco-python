@@ -102,12 +102,15 @@ class Customers(Resource):
         )
 
     def update(self,uid,options):
-
+        enddata = {
+            "customerId": uid
+        }
+        enddata.update(options)
         return self.request(
             "POST",
             "subscriptions/customer/update",
             self.epayco.api_key,
-            options,
+            enddata,
             self.epayco.private_key,
             self.epayco.test,
             False,
@@ -441,7 +444,7 @@ class Bank(Resource):
             options,
             self.epayco.private_key,
             self.epayco.test,
-            True,
+            False,
             self.epayco.lang,
             False,
             False,
@@ -493,23 +496,68 @@ class Cash(Resource):
     * @return object
     """
 
-    def create(self, options=None):
-        return self.request(
-            "POST",
-            "payment/process/cash",
+    def create(self, type=None, options=None):
+        medio = type.lower() if type else None
+        """
+        if medio == "baloto":
+            raise errors.ErrorException(self.epayco.lang, 109)
+
+        methods_payment = self.request(
+            "GET",
+            "/payment/cash/entities",
             self.epayco.api_key,
-            options,
+            None,
             self.epayco.private_key,
             self.epayco.test,
-            True,
+            False,
             self.epayco.lang,
             False,
             False,
             True
         )
 
-    def get(self, uid):
+        if not methods_payment or not hasattr(methods_payment, 'data') or not isinstance(methods_payment.data, list) or len(methods_payment.data) == 0:
+            try:
+                raise errors.ErrorException(self.epayco.lang, 106)
+            except errors.ErrorException as e:
+                print(e)*/
+            
 
+        entities = [item.name.lower().replace(" ", "") for item in methods_payment.data]
+
+        if medio not in entities:
+            try:
+                raise errors.ErrorException(self.epayco.lang, 109)
+            except errors.ErrorException as e:
+                print(e)
+        """
+        return self.request(
+            "POST",
+            f"/v2/efectivo/{medio}",
+            self.epayco.api_key,
+            options,
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang,
+            True
+        )
+        
+    def get(self, uid):
+        return self.request(
+            "GET",
+            "/transaction/response.json",
+            self.epayco.api_key,
+            {'ref_payco': uid},
+            self.epayco.private_key,
+            self.epayco.test,
+            True,
+            self.epayco.lang,
+            False
+        )
+
+
+    def get(self, uid):
         return self.request(
             "GET",
             "/transaction/response.json",
