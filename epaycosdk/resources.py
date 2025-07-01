@@ -102,15 +102,12 @@ class Customers(Resource):
         )
 
     def update(self,uid,options):
-        enddata = {
-            "customerId": uid
-        }
-        enddata.update(options)
+
         return self.request(
             "POST",
             "subscriptions/customer/update",
             self.epayco.api_key,
-            enddata,
+            options,
             self.epayco.private_key,
             self.epayco.test,
             False,
@@ -414,20 +411,20 @@ class Bank(Resource):
     """
 
     def pseBank(self,options = None):
-        if self.epayco.test == 'false':
-            url = "/pse/bancos.json?public_key="+self.epayco.api_key+"&test=1"
-        else:
-            url = "/pse/bancos.json?public_key="+self.epayco.api_key
+      
+        url = "/payment/pse/banks"
         return self.request(
             "GET",
             url,
             self.epayco.api_key,
-            {'public_key':self.epayco.api_key},
+            None,
             self.epayco.private_key,
             self.epayco.test,
-            True,
+            False,
             self.epayco.lang,
-            False
+            None,
+            None,
+            True
         )
 
     """
@@ -444,7 +441,7 @@ class Bank(Resource):
             options,
             self.epayco.private_key,
             self.epayco.test,
-            False,
+            True,
             self.epayco.lang,
             False,
             False,
@@ -496,68 +493,23 @@ class Cash(Resource):
     * @return object
     """
 
-    def create(self, type=None, options=None):
-        medio = type.lower() if type else None
-        """
-        if medio == "baloto":
-            raise errors.ErrorException(self.epayco.lang, 109)
-
-        methods_payment = self.request(
-            "GET",
-            "/payment/cash/entities",
-            self.epayco.api_key,
-            None,
-            self.epayco.private_key,
-            self.epayco.test,
-            False,
-            self.epayco.lang,
-            False,
-            False,
-            True
-        )
-
-        if not methods_payment or not hasattr(methods_payment, 'data') or not isinstance(methods_payment.data, list) or len(methods_payment.data) == 0:
-            try:
-                raise errors.ErrorException(self.epayco.lang, 106)
-            except errors.ErrorException as e:
-                print(e)*/
-            
-
-        entities = [item.name.lower().replace(" ", "") for item in methods_payment.data]
-
-        if medio not in entities:
-            try:
-                raise errors.ErrorException(self.epayco.lang, 109)
-            except errors.ErrorException as e:
-                print(e)
-        """
+    def create(self, options=None):
         return self.request(
             "POST",
-            f"/v2/efectivo/{medio}",
+            "payment/process/cash",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
             True,
             self.epayco.lang,
+            False,
+            False,
             True
         )
-        
-    def get(self, uid):
-        return self.request(
-            "GET",
-            "/transaction/response.json",
-            self.epayco.api_key,
-            {'ref_payco': uid},
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False
-        )
-
 
     def get(self, uid):
+
         return self.request(
             "GET",
             "/transaction/response.json",
