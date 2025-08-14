@@ -411,20 +411,20 @@ class Bank(Resource):
     """
 
     def pseBank(self,options = None):
-        if self.epayco.test == 'false':
-            url = "/pse/bancos.json?public_key="+self.epayco.api_key+"&test=1"
-        else:
-            url = "/pse/bancos.json?public_key="+self.epayco.api_key
+      
+        url = "/payment/pse/banks"
         return self.request(
             "GET",
             url,
             self.epayco.api_key,
-            {'public_key':self.epayco.api_key},
+            None,
             self.epayco.private_key,
             self.epayco.test,
-            True,
+            False,
             self.epayco.lang,
-            False
+            None,
+            None,
+            True
         )
 
     """

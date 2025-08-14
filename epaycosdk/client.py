@@ -14,6 +14,7 @@ from pathlib import Path
 from requests import Session
 import os
 from dotenv import load_dotenv
+import json
 load_dotenv()
 
 # No verificar el certifcado para los request
@@ -79,7 +80,16 @@ class Auth:
         response = requests.request("POST", url, headers=headers, data = payload)
         data=response.text.encode('utf8')
         json_data=json.loads(data)
-        bearer_token=json_data['token'] if apify else json_data['bearer_token']
+        if apify:
+            if 'token' not in json_data:
+                print("Error: 'token' not found in authentication response:", json_data)
+                raise Exception("Token not found in authentication response")
+            bearer_token = json_data['token']
+        else:
+            if 'bearer_token' not in json_data:
+                print("Error: 'bearer_token' not found in authentication response:", json_data)
+                raise Exception("Bearer token not found in authentication response")
+            bearer_token = json_data['bearer_token']
         return bearer_token
         
 class NoRebuildAuthSession(Session):
@@ -93,7 +103,7 @@ class NoRebuildAuthSession(Session):
 class Client:
 
     BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
-    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"ttps://secure.payco.co"
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
     ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
     BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
     IV = "0000000000000000"
@@ -162,11 +172,16 @@ class Client:
                     payload = {}
                    # session = NoRebuildAuthSession()
                     response = requests.get(self.build_url(url), headers=headers, data = payload, params=url_params)
+
             elif (method == "POST"):
                 for key, value in data.items():
                     if isinstance(value, bytes):
                         data[key] = value.decode('utf-8')
-                data["extras_epayco"] = json.dumps({"extra5":"P43"})
+               
+               
+                data["extras_epayco"] =  {"extra5":"P43"}
+                # data["extras_epayco"] = json.dumps({"extra5":"P43"})
+             
                 if (switch):
                     if test == True or test == "true":
                         test= "TRUE"
@@ -186,6 +201,7 @@ class Client:
                     payload = json.dumps(data)
                     #response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
                     response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
+                  
                 else:
                     #Agregamos la llave publica
                     if(dt):
@@ -199,6 +215,7 @@ class Client:
                         payload = json.dumps(data)
                         # response = requests.post(self.build_url(url), params=data, headers=headers)
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
+                        
             elif (method == "PATCH"):
                 response = requests.request(
                     method,
@@ -219,6 +236,7 @@ class Client:
             print(f"Se ha producido un error: {e}")
             #traceback.print_exc()
             raise  errors.ErrorException(lang, 101)
+      
 
         if (response.status_code >= 200 and response.status_code <= 206):
             if (method == "DELETE"):
@@ -226,42 +244,32 @@ class Client:
 
             return response.json()
 
-        if (response.status_code == 400):
+       
+        if (response.status_code >= 400 or response.status_code <= 500):
             try:
-                return response.json()
-                raise errors.ErrorException(lang, 103)
+                if (response.status_code == 400):
+                    raise errors.ErrorException(lang, 103)
+
+                if (response.status_code == 401):
+                    raise errors.ErrorException(lang, 104)
+
+                if (response.status_code == 404):
+                    raise errors.ErrorException(lang, 105)
+
+                if (response.status_code == 403):
+                    raise errors.ErrorException(lang, 106)
+
+                if (response.status_code == 405):
+                    raise errors.ErrorException(lang, 107)
+                
             except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 401):
-            try:
-                raise errors.ErrorException(lang, 104)
-            except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 404):
-            try:
-                raise errors.ErrorException(lang, 105)
-            except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 403):
-            try:
-                raise errors.ErrorException(lang, 106)
-            except errors.ErrorException as e:
-                print(e)
-
-        if (response.status_code == 405):
-            try:
-                raise errors.ErrorException(lang, 107)
-            except errors.ErrorException as e:
-                print(e)
-
-        try:
-            raise errors.ErrorException(lang, 102)
-        except errors.ErrorException as e:
-            print(e)
-
+              errorExcepcion = (json.dumps({
+                    "status": False,
+                    "message": str(e),
+                    "data": 0
+                }))
+              return errorExcepcion
+            
     def build_url(self,endpoint):
             """
             Build complete URL from API endpoint
