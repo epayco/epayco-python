@@ -249,6 +249,7 @@ class Client:
             try:
                 if (response.status_code == 400):
                     raise errors.ErrorException(lang, 103)
+                
 
                 if (response.status_code == 401):
                     raise errors.ErrorException(lang, 104)
@@ -263,12 +264,20 @@ class Client:
                     raise errors.ErrorException(lang, 107)
                 
             except errors.ErrorException as e:
-              errorExcepcion = (json.dumps({
+                try:
+                    response_json = response.json()
+                except ValueError:
+                    response_json = {}
+
+                response_json = json.dumps(response_json) 
+                errorExcepcion = json.dumps({
                     "status": False,
                     "message": str(e),
-                    "data": 0
-                }))
-              return errorExcepcion
+                    "data": response_json
+                })
+
+                response_final = json.loads(errorExcepcion)
+                return response_final
             
     def build_url(self,endpoint):
             """
