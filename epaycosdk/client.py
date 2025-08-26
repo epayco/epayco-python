@@ -102,10 +102,10 @@ class NoRebuildAuthSession(Session):
 
 class Client:
 
-    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
-    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
+    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://eks-subscription-api-lumen-service.epayco.io"
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://eks-rest-pagos-service.epayco.io"
     ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
-    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
+    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://eks-apify-service.epayco.io"
     IV = "0000000000000000"
     LANGUAGE = "python"
     SWITCH= False
@@ -249,6 +249,7 @@ class Client:
             try:
                 if (response.status_code == 400):
                     raise errors.ErrorException(lang, 103)
+                
 
                 if (response.status_code == 401):
                     raise errors.ErrorException(lang, 104)
@@ -263,12 +264,20 @@ class Client:
                     raise errors.ErrorException(lang, 107)
                 
             except errors.ErrorException as e:
-              errorExcepcion = (json.dumps({
+                try:
+                    response_json = response.json()
+                except ValueError:
+                    response_json = {}
+
+                response_json = json.dumps(response_json) 
+                errorExcepcion = json.dumps({
                     "status": False,
                     "message": str(e),
-                    "data": 0
-                }))
-              return errorExcepcion
+                    "data": response_json
+                })
+
+                response_final = json.loads(errorExcepcion)
+                return response_final
             
     def build_url(self,endpoint):
             """
