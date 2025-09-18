@@ -6,6 +6,7 @@ import base64
 import hashlib
 import requests
 import epaycosdk.errors as errors
+from Crypto.Cipher import AES
 import os
 import sys
 import traceback
@@ -27,6 +28,29 @@ unpad = lambda s : s[0:-(s[-1])]
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
 EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
+
+class AESCipher:
+    def __init__( self, key,iv  ):
+        self.key = key
+        self.iv = iv    
+
+    def encrypt( self, row ):
+        raw = pad(row).encode("utf8")
+        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
+        enc = cipher.encrypt(raw)
+        return base64.b64encode(enc)
+    def decrypt( self, enc ):
+       
+        enc = base64.b64decode(enc)
+        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
+        dec = cipher.decrypt(enc)
+        return unpad(dec).decode('utf-8')
+
+    def encryptArray(self,data):
+        aux = {}
+        for key, value in data.items():
+            aux[key] = self.encrypt(value)
+        return aux
 
 
 class Util():
@@ -128,7 +152,7 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False, pse =False ):
         auth = Auth(api_key, private_key)
         authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
         token_bearer = 'Bearer ' +authentication
@@ -151,17 +175,24 @@ class Client:
         try:
             if (method == "GET"):
                 if(apify):
-                    response=requests.get(self.build_url(url), data={},headers=headers)
+                   # response=requests.get(self.build_url(url), data={},headers=headers)
+                   url_with_test = f"{self.build_url(url)}?test={str(test).lower()}"
+                   response = requests.request("GET", url_with_test, headers=headers, data=data)
                 elif (switch):
+                  if (switch):
                     if test == True or test == "true":
                         test = "TRUE"
                     else:
                         test = "FALSE"
+
+                    #Encriptamos el enpruebas
+                    aes = AESCipher(private_key,self.IV)
+                    enpruebas=aes.encrypt(test)
                     addData = {
                         'public_key': api_key,
-                        #'i': base64.b64encode(self.IV.encode('ascii')),
+                        'i': base64.b64encode(self.IV.encode('ascii')),
                         'lenguaje': self.LANGUAGE,
-                        'enpruebas': test,
+                        'enpruebas': enpruebas,
                     }
                     url_params = addData
                     url_params.update(data)
@@ -174,7 +205,40 @@ class Client:
                     response = requests.get(self.build_url(url), headers=headers, data = payload, params=url_params)
 
             elif (method == "POST"):
-                for key, value in data.items():
+                if pse == True: 
+                 if (switch):
+                    if test == True or test == "true":
+                        test = "TRUE"
+                    else:
+                        test = "FALSE"
+
+                    aes = AESCipher(private_key, self.IV)
+                    enpruebas = aes.encrypt(test)
+                    if cashdata:
+                        encryptData = data
+                    else:
+                        encryptData = aes.encryptArray(data)
+
+                    addData = {
+                        'public_key': api_key,
+                        'i': base64.b64encode(self.IV.encode('ascii')),
+                        'enpruebas': enpruebas,
+                        'lenguaje': self.LANGUAGE,
+                        'p': ''
+                    }
+                    enddata = {}
+                    enddata.update(encryptData)
+                    enddata.update(addData)
+                    for key, value in enddata.items():
+                        if isinstance(value, bytes):
+                            enddata[key] = value.decode('utf-8')
+                    data = enddata
+                    payload = json.dumps(data)
+                    response = requests.post(self.build_url(url), data=payload, auth=(api_key, ''), headers=headers)
+
+
+                else:
+                 for key, value in data.items():
                     if isinstance(value, bytes):
                         data[key] = value.decode('utf-8')
                
@@ -241,10 +305,8 @@ class Client:
         if (response.status_code >= 200 and response.status_code <= 206):
             if (method == "DELETE"):
                 return response.status_code == 204 or response.status_code == 200
-
             return response.json()
-
-       
+    
         if (response.status_code >= 400 or response.status_code <= 500):
             try:
                 if (response.status_code == 400):
@@ -273,7 +335,8 @@ class Client:
                 errorExcepcion = json.dumps({
                     "status": False,
                     "message": str(e),
-                    "data": response_json
+                    "data": response_json,
+                    'errors': {'http_code': response.status_code}
                 })
 
                 response_final = json.loads(errorExcepcion)
