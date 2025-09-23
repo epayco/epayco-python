@@ -30,27 +30,25 @@ EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
 EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
 
 class AESCipher:
-    def __init__( self, key,iv  ):
+    def __init__(self, key, iv):
         self.key = key
         self.iv = iv    
 
-    def encrypt( self, row ):
+    def encrypt(self, row):
         raw = pad(row).encode("utf8")
-        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
+        cipher = AES.new(self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
         enc = cipher.encrypt(raw)
         return base64.b64encode(enc)
-    def decrypt( self, enc ):
-       
-        enc = base64.b64decode(enc)
-        cipher = AES.new( self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
-        dec = cipher.decrypt(enc)
-        return unpad(dec).decode('utf-8')
 
-    def encryptArray(self,data):
+    def encryptArray(self, data):
         aux = {}
         for key, value in data.items():
-            aux[key] = self.encrypt(value)
+            if key == "extras_epayco" and isinstance(value, dict) and "extra5" in value:
+                aux[key] = {"extra5": self.encrypt(value["extra5"]).decode('utf-8')}
+            else:
+                aux[key] = self.encrypt(value).decode('utf-8')
         return aux
+
 
 
 class Util():
@@ -176,8 +174,8 @@ class Client:
             if (method == "GET"):
                 if(apify):
                    # response=requests.get(self.build_url(url), data={},headers=headers)
-                   url_with_test = f"{self.build_url(url)}?test={str(test).lower()}"
-                   response = requests.request("GET", url_with_test, headers=headers, data=data)
+                   url_bank = f"{self.build_url(url)}?test={str(test).lower()}"
+                   response = requests.request("GET", url_bank, headers=headers, data=data)
                 elif (switch):
                   if (switch):
                     if test == True or test == "true":
@@ -185,7 +183,6 @@ class Client:
                     else:
                         test = "FALSE"
 
-                    #Encriptamos el enpruebas
                     aes = AESCipher(private_key,self.IV)
                     enpruebas=aes.encrypt(test)
                     addData = {
@@ -206,54 +203,56 @@ class Client:
 
             elif (method == "POST"):
                 if pse == True: 
-                 if (switch):
-                    if test == True or test == "true":
-                        test = "TRUE"
-                    else:
-                        test = "FALSE"
-
+                  
                     aes = AESCipher(private_key, self.IV)
-                    enpruebas = aes.encrypt(test)
-                    if cashdata:
-                        encryptData = data
-                    else:
-                        encryptData = aes.encryptArray(data)
 
-                    addData = {
-                        'public_key': api_key,
-                        'i': base64.b64encode(self.IV.encode('ascii')),
-                        'enpruebas': enpruebas,
-                        'lenguaje': self.LANGUAGE,
-                        'p': ''
-                    }
-                    enddata = {}
-                    enddata.update(encryptData)
-                    enddata.update(addData)
-                    for key, value in enddata.items():
-                        if isinstance(value, bytes):
-                            enddata[key] = value.decode('utf-8')
-                    data = enddata
-                    payload = json.dumps(data)
-                    response = requests.post(self.build_url(url), data=payload, auth=(api_key, ''), headers=headers)
+                    data["extras_epayco"] = {"extra5": "P43"}  
 
+                    if switch:
+                     
+                        if isinstance(test, bool) or (isinstance(test, str) and test.lower() in ["true", "false"]):
+                            test = "TRUE" if str(test).lower() == "true" else "FALSE"
 
+                        data_to_encrypt = data.copy()
+                        extras_epayco = data_to_encrypt.pop("extras_epayco", None)
+                        factura = data_to_encrypt.pop("factura", None)
+
+                        encryptData = aes.encryptArray(data_to_encrypt)
+
+                        if factura:
+                            encryptData["factura"] = factura
+                        if extras_epayco:
+                            encryptData["extras_epayco"] = {"extra5": aes.encrypt(extras_epayco["extra5"]).decode('utf-8')}
+
+                        addData = {
+                            'public_key': api_key,
+                            'i': base64.b64encode(self.IV.encode('ascii')).decode('utf-8'),
+                            'enpruebas': aes.encrypt(test).decode('utf-8'),
+                            'lenguaje': self.LANGUAGE,
+                            'p': ''
+                        }
+
+                        enddata = {**encryptData, **addData}
+                        payload = json.dumps(enddata)
+                        response = requests.post(self.build_url(url), data=payload, headers=headers)
+                        return response.json()
                 else:
                  for key, value in data.items():
                     if isinstance(value, bytes):
                         data[key] = value.decode('utf-8')
                
-               
-                data["extras_epayco"] =  {"extra5":"P43"}
-                # data["extras_epayco"] = json.dumps({"extra5":"P43"})
-             
-                if (switch):
-                    if test == True or test == "true":
-                        test= "TRUE"
+                if "extras_epayco" not in data or not isinstance(data["extras_epayco"], dict):
+                    data["extras_epayco"] = {"extra5": "P43"}
+                else:
+                    data["extras_epayco"]["extra5"] = "P43"
+
+                if switch:
+                    if test is True or str(test).lower() == "true":
+                        test = "TRUE"
                     else:
-                        test= "FALSE"
+                        test = "FALSE"
                     addData = {
                         'public_key': api_key,
-                        #'i': base64.b64encode(self.IV.encode('ascii')),
                         'enpruebas': test,
                         'lenguaje': self.LANGUAGE,
                         'p': ''
@@ -261,25 +260,21 @@ class Client:
                     enddata = {}
                     enddata.update(data)
                     enddata.update(addData)
-                    data=enddata
-                    payload = json.dumps(data)
-                    #response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-                    response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
-                  
+                    payload = json.dumps(enddata)
+                    response = requests.post(self.build_url(url), data=payload, headers=headers)
+                    return response.json()
                 else:
-                    #Agregamos la llave publica
-                    if(dt):
-                        data=json.dumps(data)
-                        response = requests.request("POST", self.build_url(url),headers=headers, json=data)
-                    else:
+                   if dt:
+                        payload = json.dumps(data)
+                        response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
+                   else:
                         enddata = {}
                         data.update({'test': test})
                         enddata.update(data)
-                        data = enddata
-                        payload = json.dumps(data)
-                        # response = requests.post(self.build_url(url), params=data, headers=headers)
+                        payload = json.dumps(enddata)
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
-                        
+
+                   
             elif (method == "PATCH"):
                 response = requests.request(
                     method,
