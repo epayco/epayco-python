@@ -44,7 +44,6 @@ class AESCipher:
         aux = {}
         for key, value in data.items():
             if key == "extras_epayco" and isinstance(value, dict) and "extra5" in value:
-                # 🔒 Encriptamos SOLO el valor de extra5
                 aux[key] = {"extra5": self.encrypt(value["extra5"]).decode('utf-8')}
             else:
                 aux[key] = self.encrypt(value).decode('utf-8')
@@ -125,11 +124,6 @@ class NoRebuildAuthSession(Session):
 
 class Client:
 
-
-    # BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
-    # BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
-    # ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
-    # BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
     BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://eks-subscription-api-lumen-service.epayco.io"
     BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://eks-rest-pagos-service.epayco.io"
     ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
@@ -180,8 +174,8 @@ class Client:
             if (method == "GET"):
                 if(apify):
                    # response=requests.get(self.build_url(url), data={},headers=headers)
-                   url_with_test = f"{self.build_url(url)}?test={str(test).lower()}"
-                   response = requests.request("GET", url_with_test, headers=headers, data=data)
+                   url_bank = f"{self.build_url(url)}?test={str(test).lower()}"
+                   response = requests.request("GET", url_bank, headers=headers, data=data)
                 elif (switch):
                   if (switch):
                     if test == True or test == "true":
@@ -189,7 +183,6 @@ class Client:
                     else:
                         test = "FALSE"
 
-                    #Encriptamos el enpruebas
                     aes = AESCipher(private_key,self.IV)
                     enpruebas=aes.encrypt(test)
                     addData = {
@@ -210,26 +203,22 @@ class Client:
 
             elif (method == "POST"):
                 if pse == True: 
-                    print("Entrando a pse")
+                  
                     aes = AESCipher(private_key, self.IV)
 
-                    # 🚨 Aquí agregas los extras_epayco y lo encriptas
-                    data["extras_epayco"] = {"extra5": "P43"}  # primero en plano
+                    data["extras_epayco"] = {"extra5": "P43"}  
 
-                    # Si usas switch → encriptamos los campos
                     if switch:
-                        # Normaliza el valor de test
+                     
                         if isinstance(test, bool) or (isinstance(test, str) and test.lower() in ["true", "false"]):
                             test = "TRUE" if str(test).lower() == "true" else "FALSE"
 
-                        # Encriptar todo menos factura y extras_epayco
                         data_to_encrypt = data.copy()
                         extras_epayco = data_to_encrypt.pop("extras_epayco", None)
                         factura = data_to_encrypt.pop("factura", None)
 
                         encryptData = aes.encryptArray(data_to_encrypt)
 
-                        # Reinsertar los campos especiales
                         if factura:
                             encryptData["factura"] = factura
                         if extras_epayco:
@@ -243,11 +232,9 @@ class Client:
                             'p': ''
                         }
 
-                        # Unimos todo
                         enddata = {**encryptData, **addData}
                         payload = json.dumps(enddata)
                         response = requests.post(self.build_url(url), data=payload, headers=headers)
-                        print("Respuesta completa de restpagos:", response.text)
                         return response.json()
                 else:
                  for key, value in data.items():
@@ -274,7 +261,6 @@ class Client:
                     enddata.update(data)
                     enddata.update(addData)
                     payload = json.dumps(enddata)
-                    print("Payload restpagos 3:", payload)
                     response = requests.post(self.build_url(url), data=payload, headers=headers)
                     return response.json()
                 else:
@@ -286,8 +272,6 @@ class Client:
                         data.update({'test': test})
                         enddata.update(data)
                         payload = json.dumps(enddata)
-                        print(self.build_url(url))
-                        print("Payload restpagos 5:", payload)
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
 
                    
