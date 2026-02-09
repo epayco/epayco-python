@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 import json
 load_dotenv()
 
-# No verificar el certifcado para los request
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 BS = 16
@@ -44,7 +44,7 @@ class AESCipher:
         aux = {}
         for key, value in data.items():
             if key == "extras_epayco" and isinstance(value, dict) and "extra5" in value:
-                # 🔒 Encriptamos SOLO el valor de extra5
+            
                 aux[key] = {"extra5": self.encrypt(value["extra5"]).decode('utf-8')}
             else:
                 aux[key] = self.encrypt(value).decode('utf-8')
@@ -102,7 +102,7 @@ class Auth:
             payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
         
-        # Check if response is empty or not successful
+
         if not response.text or response.status_code != 200:
             print(f"Error: Response from authentication endpoint")
             print(f"Status code: {response.status_code}")
@@ -225,7 +225,7 @@ class Client:
                     aes = AESCipher(private_key, self.IV)
 
                
-                    data["extras_epayco"] = {"extra5": "P43"}  # primero en plano
+                    data["extras_epayco"] = {"extra5": "P43"} 
 
                
                     if switch:
@@ -292,7 +292,7 @@ class Client:
                         data.update({'test': test})
                         enddata.update(data)
                         payload = json.dumps(enddata)
-                        print(self.build_url(url))
+                   
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
 
                    
