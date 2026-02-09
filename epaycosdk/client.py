@@ -101,8 +101,23 @@ class Auth:
             headers["Authorization"] = "Basic {token}".format(token=token)
             payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
+        
+        # Check if response is empty or not successful
+        if not response.text or response.status_code != 200:
+            print(f"Error: Response from authentication endpoint")
+            print(f"Status code: {response.status_code}")
+            print(f"Response text: {response.text}")
+            print(f"Response headers: {response.headers}")
+            raise Exception(f"Authentication failed with status code: {response.status_code}")
+        
         data=response.text.encode('utf8')
-        json_data=json.loads(data)
+        try:
+            json_data=json.loads(data)
+        except json.JSONDecodeError as e:
+            print(f"Error: Could not parse JSON response from authentication")
+            print(f"Response text: {repr(response.text)}")
+            print(f"Error: {e}")
+            raise
         if apify:
             if 'token' not in json_data:
                 print("Error: 'token' not found in authentication response:", json_data)
@@ -126,14 +141,10 @@ class NoRebuildAuthSession(Session):
 class Client:
 
 
-    # BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
-    # BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
-    # ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
-    # BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
-    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://eks-subscription-api-lumen-service.epayco.io"
-    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://eks-rest-pagos-service.epayco.io"
+    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
     ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
-    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://eks-apify-service.epayco.io"
+    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
     IV = "0000000000000000"
     LANGUAGE = "python"
     SWITCH= False
@@ -189,7 +200,7 @@ class Client:
                     else:
                         test = "FALSE"
 
-                    #Encriptamos el enpruebas
+                 
                     aes = AESCipher(private_key,self.IV)
                     enpruebas=aes.encrypt(test)
                     addData = {
@@ -213,23 +224,22 @@ class Client:
                     print("Entrando a pse")
                     aes = AESCipher(private_key, self.IV)
 
-                    # 🚨 Aquí agregas los extras_epayco y lo encriptas
+               
                     data["extras_epayco"] = {"extra5": "P43"}  # primero en plano
 
-                    # Si usas switch → encriptamos los campos
+               
                     if switch:
-                        # Normaliza el valor de test
+                  
                         if isinstance(test, bool) or (isinstance(test, str) and test.lower() in ["true", "false"]):
                             test = "TRUE" if str(test).lower() == "true" else "FALSE"
 
-                        # Encriptar todo menos factura y extras_epayco
                         data_to_encrypt = data.copy()
                         extras_epayco = data_to_encrypt.pop("extras_epayco", None)
                         factura = data_to_encrypt.pop("factura", None)
 
                         encryptData = aes.encryptArray(data_to_encrypt)
 
-                        # Reinsertar los campos especiales
+                       
                         if factura:
                             encryptData["factura"] = factura
                         if extras_epayco:
@@ -242,12 +252,9 @@ class Client:
                             'lenguaje': self.LANGUAGE,
                             'p': ''
                         }
-
-                        # Unimos todo
                         enddata = {**encryptData, **addData}
                         payload = json.dumps(enddata)
                         response = requests.post(self.build_url(url), data=payload, headers=headers)
-                        print("Respuesta completa de restpagos:", response.text)
                         return response.json()
                 else:
                  for key, value in data.items():
@@ -274,7 +281,6 @@ class Client:
                     enddata.update(data)
                     enddata.update(addData)
                     payload = json.dumps(enddata)
-                    print("Payload restpagos 3:", payload)
                     response = requests.post(self.build_url(url), data=payload, headers=headers)
                     return response.json()
                 else:
@@ -287,7 +293,6 @@ class Client:
                         enddata.update(data)
                         payload = json.dumps(enddata)
                         print(self.build_url(url))
-                        print("Payload restpagos 5:", payload)
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
 
                    
