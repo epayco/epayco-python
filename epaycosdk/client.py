@@ -6,6 +6,7 @@ import base64
 import hashlib
 import requests
 import epaycosdk.errors as errors
+from Crypto.Cipher import AES
 import os
 import sys
 import traceback
@@ -17,7 +18,7 @@ from dotenv import load_dotenv
 import json
 load_dotenv()
 
-# No verificar el certifcado para los request
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 BS = 16
@@ -27,6 +28,28 @@ unpad = lambda s : s[0:-(s[-1])]
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
 EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
+
+class AESCipher:
+    def __init__(self, key, iv):
+        self.key = key
+        self.iv = iv    
+
+    def encrypt(self, row):
+        raw = pad(row).encode("utf8")
+        cipher = AES.new(self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
+        enc = cipher.encrypt(raw)
+        return base64.b64encode(enc)
+
+    def encryptArray(self, data):
+        aux = {}
+        for key, value in data.items():
+            if key == "extras_epayco" and isinstance(value, dict) and "extra5" in value:
+            
+                aux[key] = {"extra5": self.encrypt(value["extra5"]).decode('utf-8')}
+            else:
+                aux[key] = self.encrypt(value).decode('utf-8')
+        return aux
+
 
 
 class Util():
@@ -78,8 +101,23 @@ class Auth:
             headers["Authorization"] = "Basic {token}".format(token=token)
             payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
+        
+
+        if not response.text or response.status_code != 200:
+            print(f"Error: Response from authentication endpoint")
+            print(f"Status code: {response.status_code}")
+            print(f"Response text: {response.text}")
+            print(f"Response headers: {response.headers}")
+            raise Exception(f"Authentication failed with status code: {response.status_code}")
+        
         data=response.text.encode('utf8')
-        json_data=json.loads(data)
+        try:
+            json_data=json.loads(data)
+        except json.JSONDecodeError as e:
+            print(f"Error: Could not parse JSON response from authentication")
+            print(f"Response text: {repr(response.text)}")
+            print(f"Error: {e}")
+            raise
         if apify:
             if 'token' not in json_data:
                 print("Error: 'token' not found in authentication response:", json_data)
@@ -101,6 +139,7 @@ class NoRebuildAuthSession(Session):
         """
 
 class Client:
+
 
     BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
     BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
@@ -128,7 +167,7 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False, pse =False ):
         auth = Auth(api_key, private_key)
         authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
         token_bearer = 'Bearer ' +authentication
@@ -151,17 +190,24 @@ class Client:
         try:
             if (method == "GET"):
                 if(apify):
-                    response=requests.get(self.build_url(url), data={},headers=headers)
+                   # response=requests.get(self.build_url(url), data={},headers=headers)
+                   url_with_test = f"{self.build_url(url)}?test={str(test).lower()}"
+                   response = requests.request("GET", url_with_test, headers=headers, data=data)
                 elif (switch):
+                  if (switch):
                     if test == True or test == "true":
                         test = "TRUE"
                     else:
                         test = "FALSE"
+
+                 
+                    aes = AESCipher(private_key,self.IV)
+                    enpruebas=aes.encrypt(test)
                     addData = {
                         'public_key': api_key,
-                        #'i': base64.b64encode(self.IV.encode('ascii')),
+                        'i': base64.b64encode(self.IV.encode('ascii')),
                         'lenguaje': self.LANGUAGE,
-                        'enpruebas': test,
+                        'enpruebas': enpruebas,
                     }
                     url_params = addData
                     url_params.update(data)
@@ -174,22 +220,52 @@ class Client:
                     response = requests.get(self.build_url(url), headers=headers, data = payload, params=url_params)
 
             elif (method == "POST"):
-                for key, value in data.items():
+                if pse == True: 
+                    aes = AESCipher(private_key, self.IV)
+                    data["extras_epayco"] = {"extra5": "P43"}  
+                    if switch:
+                  
+                        if isinstance(test, bool) or (isinstance(test, str) and test.lower() in ["true", "false"]):
+                            test = "TRUE" if str(test).lower() == "true" else "FALSE"
+
+                        data_to_encrypt = data.copy()
+                        extras_epayco = data_to_encrypt.pop("extras_epayco", None)
+                  
+
+                        encryptData = aes.encryptArray(data_to_encrypt)
+
+                       
+                        if extras_epayco:
+                            encryptData["extras_epayco"] = {"extra5": aes.encrypt(extras_epayco["extra5"]).decode('utf-8')}
+
+                        addData = {
+                            'public_key': api_key,
+                            'i': base64.b64encode(self.IV.encode('ascii')).decode('utf-8'),
+                            'enpruebas': aes.encrypt(test).decode('utf-8'),
+                            'lenguaje': self.LANGUAGE,
+                            'p': ''
+                        }
+                        enddata = {**encryptData, **addData}
+                        payload = json.dumps(enddata)
+                        response = requests.post(self.build_url(url), data=payload, headers=headers)
+                        return response.json()
+                else:
+                 for key, value in data.items():
                     if isinstance(value, bytes):
                         data[key] = value.decode('utf-8')
                
-               
-                data["extras_epayco"] =  {"extra5":"P43"}
-                # data["extras_epayco"] = json.dumps({"extra5":"P43"})
-             
-                if (switch):
-                    if test == True or test == "true":
-                        test= "TRUE"
+                if "extras_epayco" not in data or not isinstance(data["extras_epayco"], dict):
+                    data["extras_epayco"] = {"extra5": "P43"}
+                else:
+                    data["extras_epayco"]["extra5"] = "P43"
+
+                if switch:
+                    if test is True or str(test).lower() == "true":
+                        test = "TRUE"
                     else:
-                        test= "FALSE"
+                        test = "FALSE"
                     addData = {
                         'public_key': api_key,
-                        #'i': base64.b64encode(self.IV.encode('ascii')),
                         'enpruebas': test,
                         'lenguaje': self.LANGUAGE,
                         'p': ''
@@ -197,25 +273,22 @@ class Client:
                     enddata = {}
                     enddata.update(data)
                     enddata.update(addData)
-                    data=enddata
-                    payload = json.dumps(data)
-                    #response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
-                    response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
-                  
+                    payload = json.dumps(enddata)
+                    response = requests.post(self.build_url(url), data=payload, headers=headers)
+                    return response.json()
                 else:
-                    #Agregamos la llave publica
-                    if(dt):
-                        data=json.dumps(data)
-                        response = requests.request("POST", self.build_url(url),headers=headers, json=data)
-                    else:
+                   if dt:
+                        payload = json.dumps(data)
+                        response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
+                   else:
                         enddata = {}
                         data.update({'test': test})
                         enddata.update(data)
-                        data = enddata
-                        payload = json.dumps(data)
-                        # response = requests.post(self.build_url(url), params=data, headers=headers)
+                        payload = json.dumps(enddata)
+                   
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
-                        
+
+                   
             elif (method == "PATCH"):
                 response = requests.request(
                     method,
@@ -241,14 +314,13 @@ class Client:
         if (response.status_code >= 200 and response.status_code <= 206):
             if (method == "DELETE"):
                 return response.status_code == 204 or response.status_code == 200
-
             return response.json()
-
-       
+    
         if (response.status_code >= 400 or response.status_code <= 500):
             try:
                 if (response.status_code == 400):
                     raise errors.ErrorException(lang, 103)
+                
 
                 if (response.status_code == 401):
                     raise errors.ErrorException(lang, 104)
@@ -263,12 +335,21 @@ class Client:
                     raise errors.ErrorException(lang, 107)
                 
             except errors.ErrorException as e:
-              errorExcepcion = (json.dumps({
+                try:
+                    response_json = response.json()
+                except ValueError:
+                    response_json = {}
+
+                response_json = json.dumps(response_json) 
+                errorExcepcion = json.dumps({
                     "status": False,
                     "message": str(e),
-                    "data": 0
-                }))
-              return errorExcepcion
+                    "data": response_json,
+                    'errors': {'http_code': response.status_code}
+                })
+
+                response_final = json.loads(errorExcepcion)
+                return response_final
             
     def build_url(self,endpoint):
             """

@@ -21,7 +21,7 @@ If you want to clone the repository, point it directly into our GitHub project:
 
     $ git clone https://github.com/epayco/epayco-python.git
 
-Install from Packages (Linux), Python = 3.7
+Install from Packages (Linux), Python >= 3.7
 -------------------------------------------
 
 Run the file `setup.py`:
@@ -36,22 +36,22 @@ Install the ePayco module:
 
     $ pip install epaycosdk
 
-Install from Packages (Windows), Python = 3.7
+Install from Packages (Windows), Python >= 3.7
 ---------------------------------------------
 
 Run the file `setup.py`:
 
 .. code-block:: bash
 
-    $ pip install setuptools
-    $ python setup.py install
+     pip install setuptools
+     pip install . 
+     pip install pycryptodome 
 
 Install the ePayco module:
 
 .. code-block:: bash
 
     $ pip install epaycosdk
-
 
 Usage
 ####
@@ -75,8 +75,8 @@ Create Token
 
     credit_info = {
       "card[number]": "4575623182290326",
-      "card[exp_year]": "2025",
-      "card[exp_month]": "19",
+      "card[exp_year]": "2027",
+      "card[exp_month]": "12",
       "card[cvc]": "123",
       "hasCvv": True #// hasCvv: validar codigo de seguridad en la transacción
       }
@@ -311,29 +311,30 @@ List Banks
 
 Create
 *****
+
 .. code-block:: python
 
     pse_info = {
-        "bank": "1007",
-        "invoice": "147205",
+        "bank": "1077",
+        "invoice": "pruebas34574",
         "description": "pay test",
         "value": "116000",
-        "tax": float("16000"),
-        "tax_base": float("100000"),
+        "tax": "16000",
+        "tax_base": "100000",
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
-        "docNumber": "10000000",
-        "name": "testing",
-        "last_name": "PAYCO",
-        "email": "no-responder@payco.co",
+        "docNumber": "1234567890",
+        "name": "Testing",
+        "last_name": "User",
+        "city": "Bogota",
+        "email": "test@gmail.com",
         "country": "CO",
-        "cellPhone": "3010000001",
-        "ip": "190.000.000.000",  # This is the client's IP, it is required,
+        "phone": "3203602526",
+        "ip": "192.168.1.100",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "metodoconfirmacion": "GET",
-        # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
         "extra1": "",
         "extra2": "",
         "extra3": "",
@@ -344,6 +345,7 @@ Create
     }
 
     pse = objepayco.bank.create(pse_info)
+   
 
 Retrieve
 *****
@@ -366,18 +368,17 @@ Split payment
     import json
 
     pse_info = {
-    #Other customary parameters...
-      "splitpayment":"true",
-       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "01",
-       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-       "split_primary_receiver_fee":"80000"
-       "split_receivers": json.dumps([
-                {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
-                {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
+        "splitpayment": "true",
+        "split_app_id": "P_CUST_ID_CLIENTE APPLICATION",
+        "split_merchant_id": "P_CUST_ID_CLIENTE COMMERCE",
+        "split_type": "01",
+        "split_primary_receiver": "P_CUST_ID_CLIENTE APPLICATION",
+        "split_primary_receiver_fee": "80000",
+        "split_receivers": json.dumps([
+            {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"},
+            {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"}
         ])
-     }
+    }
 
     pse_split = objepayco.bank.create(pse_info)
     
@@ -387,12 +388,13 @@ Cash
 
 Create
 *****
+
 .. code-block:: python
 
-        # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
-        cash_info = {
-        "paymentMethod" :"EF",
-        "invoice": "1472050778",
+    # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
+    cash_info = {
+        "paymentMethod": "EF",
+        "invoice": "14720507jj9",
         "description": "pay test",
         "value": "116000",
         "tax": "16000",
@@ -404,9 +406,10 @@ Create
         "name": "testing",
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
-        "cellPhone": "3010000001",
-        "end_date": "2025-02-05",
-        "ip": "190.000.000.000",  # This is the client's IP, it is required,
+        "cellPhone": "3000000001",
+        "phone": "3010000001",
+        "end_date": "2025-09-20",
+        "ip": "192.168.1.100",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "metodoconfirmacion": "GET",
@@ -421,21 +424,19 @@ Create
     }
 
     cash = objepayco.cash.create(cash_info)
+  
 
 Retrieve
 *****
+
 .. code-block:: python
 
-    cash = epayco.cash.get("ref_payco")
-
-
+    cash =  objepayco.cash.get("ref_payco")
 
 Split Payments
 *****
 
 Previous requirements: https://docs.epayco.co/tools/split-payment
-
-
 
 Split payment:
 ****
@@ -444,22 +445,23 @@ use the following attributes in case you need to do a dispersion with one or mul
 
 .. code-block:: python
 
-    import json 
+    import json
 
     payment_info = {
-    #Other customary parameters...
-        "splitpayment":"true",
-        "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-        "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-        "split_type" : "02",
-        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-        "split_primary_receiver_fee":"0",
-        "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":json.dumps([
-                {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
-                {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ]) #campo obligatorio sí se envía split_rule
-        }
+        "splitpayment": "true",
+        "split_app_id": "P_CUST_ID_CLIENTE APPLICATION",
+        "split_merchant_id": "P_CUST_ID_CLIENTE COMMERCE",
+        "split_type": "02",
+        "split_primary_receiver": "P_CUST_ID_CLIENTE APPLICATION",
+        "split_primary_receiver_fee": "0",
+        "split_rule": "multiple",
+        "split_receivers": json.dumps([
+            {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"},
+            {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"}
+        ])
+    }
+
+    pay_split = objepayco.charge.create(payment_info)
 
      cash_info_split = objepayco.cash.create('efecty',cash_info)
 
@@ -472,48 +474,49 @@ Payment
 
 Create
 *****
+
 .. code-block:: python
 
     payment_info = {
-      "token_card": "token_card",
-      "customer_id": "customer_id",
-      "doc_type": "CC",
-      "doc_number": "1000000",
-      "name": "John",
-      "last_name": "Doe",
-      "email": "example@email.com",
-      "bill": "OR-1234",
-      "description": "Test Payment",
-      "country": "CO",
-      "city": "bogota",
-      "value": "116000",
-      "tax": "16000",
-      "tax_base": "100000",
-      "currency": "COP",
-      "dues": "12",
-      "ip":"190.000.000.000",  #This is the client's IP, it is required
-      "url_response": "https://tudominio.com/respuesta.php",
-      "url_confirmation": "https://tudominio.com/confirmacion.php",
-      "method_confirmation": "GET",
-      "use_default_card_customer":True, # if the user wants to be charged with the card that the customer currently has as default = true
-      #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
-      "extra1": "",
-      "extra2": "",
-      "extra3": "",
-      "extra4": "",
-      "extra5": "",  
-      "extra6": "",
-      "extra7": ""
+        "token_card": "token_card",
+        "customer_id": "customer_id",
+        "doc_type": "CC",
+        "doc_number": "1000000",
+        "name": "John",
+        "last_name": "Doe",
+        "email": "example@email.com",
+        "bill": "OR-123767612",
+        "description": "Test Payment",
+        "country": "CO",
+        "city": "bogota",
+        "value": "116000",
+        "tax": "16000",
+        "tax_base": "100000",
+        "currency": "COP",
+        "dues": "12",
+        "ip":"190.000.000.000",  #This is the client's IP, it is required
+        "url_response": "https://tudominio.com/respuesta.php",
+        "url_confirmation": "https://tudominio.com/confirmacion.php",
+        "method_confirmation": "GET",
+        "use_default_card_customer": True,
+        "extra1": "",
+        "extra2": "",
+        "extra3": "",
+        "extra4": "",
+        "extra5": "",
+        "extra6": "",
+        "extra7": ""
     }
 
     pay = objepayco.charge.create(payment_info)
+
 
 Retrieve
 *****
 
 .. code-block:: python
 
-    pay = epayco.charge.get("ref_payco")
+    pay = objepayco.charge.get("ref_payco")
 
 
 Split Payments
@@ -558,31 +561,31 @@ Create
 .. code-block:: python
 
     payment_info = {
-        "doc_type": "CC",
-        "document": "1053814580414720",
+        "doc_type": "CE",
+        "document": "786630",
         "name": "Testing",
         "last_name": "PAYCO",
         "email": "exmaple@epayco.co",
         "ind_country": "57",
-        "phone": "314853222200033",
+        "phone": "3003689000",
         "country": "CO",
         "city": "bogota",
         "address": "Calle de prueba",
         "ip": "189.176.0.1",
         "currency": "COP",
         "description": "ejemplo de transaccion con daviplata",
-        "value": "100",
+        "value": "50000",
         "tax": "0",
-        "ico": "0"
+        "ico": "0",
         "tax_base": "0",
         "method_confirmation": "GET",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
-        "extra1": "",      
+        "extra1": "",
         "extra2": "",
         "extra3": "",
         "extra4": "",
-        "extra5": "",  
+        "extra5": "",
         "extra6": "",
         "extra7": "",
         "extra8": "",
@@ -591,6 +594,7 @@ Create
     }
 
     daviplata = objepayco.daviplata.create(payment_info)
+ 
 
 confirm transaccion
 *****
@@ -602,8 +606,8 @@ confirm transaccion
         "id_session_token": "45081749", # It is obtained from the create response
         "otp": "2580"
     }
-   
-    daviplata = objepayco.daviplata.confirm(payment_info)
+
+    daviplata = objepayco.daviplata.confirm(confirm)
 
 Safetypay
 ####
@@ -615,16 +619,16 @@ Create
 
     payment_info = {
         "cash": "1",
-        "end_date": "2021-08-05",
+        "end_date": "2025-09-20",
         "doc_type": "CC",
-        "document"": "123456789",
+        "document": "1234567899",
         "name": "Jhon",
         "last_name": "doe",
         "email": "jhon.doe@yopmail.com",
         "ind_country": "57",
         "phone": "3003003434",
         "country": "CO",
-        "invoice": "fac-01", # opcional
+        "invoice": "fac-0555",
         "city": "N/A",
         "address": "N/A",
         "ip": "192.168.100.100",
@@ -637,11 +641,11 @@ Create
         "url_confirmation": "https://tudominio.com/respuesta.php",
         "url_response": "https://tudominio.com/respuesta.php",
         "method_confirmation": "POST",
-        "extra1": "",      
+        "extra1": "",
         "extra2": "",
         "extra3": "",
         "extra4": "",
-        "extra5": "",  
+        "extra5": "",
         "extra6": "",
         "extra7": "",
         "extra8": "",
@@ -650,3 +654,5 @@ Create
     }
 
     safetypay = objepayco.safetypay.create(payment_info)
+
+ 

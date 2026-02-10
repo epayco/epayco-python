@@ -436,16 +436,17 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "payment/process/pse",
+            "/pagos/debitos.json",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
-            True,
+            True,                
             self.epayco.lang,
+            False,           
+            False, 
             False,
-            False,
-            True
+            True                 
         )
 
     """
