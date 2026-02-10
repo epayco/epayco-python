@@ -21,7 +21,7 @@ If you want to clone the repository, point it directly into our GitHub project:
 
     $ git clone https://github.com/epayco/epayco-python.git
 
-Install from Packages (Linux), Python = 3.7
+Install from Packages (Linux), Python >= 3.7
 -------------------------------------------
 
 Run the file `setup.py`:
@@ -36,7 +36,7 @@ Install the ePayco module:
 
     $ pip install epaycosdk
 
-Install from Packages (Windows), Python = 3.7
+Install from Packages (Windows), Python >= 3.7
 ---------------------------------------------
 
 Run the file `setup.py`:
@@ -44,7 +44,7 @@ Run the file `setup.py`:
 .. code-block:: bash
 
      pip install setuptools
-     python setup.py install
+     pip install . 
      pip install pycryptodome 
 
 Install the ePayco module:
@@ -314,37 +314,37 @@ Create
 .. code-block:: python
 
     pse_info = {
-        "banco": "1007",
-        "factura": "147205J9o",
-        "descripcion": "pay test",
-        "valor": "116000",
-        "iva": "16000",
-        "baseiva": "100000",
-        "moneda": "COP",
-        "tipo_persona": "0",
-        "tipo_doc": "CC",
-        "docNumber": "10000000",
-        "nombres": "testing",
-        "apellidos": "PAYCO",
-        "email": "no-responder@payco.co",
-        "pais": "CO",
-        "cellPhone": "30035678909",
-        "phone": "5715555555",
-        "ip": "190.85.78.50",  # Usa una IP pública válida
-        "url_respuesta": "https://tudominio.com/respuesta.php",
-        "url_confirmacion": "https://tudominio.com/confirmacion.php",
-        "metodoconfirmacion": "GET",
-        "extra1": "",
-        "extra2": "",
-        "extra3": "",
-        "extra4": "",
-        "extra5": "",
-        "extra6": "",
-        "extra7": ""
-    }
+    "bank": "1077",
+    "invoice": "pruebas34574",  
+    "description": "pay test",
+    "value": "116000",
+    "tax": "16000",
+    "tax_base": "100000",
+    "currency": "COP",
+    "type_person": "0",
+    "doc_type": "CC",
+    "docNumber": "1234567890",  
+    "name": "Testing",
+    "last_name": "User",
+    "city": "Bogota",
+    "email": "test@gmail.com", 
+    "country": "CO",
+    "phone": "3203602526",  
+    "ip": "192.168.1.100",
+    "url_response": "https://tudominio.com/respuesta.php",
+    "url_confirmation": "https://tudominio.com/confirmacion.php",
+    "metodoconfirmacion": "GET",
+    "extra1": "",
+    "extra2": "",
+    "extra3": "",
+    "extra4": "",
+    "extra5": "",
+    "extra6": "",
+    "extra7": ""
+}
 
-    pse = objepayco.bank.create(pse_info)
-    print(pse)
+pse = objepayco.bank.create(pse_info)
+print(pse)
 
 Retrieve
 *****
