@@ -345,7 +345,7 @@ Create
     }
 
     pse = objepayco.bank.create(pse_info)
-    print(pse)
+   
 
 Retrieve
 *****
@@ -423,7 +423,7 @@ Create
     }
 
     cash = objepayco.cash.create(cash_info)
-    print(cash)
+  
 
 Retrieve
 *****
@@ -508,7 +508,7 @@ Create
     }
 
     pay = objepayco.charge.create(payment_info)
-    print(pay)
+
 
 Retrieve
 *****
@@ -593,7 +593,7 @@ Create
     }
 
     daviplata = objepayco.daviplata.create(payment_info)
-    print(daviplata)
+ 
 
 confirm transaccion
 *****
@@ -653,7 +653,7 @@ Create
     }
 
     safetypay = objepayco.safetypay.create(payment_info)
-    print(safetypay)
+ 
 
     safetypay = objepayco.safetypay.create(payment_info)
-    print(safetypay)
+ 
