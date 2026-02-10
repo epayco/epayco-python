@@ -75,7 +75,7 @@ Create Token
 
     credit_info = {
       "card[number]": "4575623182290326",
-      "card[exp_year]": "2025",
+      "card[exp_year]": "2027",
       "card[exp_month]": "12",
       "card[cvc]": "123",
       "hasCvv": True #// hasCvv: validar codigo de seguridad en la transacción
@@ -406,6 +406,7 @@ Create
         "name": "testing",
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
+        "cellPhone": "3000000001",
         "phone": "3010000001",
         "end_date": "2025-09-20",
         "ip": "192.168.1.100",
@@ -430,7 +431,7 @@ Retrieve
 
 .. code-block:: python
 
-    cash = epayco.cash.get("ref_payco")
+    cash =  objepayco.cash.get("ref_payco")
 
 Split Payments
 *****
@@ -480,7 +481,7 @@ Create
         "token_card": "token_card",
         "customer_id": "customer_id",
         "doc_type": "CC",
-        "docNumber": "1000000",
+        "doc_number": "1000000",
         "name": "John",
         "last_name": "Doe",
         "email": "example@email.com",
@@ -515,7 +516,7 @@ Retrieve
 
 .. code-block:: python
 
-    pay = epayco.charge.get("ref_payco")
+    pay = objepayco.charge.get("ref_payco")
 
 
 Split Payments
@@ -653,7 +654,5 @@ Create
     }
 
     safetypay = objepayco.safetypay.create(payment_info)
- 
 
-    safetypay = objepayco.safetypay.create(payment_info)
  
