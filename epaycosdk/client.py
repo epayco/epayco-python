@@ -221,13 +221,8 @@ class Client:
 
             elif (method == "POST"):
                 if pse == True: 
-                  ##  print("Entrando a pse")
                     aes = AESCipher(private_key, self.IV)
-
-               
-                    data["extras_epayco"] = {"extra5": "P43"} 
-
-               
+                    data["extras_epayco"] = {"extra5": "P43"}  
                     if switch:
                   
                         if isinstance(test, bool) or (isinstance(test, str) and test.lower() in ["true", "false"]):
