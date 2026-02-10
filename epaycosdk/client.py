@@ -221,7 +221,7 @@ class Client:
 
             elif (method == "POST"):
                 if pse == True: 
-                    print("Entrando a pse")
+                  ##  print("Entrando a pse")
                     aes = AESCipher(private_key, self.IV)
 
                
@@ -235,13 +235,11 @@ class Client:
 
                         data_to_encrypt = data.copy()
                         extras_epayco = data_to_encrypt.pop("extras_epayco", None)
-                        factura = data_to_encrypt.pop("factura", None)
+                  
 
                         encryptData = aes.encryptArray(data_to_encrypt)
 
                        
-                        if factura:
-                            encryptData["factura"] = factura
                         if extras_epayco:
                             encryptData["extras_epayco"] = {"extra5": aes.encrypt(extras_epayco["extra5"]).decode('utf-8')}
 
