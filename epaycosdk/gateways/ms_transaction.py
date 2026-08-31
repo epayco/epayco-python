@@ -1,54 +1,8 @@
 import requests
 
+from epaycosdk.client import Auth
 from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
-
-
-class MsTransactionAuth:
-    """Login OAuth2 (client_credentials) contra el servicio de autenticación
-    de ms-transaction -- confirmado manualmente en QA (Fase 0, SDK-1032),
-    distinto del login JWT que usa el resto del SDK (epaycosdk.client.Auth).
-
-    Forma real (no documentada en ningún ticket, descubierta por prueba y
-    error contra el endpoint):
-    - application/x-www-form-urlencoded, no JSON.
-    - grant_type=client_credentials, client_id/client_secret = las mismas
-      apiKey/privateKey del comercio que ya usa el resto del SDK (NO las
-      credenciales P_CUST_ID/P_KEY -- esas dan 400 invalid_client en este
-      endpoint).
-    - scope es obligatorio -- sin él, el servicio responde 503 con un
-      error interno (server_error) en vez de un 400 claro. No estaba en
-      ningún ejemplo de los tickets.
-    """
-
-    LOGIN_URL = "https://eks-ms-authentication-service.epayco.io/api/v1/oauth/login"
-    SCOPE = "ms-transaction"
-
-    def token(self, epayco):
-        response = requests.post(
-            self.LOGIN_URL,
-            headers={"Content-Type": "application/x-www-form-urlencoded"},
-            data={
-                "grant_type": "client_credentials",
-                "client_id": epayco.api_key,
-                "client_secret": epayco.private_key,
-                "scope": self.SCOPE,
-            },
-        )
-        data = response.json()
-        access_token = (data.get("access_token") or {}).get("accessToken")
-        if not access_token:
-            # accessToken puede venir en false (no una excepción HTTP) cuando
-            # el comercio existe pero no tiene el scope "ms-transaction"
-            # autorizado todavía -- visto en QA con credenciales de prueba
-            # reales. Falla explícito en vez de mandar "Bearer False".
-            raise Exception(
-                "No se pudo obtener token de ms-transaction (scope '{}'). "
-                "El comercio puede no tener este scope autorizado todavía "
-                "-- confirmar con backend antes de reintentar. Respuesta: "
-                "{}".format(self.SCOPE, data)
-            )
-        return access_token
 
 
 class MsTransactionGateway(PaymentGateway):
@@ -68,6 +22,16 @@ class MsTransactionGateway(PaymentGateway):
     # arma "paymentMethod": "SP"/"PSE"/etc.), no en la URL.
     TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
 
+    # Auth: el mismo login "apify" que el SDK ya usa para Daviplata/
+    # Safetypay/pseBank (epaycosdk.client.Auth -- Basic base64(public:
+    # private) -> POST /login -> {"token": "<JWT>"}), contra este host.
+    # No es un mecanismo nuevo: se reusa la clase Auth existente tal cual,
+    # sin tocarla, solo apuntándola aquí. Confirmado real (SDK-1032, Fase
+    # 0) -- se probaron antes v1 (/oauth/login, scope obligatorio, sin
+    # documentar en ningún ticket) y v2 (/auth/login, JSON) del servicio de
+    # autenticación nuevo; este login "apify" es el que corresponde usar.
+    AUTH_HOST = "https://eks-apify-service.epayco.io"
+
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),  # SDK-1032
         # "pse": (...),        (SDK-1029)
@@ -77,7 +41,7 @@ class MsTransactionGateway(PaymentGateway):
 
     def __init__(self, epayco, auth=None):
         self.epayco = epayco
-        self._auth = auth or MsTransactionAuth()
+        self._auth = auth or Auth(epayco.api_key, epayco.private_key)
 
     def create(self, payment_method, options):
         request_mapper, response_mapper = self._MAPPERS[payment_method]
@@ -99,7 +63,10 @@ class MsTransactionGateway(PaymentGateway):
         return response_mapper.to_sdk_response(response.json())
 
     def _headers(self):
-        token = self._auth.token(self.epayco)
+        # Auth.make(BASE_URL, BASE_URL_APIFY, apify) solo usa BASE_URL_APIFY
+        # cuando apify=True -- se pasa AUTH_HOST en ambos por firma, el
+        # primero se ignora.
+        token = self._auth.make(self.AUTH_HOST, self.AUTH_HOST, True)
         return {
             "Accept": "application/json",
             "Content-Type": "application/json",
