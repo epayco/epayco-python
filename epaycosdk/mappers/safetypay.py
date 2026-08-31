@@ -1,3 +1,6 @@
+from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
+
+
 class SafetypayRequestMapper:
 
     _ISO_ALPHA3 = {"CO": "COL"}
@@ -48,6 +51,9 @@ class SafetypayResponseMapper:
     _LAST_ACTION = "Envio Transaction Safetypay"
 
     def to_sdk_response(self, ms_response, options=None):
+        if is_validation_error(ms_response):
+            return legacy_validation_error_response(ms_response)
+
         options = options or {}
         success = bool(ms_response.get("success"))
         data = ms_response.get("data") or {}
