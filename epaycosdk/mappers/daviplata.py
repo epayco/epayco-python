@@ -1,3 +1,6 @@
+from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
+
+
 class DaviplataRequestMapper:
 
     def to_ms_transaction(self, options, epayco):
@@ -39,6 +42,9 @@ class DaviplataResponseMapper:
     _LAST_ACTION = "Envio Transaction Daviplata"
 
     def to_sdk_response(self, ms_response, options=None):
+        if is_validation_error(ms_response):
+            return legacy_validation_error_response(ms_response)
+
         options = options or {}
         success = bool(ms_response.get("success"))
         data = ms_response.get("data") or {}
