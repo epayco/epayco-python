@@ -1,6 +1,17 @@
 class SafetypayRequestMapper:
     """options público de hoy (ver Safetypay.create en README.rst) -> body
-    anidado que pide ms-transaction (SDK-1032)."""
+    anidado que pide ms-transaction (SDK-1032).
+
+    Forma confirmada contra la documentación real del endpoint
+    (eks-ms-transaction-service, GET /docs?api-docs.json -- ver
+    SPPaymentMethodData): requiere paymentMethodData.country en ISO
+    alfa-3 (ej. "COL"), distinto del campo raíz "country" que usa
+    alfa-2 ("CO") como el resto del SDK. Confirmado por QA (SDK-1032):
+    el backend rechazaba "CO" ahí con "El campo country no es válido".
+    """
+
+    # Alfa-2 -> alfa-3, solo lo que el SDK ya soporta como default hoy.
+    _ISO_ALPHA3 = {"CO": "COL"}
 
     def to_ms_transaction(self, options, epayco):
         options = options or {}
@@ -35,7 +46,9 @@ class SafetypayRequestMapper:
                 "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
             },
             "paymentMethodData": {
-                "country": options.get("country", "CO"),
+                "country": self._ISO_ALPHA3.get(
+                    options.get("country", "CO"), options.get("country", "CO")
+                ),
                 # options["cash"] (flag legado "pago en efectivo Safetypay")
                 # no tiene equivalente claro en el esquema nuevo -- no se
                 # mapea hasta confirmar con backend (Fase 0).
