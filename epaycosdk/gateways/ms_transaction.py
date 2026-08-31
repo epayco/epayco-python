@@ -1,6 +1,7 @@
 import requests
 
 from epaycosdk.gateways.base import PaymentGateway
+from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 
 
 class MsTransactionGateway(PaymentGateway):
@@ -15,10 +16,12 @@ class MsTransactionGateway(PaymentGateway):
 
     BASE_URL = "https://apiflow.epayco.io/payment/api"
 
-    _MAPPERS = {}
-    # Cada HU agrega su entrada aquí, p. ej.:
-    # from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
-    # _MAPPERS["safetypay"] = (SafetypayRequestMapper(), SafetypayResponseMapper())
+    _MAPPERS = {
+        "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),  # SDK-1032
+        # "pse": (...),        (SDK-1029)
+        # "cash": (...),       (SDK-1030)
+        # "daviplata": (...),  (SDK-1031)
+    }
 
     def __init__(self, epayco):
         self.epayco = epayco
