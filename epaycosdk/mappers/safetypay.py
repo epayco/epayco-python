@@ -58,12 +58,99 @@ class SafetypayRequestMapper:
 
 
 class SafetypayResponseMapper:
-    """Respuesta de ms-transaction -> misma forma que el SDK devuelve hoy.
+    """Respuesta de ms-transaction -> misma forma que Safetypay.create()
+    devuelve hoy en el flujo legado (apify).
 
-    Placeholder deliberado: el ticket SDK-1032 no trae un ejemplo de
-    respuesta real (éxito ni error). El mapeo de abajo NO se implementa
-    hasta cerrar la Fase 0 del documento técnico -- esto solo fija dónde
-    vive esa traducción para no bloquear el resto del gateway."""
+    Mapeo confirmado comparando en QA (SDK-1032) las dos respuestas reales,
+    misma transacción de prueba, contra los backends reales:
 
-    def to_sdk_response(self, ms_response):
-        return ms_response  # TODO(Fase 0): mapear campo a campo
+    Legado (apify)                       ms-transaction
+    ------------------------------------ -----------------------------------
+    success                              success
+    titleResponse ("Ok")                 -- (no existe; se fija "Ok" si
+                                             success, si no se usa message)
+    textResponse                         message
+    lastAction                           -- (no existe; se fija el mismo
+                                             string estático que ya usaba
+                                             el flujo legado para Safetypay)
+    data.refPayco                        data.refPayco
+    data.invoice                         data.invoice
+    data.description                     data.description
+    data.value                           data.amount
+    data.tax / .ico / .taxBase           data.tax / .ico / .taxBase
+    data.currency                        data.currency
+    data.status                          data.status
+    data.response                        data.response
+    data.codResponse                     data.responseCode
+    data.codError                        -- (no existe; "" como en legado)
+    data.autorization (sic, typo legado) data.authorization
+    data.receipt                         data.receipt
+    data.date                            data.date
+    data.country                         -- (viene enmascarado en
+                                             payerInformation; se toma del
+                                             options original, no de la
+                                             respuesta)
+    data.city                            data.city
+    data.urlBank                         data.paymentProviderData.urlPayment
+                                          (ausente/"" si el estado no lo trae
+                                          -- visto en pruebas: solo viene
+                                          poblado cuando status = Pendiente)
+    data.transactionId                   data.refPayco
+    data.ticketId                        data.receipt
+    data.extras                          data.extras
+    data.extras_epayco["extra5"]         data.extrasEpayco["extra5"]
+                                          (el valor del marcador interno
+                                          difiere -- P43 legado vs P51
+                                          ms-transaction -- es un código de
+                                          producto del backend, no algo que
+                                          el consumidor del SDK dependa de
+                                          leer; se pasa tal cual sin
+                                          "corregirlo" a P43)
+
+    Nota: options se recibe además de ms_response porque "country" no
+    viene sin enmascarar en ningún campo de la respuesta nueva.
+    """
+
+    _LAST_ACTION = "Envio Transaction Safetypay"
+
+    def to_sdk_response(self, ms_response, options=None):
+        options = options or {}
+        success = bool(ms_response.get("success"))
+        data = ms_response.get("data") or {}
+        provider_data = data.get("paymentProviderData") or {}
+        # paymentProviderData puede venir como [] (lista vacía) cuando no
+        # aplica en el estado actual de la transacción -- normalizado a {}.
+        if isinstance(provider_data, list):
+            provider_data = {}
+        extras_epayco_new = data.get("extrasEpayco") or {}
+
+        return {
+            "success": success,
+            "titleResponse": "Ok" if success else ms_response.get("message"),
+            "textResponse": ms_response.get("message"),
+            "lastAction": self._LAST_ACTION,
+            "data": {
+                "refPayco": data.get("refPayco"),
+                "invoice": data.get("invoice"),
+                "description": data.get("description"),
+                "value": data.get("amount"),
+                "tax": data.get("tax"),
+                "ico": data.get("ico"),
+                "taxBase": data.get("taxBase"),
+                "currency": data.get("currency"),
+                "status": data.get("status"),
+                "response": data.get("response"),
+                "codResponse": data.get("responseCode", ""),
+                "codError": "",
+                "autorization": data.get("authorization"),
+                "receipt": data.get("receipt"),
+                "date": data.get("date"),
+                "country": options.get("country", "CO"),
+                "city": data.get("city"),
+                "urlBank": provider_data.get("urlPayment", ""),
+                "transactionId": data.get("refPayco"),
+                "ticketId": data.get("receipt"),
+                "extras": data.get("extras") or {},
+                "extras_epayco": {"extra5": extras_epayco_new.get("extra5", "")},
+            },
+        }

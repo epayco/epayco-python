@@ -62,7 +62,10 @@ class MsTransactionGateway(PaymentGateway):
             json=self._encrypt(body),
             headers=self._headers(),
         )
-        return response_mapper.to_sdk_response(response.json())
+        # options se pasa al mapper porque algunos campos legados (p. ej.
+        # "country") no vienen sin enmascarar en la respuesta de
+        # ms-transaction -- ver SafetypayResponseMapper.
+        return response_mapper.to_sdk_response(response.json(), options)
 
     def get(self, payment_method, ref_payco):
         _, response_mapper = self._MAPPERS[payment_method]
@@ -77,17 +80,34 @@ class MsTransactionGateway(PaymentGateway):
         """Cifra cada campo del body (menos publicKey) con AES-256-CBC,
         IV fijo -- misma mecánica que epaycosdk.client.AESCipher.encryptArray
         para el flujo legado "switch", generalizada para valores no-string
-        (dict/list/bool/número), que ese método original no soporta."""
+        (dict/list/bool/número), que ese método original no soporta.
+
+        Los objetos anidados (p. ej. paymentMethodData) se cifran campo a
+        campo, no como un bloque JSON -- confirmado por QA (SDK-1032): el
+        backend rechaza "country"/"expirationDate" dentro de
+        paymentMethodData como "no válidos" cuando se manda el objeto
+        entero cifrado de una sola vez.
+        """
         aes = AESCipher(self.epayco.private_key, self.IV)
+
+        def encrypt_value(value):
+            if isinstance(value, dict):
+                return {k: encrypt_value(v) for k, v in value.items() if v is not None}
+            raw = value if isinstance(value, str) else json.dumps(value)
+            return aes.encrypt(raw).decode("utf-8")
+
         encrypted = {}
         for key, value in body.items():
             if key == "publicKey" or value is None:
                 if value is not None:
                     encrypted[key] = value
                 continue
-            raw = value if isinstance(value, str) else json.dumps(value)
-            encrypted[key] = aes.encrypt(raw).decode("utf-8")
+            encrypted[key] = encrypt_value(value)
         encrypted["i"] = base64.b64encode(self.IV.encode("ascii")).decode("utf-8")
+        # Obligatorio según la doc real del endpoint (confirmado por QA:
+        # "El campo language es obligatorio" sin él) -- no estaba en
+        # ningún ejemplo de los tickets originales.
+        encrypted["language"] = encrypt_value("python")
         return encrypted
 
     def _headers(self):
