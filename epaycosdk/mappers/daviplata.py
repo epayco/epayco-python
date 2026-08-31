@@ -70,10 +70,6 @@ class DaviplataResponseMapper:
                 "date": data.get("date"),
                 "country": options.get("country", "CO"),
                 "city": data.get("city"),
-                # Sin confirmar contra una respuesta legada real (el
-                # endpoint legado devolvió error para las credenciales de
-                # prueba disponibles): se infiere de la firma de
-                # Daviplata.confirm(), que ya recibe "id_session_token".
                 "id_session_token": provider_data.get("paymentSessionId"),
                 "transactionId": data.get("refPayco"),
                 "ticketId": data.get("receipt"),
