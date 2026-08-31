@@ -5,6 +5,7 @@ import requests
 
 from epaycosdk.client import AESCipher, Auth
 from epaycosdk.gateways.base import PaymentGateway
+from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 
 
 class MsTransactionGateway(PaymentGateway):
@@ -13,7 +14,9 @@ class MsTransactionGateway(PaymentGateway):
     AUTH_HOST = "https://eks-apify-service.epayco.io"
     IV = "0000000000000000"
 
-    _MAPPERS = {}
+    _MAPPERS = {
+        "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
+    }
 
     def __init__(self, epayco, auth=None):
         self.epayco = epayco
