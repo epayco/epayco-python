@@ -1,6 +1,9 @@
+import base64
+import json
+
 import requests
 
-from epaycosdk.client import Auth
+from epaycosdk.client import AESCipher, Auth
 from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 
@@ -32,6 +35,14 @@ class MsTransactionGateway(PaymentGateway):
     # autenticación nuevo; este login "apify" es el que corresponde usar.
     AUTH_HOST = "https://eks-apify-service.epayco.io"
 
+    # Cifrado: la documentación real del endpoint (Swagger de
+    # eks-ms-transaction-service, GET /docs?api-docs.json) confirma que
+    # TODO el body debe ir cifrado AES-256-CBC excepto "publicKey", con el
+    # mismo IV fijo que ya usa epaycosdk.client.AESCipher para el flujo
+    # legado "switch" (el ejemplo del campo "i" en el spec decodifica
+    # exactamente a este IV). Se reusa esa clase tal cual, sin tocarla.
+    IV = "0000000000000000"
+
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),  # SDK-1032
         # "pse": (...),        (SDK-1029)
@@ -48,7 +59,7 @@ class MsTransactionGateway(PaymentGateway):
         body = request_mapper.to_ms_transaction(options, self.epayco)
         response = requests.post(
             self.TRANSACTIONS_URL,
-            json=body,
+            json=self._encrypt(body),
             headers=self._headers(),
         )
         return response_mapper.to_sdk_response(response.json())
@@ -61,6 +72,23 @@ class MsTransactionGateway(PaymentGateway):
             headers=self._headers(),
         )
         return response_mapper.to_sdk_response(response.json())
+
+    def _encrypt(self, body):
+        """Cifra cada campo del body (menos publicKey) con AES-256-CBC,
+        IV fijo -- misma mecánica que epaycosdk.client.AESCipher.encryptArray
+        para el flujo legado "switch", generalizada para valores no-string
+        (dict/list/bool/número), que ese método original no soporta."""
+        aes = AESCipher(self.epayco.private_key, self.IV)
+        encrypted = {}
+        for key, value in body.items():
+            if key == "publicKey" or value is None:
+                if value is not None:
+                    encrypted[key] = value
+                continue
+            raw = value if isinstance(value, str) else json.dumps(value)
+            encrypted[key] = aes.encrypt(raw).decode("utf-8")
+        encrypted["i"] = base64.b64encode(self.IV.encode("ascii")).decode("utf-8")
+        return encrypted
 
     def _headers(self):
         # Auth.make(BASE_URL, BASE_URL_APIFY, apify) solo usa BASE_URL_APIFY
