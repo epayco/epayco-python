@@ -14,7 +14,12 @@ class MsTransactionGateway(PaymentGateway):
     detalle de la arquitectura.
     """
 
-    BASE_URL = "https://apiflow.epayco.io/payment/api"
+    # Endpoint único para los cuatro medios de pago -- confirmado por QA
+    # (SDK-1032): la ruta por medio de pago (/v1/<medio>/transactions, la
+    # que mostraban los curls de los tickets) devuelve 404 real contra
+    # ms-transaction. El medio de pago va en el body (request_mapper ya
+    # arma "paymentMethod": "SP"/"PSE"/etc.), no en la URL.
+    TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
 
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),  # SDK-1032
@@ -30,7 +35,7 @@ class MsTransactionGateway(PaymentGateway):
         request_mapper, response_mapper = self._MAPPERS[payment_method]
         body = request_mapper.to_ms_transaction(options, self.epayco)
         response = requests.post(
-            "{}/v1/{}/transactions".format(self.BASE_URL, payment_method),
+            self.TRANSACTIONS_URL,
             json=body,
             headers=self._headers(),
         )
@@ -39,7 +44,7 @@ class MsTransactionGateway(PaymentGateway):
     def get(self, payment_method, ref_payco):
         _, response_mapper = self._MAPPERS[payment_method]
         response = requests.get(
-            "{}/v1/{}/transactions".format(self.BASE_URL, payment_method),
+            self.TRANSACTIONS_URL,
             params={"ref_payco": ref_payco},
             headers=self._headers(),
         )
