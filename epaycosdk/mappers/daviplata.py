@@ -39,7 +39,7 @@ class DaviplataRequestMapper:
 
 class DaviplataResponseMapper:
 
-    _LAST_ACTION = "Envio Transaction Daviplata"
+    _LAST_ACTION = "Registrar pago en daviplata"
 
     def to_sdk_response(self, ms_response, options=None):
         if is_validation_error(ms_response):
@@ -52,33 +52,45 @@ class DaviplataResponseMapper:
         if isinstance(provider_data, list):
             provider_data = {}
         extras_epayco_new = data.get("extrasEpayco") or {}
+        amount = data.get("amount")
 
         return {
             "success": success,
-            "titleResponse": "Ok" if success else ms_response.get("message"),
+            "titleResponse": "SUCCESS" if success else "Error",
             "textResponse": ms_response.get("message"),
             "lastAction": self._LAST_ACTION,
             "data": {
                 "refPayco": data.get("refPayco"),
                 "invoice": data.get("invoice"),
                 "description": data.get("description"),
-                "value": data.get("amount"),
+                "value": amount,
                 "tax": data.get("tax"),
                 "ico": data.get("ico"),
                 "taxBase": data.get("taxBase"),
+                "netoValue": amount,
                 "currency": data.get("currency"),
-                "status": data.get("status"),
+                "bank": "DaviPlata",
+                "estatus": data.get("status"),
                 "response": data.get("response"),
-                "codResponse": data.get("responseCode", ""),
-                "codError": "",
                 "autorization": data.get("authorization"),
                 "receipt": data.get("receipt"),
                 "date": data.get("date"),
-                "country": options.get("country", "CO"),
+                "franchise": data.get("franchise"),
+                "codResponse": data.get("responseCode"),
+                "codError": "",
+                "ip": data.get("ip"),
+                "testMode": data.get("testMode"),
+                "docType": options.get("doc_type"),
+                "document": options.get("document"),
+                "name": options.get("name"),
+                "lastName": options.get("last_name"),
+                "email": options.get("email"),
                 "city": data.get("city"),
-                "id_session_token": provider_data.get("paymentSessionId"),
-                "transactionId": data.get("refPayco"),
-                "ticketId": data.get("receipt"),
+                "address": options.get("address"),
+                "indCountry": options.get("ind_country", ""),
+                "idSessionToken": provider_data.get("paymentSessionId"),
+                "tokenExpirationDate": provider_data.get("paymentSessionExpirationDate"),
+                "daviplataOtpLab": None,
                 "extras": data.get("extras") or {},
                 "extras_epayco": {"extra5": extras_epayco_new.get("extra5", "")},
             },
