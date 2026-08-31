@@ -525,21 +525,14 @@ class Cash(Resource):
 
 class Daviplata(Resource):
     def create(self, options = None):
-        return self.request(
-            "POST",
-            "payment/process/daviplata",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            False,
-            self.epayco.lang,
-            False,
-            False,
-            True # apify
-        )
+        gateway = self.epayco.gateway_for("daviplata")
+        return gateway.create("daviplata", options)
 
-    def confirm(self, options = None):  
+    def get(self, uid):
+        gateway = self.epayco.gateway_for("daviplata")
+        return gateway.get("daviplata", uid)
+
+    def confirm(self, options = None):
         return self.request(
             "POST",
             "payment/confirm/daviplata",

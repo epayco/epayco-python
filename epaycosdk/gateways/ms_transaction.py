@@ -6,6 +6,7 @@ import requests
 from epaycosdk.client import AESCipher, Auth
 from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
+from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataResponseMapper
 
 
 class MsTransactionGateway(PaymentGateway):
@@ -16,6 +17,7 @@ class MsTransactionGateway(PaymentGateway):
 
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
+        "daviplata": (DaviplataRequestMapper(), DaviplataResponseMapper()),
     }
 
     def __init__(self, epayco, auth=None):
