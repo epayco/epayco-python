@@ -557,16 +557,9 @@ class Daviplata(Resource):
 
 class Safetypay(Resource):
     def create(self, options = None):
-        # SDK-1032: enruta por el selector (Strategy) -- misma firma, mismo
-        # tipo de retorno. Legado por defecto; ms-transaction solo si el
-        # comercio activó "safetypay" en msTransactionMethods.
         gateway = self.epayco.gateway_for("safetypay")
         return gateway.create("safetypay", options)
 
     def get(self, uid):
-        """Consulta de transacción por ref_payco -- capacidad nueva
-        (SDK-1032, no existía antes en el SDK). Solo disponible cuando
-        "safetypay" está en msTransactionMethods: el flujo legado no la
-        soporta y LegacyGateway.get() lo señala con un error explícito."""
         gateway = self.epayco.gateway_for("safetypay")
         return gateway.get("safetypay", uid)

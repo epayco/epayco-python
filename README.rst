@@ -68,6 +68,28 @@ Usage
 
     objepayco=epayco.Epayco(options)
 
+Medios de pago sobre ms-transaction (opcional)
+####
+
+Por defecto, todos los medios de pago usan el flujo actual del SDK. Un comercio puede activar,
+uno por uno, el backend nuevo ms-transaction agregando ``msTransactionMethods`` a ``options``:
+
+.. code-block:: python
+
+    options = {
+        "apiKey": apiKey,
+        "privateKey": privateKey,
+        "test": test,
+        "lenguage": lenguage,
+        "msTransactionMethods": ["safetypay"],
+    }
+
+    objepayco = epayco.Epayco(options)
+
+Los métodos públicos del SDK (``objepayco.safetypay.create(...)``, etc.) no cambian de firma ni
+de forma de respuesta según el flujo usado. Medios de pago soportados hoy sobre ms-transaction:
+``safetypay``.
+
 Create Token
 ####
 
@@ -655,4 +677,13 @@ Create
 
     safetypay = objepayco.safetypay.create(payment_info)
 
- 
+Retrieve
+******
+
+Disponible solo cuando ``safetypay`` está activo en ``msTransactionMethods`` (ver
+"Medios de pago sobre ms-transaction"). El flujo legado no tiene consulta de transacciones
+Safetypay por ``ref_payco``.
+
+.. code-block:: python
+
+    safetypay = objepayco.safetypay.get("ref_payco")
