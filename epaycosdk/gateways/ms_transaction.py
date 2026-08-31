@@ -4,6 +4,53 @@ from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 
 
+class MsTransactionAuth:
+    """Login OAuth2 (client_credentials) contra el servicio de autenticación
+    de ms-transaction -- confirmado manualmente en QA (Fase 0, SDK-1032),
+    distinto del login JWT que usa el resto del SDK (epaycosdk.client.Auth).
+
+    Forma real (no documentada en ningún ticket, descubierta por prueba y
+    error contra el endpoint):
+    - application/x-www-form-urlencoded, no JSON.
+    - grant_type=client_credentials, client_id/client_secret = las mismas
+      apiKey/privateKey del comercio que ya usa el resto del SDK (NO las
+      credenciales P_CUST_ID/P_KEY -- esas dan 400 invalid_client en este
+      endpoint).
+    - scope es obligatorio -- sin él, el servicio responde 503 con un
+      error interno (server_error) en vez de un 400 claro. No estaba en
+      ningún ejemplo de los tickets.
+    """
+
+    LOGIN_URL = "https://eks-ms-authentication-service.epayco.io/api/v1/oauth/login"
+    SCOPE = "ms-transaction"
+
+    def token(self, epayco):
+        response = requests.post(
+            self.LOGIN_URL,
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            data={
+                "grant_type": "client_credentials",
+                "client_id": epayco.api_key,
+                "client_secret": epayco.private_key,
+                "scope": self.SCOPE,
+            },
+        )
+        data = response.json()
+        access_token = (data.get("access_token") or {}).get("accessToken")
+        if not access_token:
+            # accessToken puede venir en false (no una excepción HTTP) cuando
+            # el comercio existe pero no tiene el scope "ms-transaction"
+            # autorizado todavía -- visto en QA con credenciales de prueba
+            # reales. Falla explícito en vez de mandar "Bearer False".
+            raise Exception(
+                "No se pudo obtener token de ms-transaction (scope '{}'). "
+                "El comercio puede no tener este scope autorizado todavía "
+                "-- confirmar con backend antes de reintentar. Respuesta: "
+                "{}".format(self.SCOPE, data)
+            )
+        return access_token
+
+
 class MsTransactionGateway(PaymentGateway):
     """Adaptador hacia el backend nuevo (ms-transaction). Traduce en ambas
     direcciones vía un RequestMapper/ResponseMapper por medio de pago, para
@@ -28,8 +75,9 @@ class MsTransactionGateway(PaymentGateway):
         # "daviplata": (...),  (SDK-1031)
     }
 
-    def __init__(self, epayco):
+    def __init__(self, epayco, auth=None):
         self.epayco = epayco
+        self._auth = auth or MsTransactionAuth()
 
     def create(self, payment_method, options):
         request_mapper, response_mapper = self._MAPPERS[payment_method]
@@ -51,9 +99,9 @@ class MsTransactionGateway(PaymentGateway):
         return response_mapper.to_sdk_response(response.json())
 
     def _headers(self):
-        # Placeholder -- el mecanismo real de auth es una pregunta abierta
-        # de Fase 0 (documento técnico SDK-1029..1032). Los tickets solo
-        # muestran un header X-CSRF-TOKEN con un valor literal idéntico en
-        # los cuatro curls, que no parece una credencial reutilizable
-        # servidor-a-servidor. No se hardcodea aquí hasta confirmarlo.
-        return {"Accept": "application/json", "Content-Type": "application/json"}
+        token = self._auth.token(self.epayco)
+        return {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer {}".format(token),
+        }
