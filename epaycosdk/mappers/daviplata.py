@@ -36,5 +36,48 @@ class DaviplataRequestMapper:
 
 class DaviplataResponseMapper:
 
+    _LAST_ACTION = "Envio Transaction Daviplata"
+
     def to_sdk_response(self, ms_response, options=None):
-        return ms_response
+        options = options or {}
+        success = bool(ms_response.get("success"))
+        data = ms_response.get("data") or {}
+        provider_data = data.get("paymentProviderData") or {}
+        if isinstance(provider_data, list):
+            provider_data = {}
+        extras_epayco_new = data.get("extrasEpayco") or {}
+
+        return {
+            "success": success,
+            "titleResponse": "Ok" if success else ms_response.get("message"),
+            "textResponse": ms_response.get("message"),
+            "lastAction": self._LAST_ACTION,
+            "data": {
+                "refPayco": data.get("refPayco"),
+                "invoice": data.get("invoice"),
+                "description": data.get("description"),
+                "value": data.get("amount"),
+                "tax": data.get("tax"),
+                "ico": data.get("ico"),
+                "taxBase": data.get("taxBase"),
+                "currency": data.get("currency"),
+                "status": data.get("status"),
+                "response": data.get("response"),
+                "codResponse": data.get("responseCode", ""),
+                "codError": "",
+                "autorization": data.get("authorization"),
+                "receipt": data.get("receipt"),
+                "date": data.get("date"),
+                "country": options.get("country", "CO"),
+                "city": data.get("city"),
+                # Sin confirmar contra una respuesta legada real (el
+                # endpoint legado devolvió error para las credenciales de
+                # prueba disponibles): se infiere de la firma de
+                # Daviplata.confirm(), que ya recibe "id_session_token".
+                "id_session_token": provider_data.get("paymentSessionId"),
+                "transactionId": data.get("refPayco"),
+                "ticketId": data.get("receipt"),
+                "extras": data.get("extras") or {},
+                "extras_epayco": {"extra5": extras_epayco_new.get("extra5", "")},
+            },
+        }
