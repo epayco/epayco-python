@@ -32,7 +32,7 @@ class MsTransactionGateway(PaymentGateway):
             json=self._encrypt(body),
             headers=self._headers(),
         )
-        return response_mapper.to_sdk_response(response.json(), options)
+        return response_mapper.to_sdk_response(self._parse(response), options)
 
     def get(self, payment_method, ref_payco):
         _, response_mapper = self._MAPPERS[payment_method]
@@ -41,7 +41,17 @@ class MsTransactionGateway(PaymentGateway):
             params={"ref_payco": ref_payco},
             headers=self._headers(),
         )
-        return response_mapper.to_sdk_response(response.json())
+        return response_mapper.to_sdk_response(self._parse(response))
+
+    def _parse(self, response):
+        try:
+            return response.json()
+        except ValueError:
+            raise Exception(
+                "ms-transaction respondió HTTP {} sin JSON válido: {}".format(
+                    response.status_code, response.text[:300]
+                )
+            )
 
     def _encrypt(self, body):
         aes = AESCipher(self.epayco.private_key, self.IV)
