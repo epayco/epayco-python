@@ -24,7 +24,7 @@ class SafetypayRequestMapper:
             "amount": options.get("value"),
             "tax": options.get("tax", 0),
             "ico": options.get("ico", 0),
-            "baseTax": options.get("tax_base", 0),
+            "taxBase": options.get("tax_base", 0),
             "currency": options.get("currency", "COP"),
             "uniqueTransactionPerBill": options.get("unique_transaction_per_bill", False),
             "testMode": epayco.test,
