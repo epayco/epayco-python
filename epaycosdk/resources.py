@@ -557,16 +557,9 @@ class Daviplata(Resource):
 
 class Safetypay(Resource):
     def create(self, options = None):
-        return self.request(
-            "POST",
-            "payment/process/safetypay",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            False,
-            self.epayco.lang,
-            False,
-            False,
-            True
-        )
+        gateway = self.epayco.gateway_for("safetypay")
+        return gateway.create("safetypay", options)
+
+    def get(self, uid):
+        gateway = self.epayco.gateway_for("safetypay")
+        return gateway.get("safetypay", uid)

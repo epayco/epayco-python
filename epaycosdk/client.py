@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 import json
 load_dotenv()
 
-# No verificar el certifcado para los request
+
 ssl._create_default_https_context = ssl._create_unverified_context
 
 BS = 16
@@ -100,8 +100,23 @@ class Auth:
             headers["Authorization"] = "Basic {token}".format(token=token)
             payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
+        
+
+        if not response.text or response.status_code != 200:
+            print(f"Error: Response from authentication endpoint")
+            print(f"Status code: {response.status_code}")
+            print(f"Response text: {response.text}")
+            print(f"Response headers: {response.headers}")
+            raise Exception(f"Authentication failed with status code: {response.status_code}")
+        
         data=response.text.encode('utf8')
-        json_data=json.loads(data)
+        try:
+            json_data=json.loads(data)
+        except json.JSONDecodeError as e:
+            print(f"Error: Could not parse JSON response from authentication")
+            print(f"Response text: {repr(response.text)}")
+            print(f"Error: {e}")
+            raise
         if apify:
             if 'token' not in json_data:
                 print("Error: 'token' not found in authentication response:", json_data)
@@ -215,7 +230,7 @@ class Client:
 
                         data_to_encrypt = data.copy()
                         extras_epayco = data_to_encrypt.pop("extras_epayco", None)
-                        factura = data_to_encrypt.pop("factura", None)
+                  
 
                         encryptData = aes.encryptArray(data_to_encrypt)
 
