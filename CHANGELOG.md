@@ -2,6 +2,20 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [3.5.0] - 2026-08-31
+
+### Added
+- Migración de Daviplata al backend ms-transaction, activable de forma opcional y por comercio
+  con `msTransactionMethods` (mismo mecanismo que Safetypay).
+- `Daviplata.get(ref_payco)`: consulta de transacción, disponible solo cuando `daviplata` está en
+  `msTransactionMethods` (no existe en el flujo legado).
+- `epaycosdk.mappers.daviplata`.
+
+### Changed
+- `Daviplata.create(...)` mantiene su firma y forma de respuesta; internamente enruta al flujo
+  legado o a ms-transaction según la configuración del comercio.
+- `Daviplata.confirm(...)` no cambia: sigue siendo exclusivamente flujo legado.
+
 ## [3.4.0] - 2026-08-31
 
 ### Added
