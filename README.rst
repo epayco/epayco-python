@@ -484,7 +484,6 @@ Create
 
 Retrieve
 *****
-
 .. code-block:: python
 
     cash = objepayco.cash.get("ref_payco")
