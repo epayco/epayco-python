@@ -8,6 +8,7 @@ from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataResponseMapper
 from epaycosdk.mappers.pse import PseRequestMapper, PseResponseMapper
+from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 
 
 class MsTransactionGateway(PaymentGateway):
@@ -21,6 +22,7 @@ class MsTransactionGateway(PaymentGateway):
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
         "daviplata": (DaviplataRequestMapper(), DaviplataResponseMapper()),
         "pse": (PseRequestMapper(), PseResponseMapper()), 
+        "cash": (CashRequestMapper(), CashResponseMapper())
     }
 
     def __init__(self, epayco, auth=None):
@@ -62,29 +64,24 @@ class MsTransactionGateway(PaymentGateway):
     def get(self, payment_method, ref_payco):
         _, response_mapper = self._MAPPERS[payment_method]
 
-        url = self.TRANSACTIONS_URL
-        params = {
-            "ref_payco": ref_payco
-        }
+        url =f"{self.TRANSACTIONS_URL}/{ref_payco}"
         headers = self._headers()
 
         print("====================================")
         print("METHOD: GET")
         print("URL:", url)
-        print("PARAMS:", params)
+  
         print(
             "FULL URL:",
             requests.Request(
                 "GET",
-                url,
-                params=params
+                url
             ).prepare().url
         )
         print("====================================")
 
         response = requests.get(
             url,
-            params=params,
             headers=headers,
         )
 
