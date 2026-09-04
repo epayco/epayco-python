@@ -24,7 +24,7 @@ class Epayco:
         self.test = True if options["test"] else False
         self.lang = options["lenguage"]
 
-        self.ms_transaction_methods = set(options.get("msTransactionMethods", []))
+        self.legacy_methods = set(options.get("transactionMethods", []))
         self._legacy_gateway = LegacyGateway(self)
         self._ms_transaction_gateway = MsTransactionGateway(self)
 
@@ -39,6 +39,6 @@ class Epayco:
         self.daviplata = Daviplata(self)
 
     def gateway_for(self, payment_method):
-        if payment_method in self.ms_transaction_methods:
-            return self._ms_transaction_gateway
-        return self._legacy_gateway
+        if payment_method in self.legacy_methods:
+            return self._legacy_gateway
+        return self._ms_transaction_gateway

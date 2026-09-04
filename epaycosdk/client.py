@@ -44,7 +44,6 @@ class AESCipher:
         aux = {}
         for key, value in data.items():
             if key == "extras_epayco" and isinstance(value, dict) and "extra5" in value:
-            
                 aux[key] = {"extra5": self.encrypt(value["extra5"]).decode('utf-8')}
             else:
                 aux[key] = self.encrypt(value).decode('utf-8')
@@ -140,11 +139,10 @@ class NoRebuildAuthSession(Session):
 
 class Client:
 
-
-    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
-    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
+    BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://eks-subscription-api-lumen-service.epayco.io"
+    BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://eks-rest-pagos-service.epayco.io"
     ENTORNO = os.getenv("ENTORNO_SDK") if os.getenv("ENTORNO_SDK") else "/restpagos"
-    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://apify.epayco.co"
+    BASE_URL_APIFY = os.getenv("BASE_URL_APIFY") if os.getenv("BASE_URL_APIFY") else "https://eks-apify-service.epayco.io"
     IV = "0000000000000000"
     LANGUAGE = "python"
     SWITCH= False
@@ -191,8 +189,8 @@ class Client:
             if (method == "GET"):
                 if(apify):
                    # response=requests.get(self.build_url(url), data={},headers=headers)
-                   url_with_test = f"{self.build_url(url)}?test={str(test).lower()}"
-                   response = requests.request("GET", url_with_test, headers=headers, data=data)
+                   url_bank = f"{self.build_url(url)}?test={str(test).lower()}"
+                   response = requests.request("GET", url_bank, headers=headers, data=data)
                 elif (switch):
                   if (switch):
                     if test == True or test == "true":
@@ -200,7 +198,6 @@ class Client:
                     else:
                         test = "FALSE"
 
-                 
                     aes = AESCipher(private_key,self.IV)
                     enpruebas=aes.encrypt(test)
                     addData = {
@@ -221,10 +218,13 @@ class Client:
 
             elif (method == "POST"):
                 if pse == True: 
-                    aes = AESCipher(private_key, self.IV)
-                    data["extras_epayco"] = {"extra5": "P43"}  
-                    if switch:
                   
+                    aes = AESCipher(private_key, self.IV)
+
+                    data["extras_epayco"] = {"extra5": "P43"}  
+
+                    if switch:
+                     
                         if isinstance(test, bool) or (isinstance(test, str) and test.lower() in ["true", "false"]):
                             test = "TRUE" if str(test).lower() == "true" else "FALSE"
 
@@ -234,7 +234,8 @@ class Client:
 
                         encryptData = aes.encryptArray(data_to_encrypt)
 
-                       
+                        if factura:
+                            encryptData["factura"] = factura
                         if extras_epayco:
                             encryptData["extras_epayco"] = {"extra5": aes.encrypt(extras_epayco["extra5"]).decode('utf-8')}
 
@@ -245,6 +246,7 @@ class Client:
                             'lenguaje': self.LANGUAGE,
                             'p': ''
                         }
+
                         enddata = {**encryptData, **addData}
                         payload = json.dumps(enddata)
                         response = requests.post(self.build_url(url), data=payload, headers=headers)
@@ -285,7 +287,6 @@ class Client:
                         data.update({'test': test})
                         enddata.update(data)
                         payload = json.dumps(enddata)
-                   
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
 
                    

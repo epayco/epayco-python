@@ -24,22 +24,22 @@ If you want to clone the repository, point it directly into our GitHub project:
 Install from Packages (Linux), Python >= 3.7
 -------------------------------------------
 
-Run the file `setup.py`:
+1.  Install the ePayco module:
 
 .. code-block:: bash
 
-    $ sudo python3 setup.py install
+    pip install epaycosdk
 
-Install the ePayco module:
+2.  Run the `setup.py` file:
 
 .. code-block:: bash
 
-    $ pip install epaycosdk
+    sudo python3 setup.py install
 
 Install from Packages (Windows), Python >= 3.7
 ---------------------------------------------
 
-Run the file `setup.py`:
+1. Install the ePayco module:
 
 .. code-block:: bash
 
@@ -47,11 +47,25 @@ Run the file `setup.py`:
      pip install . 
      pip install pycryptodome 
 
-Install the ePayco module:
+
+2. Install setuptools (if not already installed):
 
 .. code-block:: bash
 
-    $ pip install epaycosdk
+    pip install setuptools
+
+3. Run the `setup.py` file:
+
+.. code-block:: bash
+
+    python setup.py install
+
+4. Install pycryptodome (required for encryption):
+
+.. code-block:: bash
+
+    pip install pycryptodome
+
 
 Usage
 ####
@@ -68,11 +82,12 @@ Usage
 
     objepayco=epayco.Epayco(options)
 
-Medios de pago sobre ms-transaction (opcional)
+Flujo legado (opcional)
 ####
 
-Por defecto, todos los medios de pago usan el flujo actual del SDK. Un comercio puede activar,
-uno por uno, el backend nuevo ms-transaction agregando ``msTransactionMethods`` a ``options``:
+Por defecto, Safetypay y Daviplata usan el backend nuevo ms-transaction. Un comercio puede
+mantener uno o varios medios de pago en el flujo legado agregando ``transactionMethods`` a
+``options``:
 
 .. code-block:: python
 
@@ -81,14 +96,14 @@ uno por uno, el backend nuevo ms-transaction agregando ``msTransactionMethods`` 
         "privateKey": privateKey,
         "test": test,
         "lenguage": lenguage,
-        "msTransactionMethods": ["safetypay"],
+        "transactionMethods": ["safetypay", "daviplata"],
     }
 
     objepayco = epayco.Epayco(options)
 
 Los métodos públicos del SDK (``objepayco.safetypay.create(...)``, etc.) no cambian de firma ni
 de forma de respuesta según el flujo usado. Medios de pago soportados hoy sobre ms-transaction:
-``safetypay``.
+``safetypay``, ``daviplata``.
 
 Create Token
 ####
@@ -104,6 +119,7 @@ Create Token
       }
 
     token=objepayco.token.create(credit_info)
+    print(token)
 
 Customers
 ####
@@ -126,12 +142,14 @@ Create
       }
 
     customer=objepayco.customer.create(customer_info)
+    print(customer)
 
 Retrieve
 ******
 .. code-block:: python
 
     customer=objepayco.customer.get("id_client")
+    print(customer)
 
 List
 ******
@@ -142,6 +160,7 @@ List
         "perPage": 5 #number of customers per page
     }
     customers = objepayco.customer.getlist(customer_info)
+    print(customers)
 
 Update
 ******
@@ -153,6 +172,7 @@ Update
     }
 
     customer =objepayco.customer.update(update_customer_info)
+    print(customer)
 
 Delete Token
 ******
@@ -165,6 +185,7 @@ Delete Token
     }
 
     customer =objepayco.customer.delete(delete_customer_info)
+    print(customer)
 
 
 
@@ -179,6 +200,7 @@ Add new token default to card existed
         "mask":"457562******0326"
     }
     customer=objepayco.customer.addDefaultCard(customer_info)
+    print(customer)
 
 
 Add new token to customer existed
@@ -190,6 +212,7 @@ Add new token to customer existed
         "customer_id":"id_client"
     }
     customer=objepayco.customer.addNewToken(customer_info)
+    print(customer)
 
 
 
@@ -227,6 +250,8 @@ Create
     }
 
     plan = objepayco.plan.create(plan_info)
+    id_plan=plan['data']['id_plan']
+    print(plan)
 
 
 Retrieve
@@ -234,18 +259,21 @@ Retrieve
 .. code-block:: python
 
     plan = objepayco.plan.get("coursereact")
+    print(plan)
 
 List
 ******
 .. code-block:: python
 
     planes = objepayco.plan.getlist()
+    print(planes)
 
 Remove
 ******
 .. code-block:: python
 
     plan = objepayco.plan.delete("coursereact")
+    print(plan)
 
 Upadate
 ******
@@ -267,6 +295,7 @@ Upadate
         #"afterPayment":"message after paying"
     }
     plan = objepayco.plan.update(id_plan, plan_info_update)
+    print(plan)
 
 Subscriptions
 ####
@@ -287,24 +316,28 @@ Create
     }
 
     sub=objepayco.subscriptions.create(subscription_info)
+    print(sub)
 
 Retrieve
 ******
 .. code-block:: python
 
     sub=objepayco.subscriptions.get("efPXtZ5r4nZRoPtjZ")
+    print(sub)
 
 List
 ******
 .. code-block:: python
 
     sub=objepayco.subscriptions.getlist()
+    print(sub)
 
 Cancel
 ******
 .. code-block:: python
 
     sub=objepayco.subscriptions.cancel("fayE66HxYbxWydaN8")
+    print(sub)
 
 Pay Subscription
 ******
@@ -321,6 +354,7 @@ Pay Subscription
     }
 
     sub = objepayco.subscriptions.charge(subscription_info)
+    print(sub)
 
 PSE
 ####
@@ -330,6 +364,7 @@ List Banks
 .. code-block:: python
 
     banks = objepayco.bank.pseBank()
+    print(banks)
 
 Create
 *****
@@ -374,6 +409,7 @@ Retrieve
 .. code-block:: python
 
     pse = objepayco.bank.pseTransaction("ticketId")
+    print(pse)
 
 Split Payments
 *****
@@ -403,6 +439,7 @@ Split payment
     }
 
     pse_split = objepayco.bank.create(pse_info)
+    print(pse_split)
     
 
 Cash
@@ -413,10 +450,10 @@ Create
 
 .. code-block:: python
 
-    # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
-    cash_info = {
-        "paymentMethod": "EF",
-        "invoice": "14720507jj9",
+        # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
+        cash_info = {
+        "paymentMethod" :"EF",
+        "invoice": "123-ref",
         "description": "pay test",
         "value": "116000",
         "tax": "16000",
@@ -450,6 +487,10 @@ Create
 
 Retrieve
 *****
+.. code-block:: python
+
+    cash = epayco.cash.get("ref_payco")
+    print(cash)
 
 .. code-block:: python
 
@@ -486,6 +527,7 @@ use the following attributes in case you need to do a dispersion with one or mul
     pay_split = objepayco.charge.create(payment_info)
 
      cash_info_split = objepayco.cash.create('efecty',cash_info)
+     print(cash_info_split)
 
 
 
@@ -539,6 +581,8 @@ Retrieve
 .. code-block:: python
 
     pay = objepayco.charge.get("ref_payco")
+    print(pay)
+
 
 
 Split Payments
@@ -572,6 +616,7 @@ use the following attributes in case you need to do a dispersion with one or mul
         }
 
     pay_split = objepayco.charge.create(payment_info)
+    print(pay_split)
 
 
 Daviplata
@@ -628,8 +673,20 @@ confirm transaccion
         "id_session_token": "45081749", # It is obtained from the create response
         "otp": "2580"
     }
+   
+    daviplata = objepayco.daviplata.confirm(payment_info)
+    print(daviplata)
 
-    daviplata = objepayco.daviplata.confirm(confirm)
+Retrieve
+******
+
+Disponible por defecto (ms-transaction). No funciona si ``daviplata`` está en
+``transactionMethods`` (ver "Flujo legado") -- el flujo legado no tiene consulta de
+transacciones Daviplata por ``ref_payco``.
+
+.. code-block:: python
+
+    daviplata = objepayco.daviplata.get("ref_payco")
 
 Safetypay
 ####
@@ -680,9 +737,9 @@ Create
 Retrieve
 ******
 
-Disponible solo cuando ``safetypay`` está activo en ``msTransactionMethods`` (ver
-"Medios de pago sobre ms-transaction"). El flujo legado no tiene consulta de transacciones
-Safetypay por ``ref_payco``.
+Disponible por defecto (ms-transaction). No funciona si ``safetypay`` está en
+``transactionMethods`` (ver "Flujo legado") -- el flujo legado no tiene consulta de
+transacciones Safetypay por ``ref_payco``.
 
 .. code-block:: python
 
