@@ -399,17 +399,15 @@ class Subscriptions(Resource):
             False
         )
 
-"""
- * Pse methods
-"""
-
+    """
+    * Pse methods
+    """
 
 class Bank(Resource):
     """
      * Return list all banks
      * @return object
     """
-
     
     def pseBank(self, options=None):
         gateway = self.epayco.gateway_for("pse")
@@ -431,19 +429,6 @@ class Bank(Resource):
      * @return object
     """
 
-    # def pseTransaction(self, uid):
-    #     return self.request(
-    #         "GET",
-    #         "/pse/transactioninfomation.json",
-    #         self.epayco.api_key,
-    #         {'transactionID':uid},
-    #         self.epayco.private_key,
-    #         self.epayco.test,
-    #         True,
-    #         self.epayco.lang,
-    #         False
-    #     )
-
     def get(self, uid):
         gateway = self.epayco.gateway_for("pse")
         return gateway.get("pse", uid)
@@ -458,12 +443,10 @@ class Cash(Resource):
     * @param  String $options data transaction
     * @return object
     """
-
     def create(self, options=None):
         gateway = self.epayco.gateway_for("cash")
         return gateway.create("cash", options)
        
-
     def get(self, uid):
         gateway = self.epayco.gateway_for("cash")
         return gateway.get("cash", uid)

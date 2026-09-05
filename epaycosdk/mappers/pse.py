@@ -48,7 +48,7 @@ class PseRequestMapper:
             "extrasEpayco": {"extra5": "P43"}
         }
 
-        # --- Bloque de Split Payment (opcional) ---
+        #  Bloque de Split Payment
         split_info = options.get("split_payment")
         if split_info:
             # credits van dentro de paymentMethodData

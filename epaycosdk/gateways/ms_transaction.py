@@ -45,20 +45,11 @@ class MsTransactionGateway(PaymentGateway):
         url = f"{self.PSE_BANKS_URL}/{public_key}"
         headers = self._headers()
 
-        print("====================================")
-        print("METHOD: GET")
-        print("URL:", url)
-        print("====================================")
-
         response = requests.get(
             url,
             headers=headers,
         )
-
-        print("STATUS CODE:", response.status_code)
-        print("RESPONSE:", response.text)
-        print("====================================")
-
+ 
         return self._parse(response)
 
     def get(self, payment_method, ref_payco):
@@ -67,27 +58,12 @@ class MsTransactionGateway(PaymentGateway):
         url =f"{self.TRANSACTIONS_URL}/{ref_payco}"
         headers = self._headers()
 
-        print("====================================")
-        print("METHOD: GET")
-        print("URL:", url)
-  
-        print(
-            "FULL URL:",
-            requests.Request(
-                "GET",
-                url
-            ).prepare().url
-        )
-        print("====================================")
-
         response = requests.get(
             url,
             headers=headers,
         )
 
-        print("STATUS CODE:", response.status_code)
-        print("RESPONSE:", response.text)
-        print("====================================")
+      
 
         return response_mapper.to_sdk_response(
             self._parse(response)
