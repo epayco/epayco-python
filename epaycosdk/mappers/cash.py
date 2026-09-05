@@ -3,45 +3,66 @@ from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_
 
 class CashRequestMapper:
 
-    def to_ms_transaction(self, options, epayco):
-        options = options or {}
-        return {
-            "invoice": options.get("invoice"),
-            "quotes": options.get("quotes", "1"),
-            "documentType": options.get("doc_type"),
-            "document": options.get("docNumber"),
-            "names": options.get("name"),
-            "lastNames": options.get("last_name"),
-            "phone": options.get("phone"),
-            "cellphone": options.get("cellPhone"),
-            "address": options.get("address", ""),
-            "city": options.get("city", ""),
-            "email": options.get("email"),
-            "amount": options.get("value"),
-            "tax": options.get("tax", 0),
-            "ico": options.get("ico", 0),
-            "baseTax": options.get("tax_base", 0),
-            "currency": options.get("currency", "COP"),
-            "testMode": epayco.test,
-            "uniqueTransactionPerBill": options.get("unique_transaction_per_bill", False),
-            "paymentMethod": "CASH",
-            "paymentMethodData": {
-                "franchise": options.get("paymentMethod")
-            },
-            "country": options.get("country", "CO"),
-            "ip": options.get("ip"),
-            "responseUrl": options.get("url_response"),
-            "confirmationUrl": options.get("url_confirmation"),
-            "confirmationMethod": options.get("metodoconfirmacion", "POST"),
-            "description": options.get("description"),
-            "integrationType": {"tipo_checkout": "smart_checkout", "modo_pago": "cash"},
-            "publicKey": epayco.api_key,
-            "extras": {
-                "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
-            },
-            "extrasEpayco": {"extra5": "P43"}
+ def to_ms_transaction(self, options, epayco):
+    options = options or {}
+    body = {
+        "invoice": options.get("invoice"),
+        "quotes": options.get("quotes", "1"),
+        "documentType": options.get("doc_type"),
+        "document": options.get("docNumber"),
+        "names": options.get("name"),
+        "lastNames": options.get("last_name"),
+        "phone": options.get("phone"),
+        "cellphone": options.get("cellPhone"),
+        "address": options.get("address", ""),
+        "city": options.get("city", ""),
+        "email": options.get("email"),
+        "amount": options.get("value"),
+        "tax": options.get("tax", 0),
+        "ico": options.get("ico", 0),
+        "baseTax": options.get("tax_base", 0),
+        "currency": options.get("currency", "COP"),
+        "testMode": epayco.test,
+        "uniqueTransactionPerBill": options.get("unique_transaction_per_bill", False),
+        "paymentMethod": "CASH",
+        "paymentMethodData": {
+            "franchise": options.get("paymentMethod")
+        },
+        "country": options.get("country", "CO"),
+        "ip": options.get("ip"),
+        "responseUrl": options.get("url_response"),
+        "confirmationUrl": options.get("url_confirmation"),
+        "confirmationMethod": options.get("metodoconfirmacion", "POST"),
+        "description": options.get("description"),
+        "integrationType": {"tipo_checkout": "smart_checkout", "modo_pago": "cash"},
+        "publicKey": epayco.api_key,
+        "extras": {
+            "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
+        },
+        "extrasEpayco": {"extra5": "P43"}
+    }
+
+    # Split Payment block
+    split_info = options.get("split_payment")
+    if split_info:
+        # credits go inside paymentMethodData
+        credits = split_info.get("credits")
+        if credits:
+            body["paymentMethodData"]["credits"] = credits
+
+        # splitPayment goes at the root level of the body
+        body["splitPayment"] = {
+            "splitMethod": split_info.get("split_method", "multiple"),
+            "splitAppId": split_info.get("split_app_id"),
+            "splitMerchantId": split_info.get("split_merchant_id"),
+            "splitType": split_info.get("split_type", "02"),
+            "splitPrimaryReceiver": split_info.get("split_primary_receiver"),
+            "splitPrimaryReceiverFee": split_info.get("split_primary_receiver_fee", "0"),
+            "splitRule": split_info.get("split_rule", "multiple"),
+            "splitReceivers": split_info.get("split_receivers", []),
         }
-        
+
+    return body
         
 
 class CashResponseMapper:
