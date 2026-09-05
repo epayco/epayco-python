@@ -7,6 +7,7 @@ class LegacyGateway(PaymentGateway):
     _CREATE_ENDPOINTS = {
         "safetypay": ("payment/process/safetypay", False, True, False),
         "daviplata": ("payment/process/daviplata", False, True, False),
+        "pse": ("payment/process/daviplata", False, True, False),
     }
 
     def __init__(self, epayco):
