@@ -361,6 +361,9 @@ PSE
 
 List Banks
 *****
+
+Modo de integración: Se mostrara el listado de bancos según como tengamos configurado nuestro dashboard en modo pruebas o producción. 
+*****
 .. code-block:: python
 
     banks = objepayco.bank.pseBank()
@@ -373,11 +376,11 @@ Create
 
     pse_info = {
         "bank": "1077",
-        "invoice": "pruebas34574",
-        "description": "pay test",
-        "value": "116000",
-        "tax": "16000",
-        "tax_base": "100000",
+        "invoice": "BANK-78",
+        "description": "producto de prueba",
+        "value": 7000,
+        "tax": 0,
+        "tax_base": 0,
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
@@ -402,13 +405,14 @@ Create
     }
 
     pse = objepayco.bank.create(pse_info)
+    print(pse)
    
 
 Retrieve
 *****
 .. code-block:: python
 
-    pse = objepayco.bank.pseTransaction("ticketId")
+    pse = objepayco.bank.get(ref_payco)
     print(pse)
 
 Split Payments
@@ -423,20 +427,23 @@ Split payment
 
 .. code-block:: python
 
-    import json
-
-    pse_info = {
-        "splitpayment": "true",
-        "split_app_id": "P_CUST_ID_CLIENTE APPLICATION",
-        "split_merchant_id": "P_CUST_ID_CLIENTE COMMERCE",
-        "split_type": "01",
-        "split_primary_receiver": "P_CUST_ID_CLIENTE APPLICATION",
-        "split_primary_receiver_fee": "80000",
-        "split_receivers": json.dumps([
-            {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"},
-            {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"}
-        ])
+    "split_payment": {
+       "split_app_id": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_merchant_id": "630339", #P_CUST_ID_CLIENTE COMMERCE
+        "split_primary_receiver": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_receivers": [
+                {
+                 "id": "631581", #P_CUST_ID_CLIENTE 1 RECEIVER
+                 "total": 5000,
+                 "iva": 0, 
+                 "baseTax": 0,
+                 "fee": 2,
+                }, 
+                # AGREGAR MAS RECEIVERS
+            ],
     }
+    
+    
 
     pse_split = objepayco.bank.create(pse_info)
     print(pse_split)
@@ -453,11 +460,11 @@ Create
         # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
         cash_info = {
         "paymentMethod" :"EF",
-        "invoice": "123-ref",
-        "description": "pay test",
-        "value": "116000",
-        "tax": "16000",
-        "tax_base": "100000",
+        "invoice": "2358-CASH",
+        "description": "producto de prueba",
+        "value": 25000,
+        "tax": 0,
+        "tax_base": 0,
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
@@ -467,11 +474,11 @@ Create
         "email": "test@mailinator.com",
         "cellPhone": "3000000001",
         "phone": "3010000001",
-        "end_date": "2025-09-20",
+        "end_date": "2026-09-09",
         "ip": "192.168.1.100",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
-        "metodoconfirmacion": "GET",
+        "metodoconfirmacion": "POST",
         # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
         "extra1": "",
         "extra2": "",
@@ -483,18 +490,15 @@ Create
     }
 
     cash = objepayco.cash.create(cash_info)
+    print(cash)
   
 
 Retrieve
 *****
 .. code-block:: python
 
-    cash = epayco.cash.get("ref_payco")
+    cash = objepayco.cash.get(ref_payco)
     print(cash)
-
-.. code-block:: python
-
-    cash =  objepayco.cash.get("ref_payco")
 
 Split Payments
 *****
@@ -508,30 +512,26 @@ use the following attributes in case you need to do a dispersion with one or mul
 
 .. code-block:: python
 
-    import json
-
-    payment_info = {
-        "splitpayment": "true",
-        "split_app_id": "P_CUST_ID_CLIENTE APPLICATION",
-        "split_merchant_id": "P_CUST_ID_CLIENTE COMMERCE",
-        "split_type": "02",
-        "split_primary_receiver": "P_CUST_ID_CLIENTE APPLICATION",
-        "split_primary_receiver_fee": "0",
-        "split_rule": "multiple",
-        "split_receivers": json.dumps([
-            {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"},
-            {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"}
-        ])
+     #AGREGAR AL FINAL DE LA PETICION
+     "split_payment": {
+       "split_app_id": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_merchant_id": "630339", #P_CUST_ID_CLIENTE COMMERCE
+        "split_primary_receiver": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_receivers": [
+                {
+                 "id": "631581", #P_CUST_ID_CLIENTE 1 RECEIVER
+                 "total": 5000,
+                 "iva": 0, 
+                 "baseTax": 0,
+                 "fee": 2,
+                }, 
+                # AGREGAR MAS RECEIVERS
+            ],
     }
-
-    pay_split = objepayco.charge.create(payment_info)
-
-     cash_info_split = objepayco.cash.create('efecty',cash_info)
-     print(cash_info_split)
-
-
-
-
+    
+    
+    cash_split = objepayco.cash.create(cash_info)
+    print(cash_split)
 
 Payment
 ####

@@ -13,9 +13,9 @@ from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 
 class MsTransactionGateway(PaymentGateway):
 
-    TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
-    PSE_BANKS_URL = "https://apiflow.epayco.io/payment/api/v1/pse/banks"
-    AUTH_HOST = "https://eks-apify-service.epayco.io"
+    TRANSACTIONS_URL = "https://apiflow.epayco.co/payment/api/v1/transactions"
+    PSE_BANKS_URL = "https://apiflow.epayco.co/payment/api/v1/pse/banks"
+    AUTH_HOST = "https://apify.epayco.co"
     IV = "0000000000000000"
 
     _MAPPERS = {
