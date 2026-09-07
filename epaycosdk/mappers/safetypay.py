@@ -7,7 +7,7 @@ class SafetypayRequestMapper:
 
     def to_ms_transaction(self, options, epayco):
         options = options or {}
-        return {
+        body = {
             "quotes": options.get("quotes", "1"),
             "documentType": options.get("doc_type"),
             "document": options.get("document"),
@@ -44,6 +44,9 @@ class SafetypayRequestMapper:
                 "expirationDate": options.get("end_date"),
             },
         }
+        if options.get("split_payment"):
+            body["split_payment"] = options["split_payment"]
+        return body
 
 
 class SafetypayResponseMapper:
