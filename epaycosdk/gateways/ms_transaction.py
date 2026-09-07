@@ -32,6 +32,13 @@ class MsTransactionGateway(PaymentGateway):
     def create(self, payment_method, options):
         request_mapper, response_mapper = self._MAPPERS[payment_method]
         body = request_mapper.to_ms_transaction(options, self.epayco)
+        
+        print("====================================")
+        print("body" , body)
+        print("URL:", self.TRANSACTIONS_URL )
+        print("====================================")
+        
+        
         response = requests.post(
             self.TRANSACTIONS_URL,
             json=self._encrypt(body),
@@ -45,11 +52,20 @@ class MsTransactionGateway(PaymentGateway):
         url = f"{self.PSE_BANKS_URL}/{public_key}"
         headers = self._headers()
 
+        print("====================================")
+        print("METHOD: GET")
+        print("URL:", url)
+        print("====================================")
+
         response = requests.get(
             url,
             headers=headers,
         )
- 
+
+        print("STATUS CODE:", response.status_code)
+        print("RESPONSE:", response.text)
+        print("====================================")
+
         return self._parse(response)
 
     def get(self, payment_method, ref_payco):
@@ -58,12 +74,27 @@ class MsTransactionGateway(PaymentGateway):
         url =f"{self.TRANSACTIONS_URL}/{ref_payco}"
         headers = self._headers()
 
+        print("====================================")
+        print("METHOD: GET")
+        print("URL:", url)
+  
+        print(
+            "FULL URL:",
+            requests.Request(
+                "GET",
+                url
+            ).prepare().url
+        )
+        print("====================================")
+
         response = requests.get(
             url,
             headers=headers,
         )
 
-      
+        print("STATUS CODE:", response.status_code)
+        print("RESPONSE:", response.text)
+        print("====================================")
 
         return response_mapper.to_sdk_response(
             self._parse(response)
