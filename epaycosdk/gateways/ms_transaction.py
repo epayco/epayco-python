@@ -7,17 +7,22 @@ from epaycosdk.client import AESCipher, Auth
 from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataResponseMapper
+from epaycosdk.mappers.pse import PseRequestMapper, PseResponseMapper
+from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 
 
 class MsTransactionGateway(PaymentGateway):
 
     TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
+    PSE_BANKS_URL = "https://apiflow.epayco.io/payment/api/v1/pse/banks"
     AUTH_HOST = "https://eks-apify-service.epayco.io"
     IV = "0000000000000000"
 
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
         "daviplata": (DaviplataRequestMapper(), DaviplataResponseMapper()),
+        "pse": (PseRequestMapper(), PseResponseMapper()), 
+        "cash": (CashRequestMapper(), CashResponseMapper())
     }
 
     def __init__(self, epayco, auth=None):
@@ -33,15 +38,36 @@ class MsTransactionGateway(PaymentGateway):
             headers=self._headers(),
         )
         return response_mapper.to_sdk_response(self._parse(response), options)
+    
+    def pse_banks(self):
+        public_key = self.epayco.api_key
+
+        url = f"{self.PSE_BANKS_URL}/{public_key}"
+        headers = self._headers()
+
+        response = requests.get(
+            url,
+            headers=headers,
+        )
+ 
+        return self._parse(response)
 
     def get(self, payment_method, ref_payco):
         _, response_mapper = self._MAPPERS[payment_method]
+
+        url =f"{self.TRANSACTIONS_URL}/{ref_payco}"
+        headers = self._headers()
+
         response = requests.get(
-            self.TRANSACTIONS_URL,
-            params={"ref_payco": ref_payco},
-            headers=self._headers(),
+            url,
+            headers=headers,
         )
-        return response_mapper.to_sdk_response(self._parse(response))
+
+      
+
+        return response_mapper.to_sdk_response(
+            self._parse(response)
+        )
 
     def _parse(self, response):
         try:
