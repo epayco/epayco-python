@@ -3,7 +3,7 @@ import json
 
 import requests
 
-from epaycosdk.client import AESCipher, Auth
+from epaycosdk.client import AESCipher
 from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataResponseMapper
@@ -15,19 +15,19 @@ class MsTransactionGateway(PaymentGateway):
 
     TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
     PSE_BANKS_URL = "https://apiflow.epayco.io/payment/api/v1/pse/banks"
-    AUTH_HOST = "https://eks-apify-service.epayco.io"
+    AUTH_HOST = "https://eks-ms-authentication-service.epayco.io"
+    AUTH_PATH = "/api/v2/auth/login"
     IV = "0000000000000000"
 
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
         "daviplata": (DaviplataRequestMapper(), DaviplataResponseMapper()),
-        "pse": (PseRequestMapper(), PseResponseMapper()), 
+        "pse": (PseRequestMapper(), PseResponseMapper()),
         "cash": (CashRequestMapper(), CashResponseMapper())
     }
 
-    def __init__(self, epayco, auth=None):
+    def __init__(self, epayco):
         self.epayco = epayco
-        self._auth = auth or Auth(epayco.api_key, epayco.private_key)
 
     def create(self, payment_method, options):
         request_mapper, response_mapper = self._MAPPERS[payment_method]
@@ -99,10 +99,21 @@ class MsTransactionGateway(PaymentGateway):
         encrypted["language"] = encrypt_value("python")
         return encrypted
 
+    def _get_token(self):
+        response = requests.post(
+            "{}{}".format(self.AUTH_HOST, self.AUTH_PATH),
+            headers={"Content-Type": "application/json"},
+            json={
+                "client_id": self.epayco.api_key,
+                "client_secret": self.epayco.private_key,
+                "grant_type": "client_credentials",
+            },
+        )
+        return self._parse(response)["data"]["token"]
+
     def _headers(self):
-        token = self._auth.make(self.AUTH_HOST, self.AUTH_HOST, True)
         return {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Authorization": "Bearer {}".format(token),
+            "Authorization": "Bearer {}".format(self._get_token()),
         }
