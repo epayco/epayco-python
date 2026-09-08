@@ -45,7 +45,7 @@ Install from Packages (Windows), Python >= 3.7
 
      pip install setuptools
      pip install . 
-     pip install pycryptodome 
+     pip install pycryptodome  
 
 
 2. Install setuptools (if not already installed):
