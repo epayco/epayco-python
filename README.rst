@@ -82,11 +82,12 @@ Usage
 
     objepayco=epayco.Epayco(options)
 
-Medios de pago sobre ms-transaction (opcional)
+Flujo legado (opcional)
 ####
 
-Por defecto, todos los medios de pago usan el flujo actual del SDK. Un comercio puede activar,
-uno por uno, el backend nuevo ms-transaction agregando ``msTransactionMethods`` a ``options``:
+Por defecto, Safetypay y Daviplata usan el backend nuevo ms-transaction. Un comercio puede
+mantener uno o varios medios de pago en el flujo legado agregando ``transactionMethods`` a
+``options``:
 
 .. code-block:: python
 
@@ -95,7 +96,7 @@ uno por uno, el backend nuevo ms-transaction agregando ``msTransactionMethods`` 
         "privateKey": privateKey,
         "test": test,
         "lenguage": lenguage,
-        "msTransactionMethods": ["safetypay", "daviplata"],
+        "transactionMethods": ["safetypay", "daviplata"],
     }
 
     objepayco = epayco.Epayco(options)
@@ -679,9 +680,9 @@ confirm transaccion
 Retrieve
 ******
 
-Disponible solo cuando ``daviplata`` está activo en ``msTransactionMethods`` (ver
-"Medios de pago sobre ms-transaction"). El flujo legado no tiene consulta de transacciones
-Daviplata por ``ref_payco``.
+Disponible por defecto (ms-transaction). No funciona si ``daviplata`` está en
+``transactionMethods`` (ver "Flujo legado") -- el flujo legado no tiene consulta de
+transacciones Daviplata por ``ref_payco``.
 
 .. code-block:: python
 
@@ -736,9 +737,9 @@ Create
 Retrieve
 ******
 
-Disponible solo cuando ``safetypay`` está activo en ``msTransactionMethods`` (ver
-"Medios de pago sobre ms-transaction"). El flujo legado no tiene consulta de transacciones
-Safetypay por ``ref_payco``.
+Disponible por defecto (ms-transaction). No funciona si ``safetypay`` está en
+``transactionMethods`` (ver "Flujo legado") -- el flujo legado no tiene consulta de
+transacciones Safetypay por ``ref_payco``.
 
 .. code-block:: python
 

@@ -2,6 +2,17 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
+## [3.6.0] - 2026-09-01
+
+### Changed
+- **Cambio de comportamiento por defecto:** Safetypay y Daviplata ahora usan ms-transaction por
+  defecto, sin necesidad de configuración adicional. El flujo legado pasa a ser opt-in con la
+  nueva clave `transactionMethods` en `options` (reemplaza a `msTransactionMethods`, que
+  funcionaba al revés -- ms-transaction era el opt-in).
+- `Safetypay.get(...)` y `Daviplata.get(...)` quedan disponibles por defecto (antes requerían
+  activar ms-transaction explícitamente); dejan de funcionar si ese medio de pago se fuerza al
+  flujo legado vía `transactionMethods`.
+
 ## [3.5.0] - 2026-08-31
 
 ### Added

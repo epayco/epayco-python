@@ -29,10 +29,10 @@ class DaviplataRequestMapper:
             "description": options.get("description"),
             "integrationType": {"tipo_checkout": "api", "modo_pago": "payment"},
             "publicKey": epayco.api_key,
-            "extras": {},
-            "extrasEpayco": {
+            "extras": {
                 "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
             },
+            "extrasEpayco": {"extra5": "P43"},
             "paymentMethodData": {},
         }
 

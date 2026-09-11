@@ -24,7 +24,7 @@ class SafetypayRequestMapper:
             "amount": options.get("value"),
             "tax": options.get("tax", 0),
             "ico": options.get("ico", 0),
-            "baseTax": options.get("tax_base", 0),
+            "taxBase": options.get("tax_base", 0),
             "currency": options.get("currency", "COP"),
             "uniqueTransactionPerBill": options.get("unique_transaction_per_bill", False),
             "testMode": epayco.test,
@@ -33,10 +33,10 @@ class SafetypayRequestMapper:
             "ip": options.get("ip"),
             "description": options.get("description"),
             "publicKey": epayco.api_key,
-            "extras": {},
-            "extrasEpayco": {
+            "extras": {
                 "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
             },
+            "extrasEpayco": {"extra5": "P43"},
             "paymentMethodData": {
                 "country": self._ISO_ALPHA3.get(
                     options.get("country", "CO"), options.get("country", "CO")
