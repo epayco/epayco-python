@@ -3,26 +3,31 @@ import json
 
 import requests
 
-from epaycosdk.client import AESCipher, Auth
+from epaycosdk.client import AESCipher
 from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataResponseMapper
+from epaycosdk.mappers.pse import PseRequestMapper, PseResponseMapper
+from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 
 
 class MsTransactionGateway(PaymentGateway):
 
     TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
-    AUTH_HOST = "https://eks-apify-service.epayco.io"
+    PSE_BANKS_URL = "https://apiflow.epayco.io/payment/api/v1/pse/banks"
+    AUTH_HOST = "https://apiflow.epayco.io"
+    AUTH_PATH = "/authentication/api/v2/login"
     IV = "0000000000000000"
 
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
         "daviplata": (DaviplataRequestMapper(), DaviplataResponseMapper()),
+        "pse": (PseRequestMapper(), PseResponseMapper()),
+        "cash": (CashRequestMapper(), CashResponseMapper())
     }
 
-    def __init__(self, epayco, auth=None):
+    def __init__(self, epayco):
         self.epayco = epayco
-        self._auth = auth or Auth(epayco.api_key, epayco.private_key)
 
     def create(self, payment_method, options):
         request_mapper, response_mapper = self._MAPPERS[payment_method]
@@ -33,15 +38,36 @@ class MsTransactionGateway(PaymentGateway):
             headers=self._headers(),
         )
         return response_mapper.to_sdk_response(self._parse(response), options)
+    
+    def pse_banks(self):
+        public_key = self.epayco.api_key
+
+        url = f"{self.PSE_BANKS_URL}/{public_key}"
+        headers = self._headers()
+
+        response = requests.get(
+            url,
+            headers=headers,
+        )
+ 
+        return self._parse(response)
 
     def get(self, payment_method, ref_payco):
         _, response_mapper = self._MAPPERS[payment_method]
+
+        url =f"{self.TRANSACTIONS_URL}/{ref_payco}"
+        headers = self._headers()
+
         response = requests.get(
-            self.TRANSACTIONS_URL,
-            params={"ref_payco": ref_payco},
-            headers=self._headers(),
+            url,
+            headers=headers,
         )
-        return response_mapper.to_sdk_response(self._parse(response))
+
+      
+
+        return response_mapper.to_sdk_response(
+            self._parse(response)
+        )
 
     def _parse(self, response):
         try:
@@ -73,10 +99,21 @@ class MsTransactionGateway(PaymentGateway):
         encrypted["language"] = encrypt_value("python")
         return encrypted
 
+    def _get_token(self):
+        response = requests.post(
+            "{}{}".format(self.AUTH_HOST, self.AUTH_PATH),
+            headers={"Content-Type": "application/json"},
+            json={
+                "client_id": self.epayco.api_key,
+                "client_secret": self.epayco.private_key,
+                "grant_type": "client_credentials",
+            },
+        )
+        return self._parse(response)["data"]["token"]
+
     def _headers(self):
-        token = self._auth.make(self.AUTH_HOST, self.AUTH_HOST, True)
         return {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Authorization": "Bearer {}".format(token),
+            "Authorization": "Bearer {}".format(self._get_token()),
         }
