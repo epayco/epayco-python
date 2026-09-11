@@ -15,8 +15,8 @@ class MsTransactionGateway(PaymentGateway):
 
     TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
     PSE_BANKS_URL = "https://apiflow.epayco.io/payment/api/v1/pse/banks"
-    AUTH_HOST = "https://eks-ms-authentication-service.epayco.io"
-    AUTH_PATH = "/api/v2/auth/login"
+    AUTH_HOST = "https://apiflow.epayco.io"
+    AUTH_PATH = "/authentication/api/v2/login"
     IV = "0000000000000000"
 
     _MAPPERS = {
