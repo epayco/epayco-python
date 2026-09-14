@@ -7,9 +7,13 @@ class LegacyGateway(PaymentGateway):
     _CREATE_ENDPOINTS = {
         "safetypay": ("payment/process/safetypay", False, True, False),
         "daviplata": ("payment/process/daviplata", False, True, False),
-        "pse": ("payment/process/pse", False, True, False),
+        # PSE legacy usa el endpoint historico /pagos/debitos.json (switch+pse,
+        # no apify) -- confirmado cruzando con epayco-node (lib/resources/bank.js
+        # _legacyCreate: "/restpagos/pagos/debitos.json", sw=true). El endpoint
+        # "payment/process/pse" nunca correspondio a PSE; quedo mal copiado de
+        # safetypay/daviplata/cash durante la migracion a ms-transaction.
+        "pse": ("/pagos/debitos.json", True, False, True),
         "cash": ("payment/process/cash", False, True, False),
-        
     }
 
     def __init__(self, epayco):
