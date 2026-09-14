@@ -16,11 +16,11 @@ class PseRequestMapper:
         body = {
             "invoice": options.get("invoice"),
             "documentType": options.get("doc_type"),
-            "document": options.get("document"),
+            "document": options.get("docNumber") or options.get("document") or options.get("doc_number"),
             "names": options.get("name"),
             "lastNames": options.get("last_name"),
             "phone": options.get("phone"),
-            "cellphone": options.get("cell_phone"),
+            "cellphone": options.get("cell_phone") or options.get("cellPhone"),
             "email": options.get("email"),
             "amount": options.get("value"),
             "tax": options.get("tax", 0),
@@ -35,7 +35,7 @@ class PseRequestMapper:
             "ip": options.get("ip"),
             "responseUrl": options.get("url_response"),
             "confirmationUrl": options.get("url_confirmation"),
-            "confirmationMethod": options.get("method_confirmation", "POST"),
+            "confirmationMethod": options.get("metodoconfirmacion") or options.get("method_confirmation", "POST"),
             "description": options.get("description"),
             "integrationType": {
                 "tipo_checkout": "onpage",
