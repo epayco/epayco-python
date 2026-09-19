@@ -22,6 +22,15 @@ class LegacyGateway(PaymentGateway):
 
     def create(self, payment_method, options):
         url, switch, apify, pse = self._CREATE_ENDPOINTS[payment_method]
+        if pse and options and "split_payment" in options:
+            # El pipeline de cifrado AES por campo de este endpoint
+            # (Client.request, rama switch+pse) solo soporta valores
+            # string -- un dict anidado como split_payment lo revienta con
+            # TypeError. Los demas metodos legacy (estilo apify) ya ignoran
+            # split_payment en silencio porque su backend no lo procesa; se
+            # replica el mismo comportamiento aqui en vez de dejarlo crashear.
+            options = dict(options)
+            options.pop("split_payment", None)
         return self.client.request(
             "POST", url, self.epayco.api_key, options, self.epayco.private_key,
             self.epayco.test, switch, self.epayco.lang, False, False, apify, pse,
