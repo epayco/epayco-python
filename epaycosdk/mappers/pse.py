@@ -1,4 +1,4 @@
-from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
+from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response, legacy_status_code
 
 
 class PseRequestMapper:
@@ -90,6 +90,7 @@ class PseResponseMapper:
         extras_epayco_new = data.get("extrasEpayco") or {}
         cycle = provider_data.get("cycle")
         ticket_id = provider_data.get("ticketId", data.get("receipt"))
+        estado = data.get("status")
 
         return {
             "success": success,
@@ -105,9 +106,9 @@ class PseResponseMapper:
                 "ico": data.get("ico"),
                 "baseiva": data.get("taxBase"),
                 "moneda": data.get("currency"),
-                "estado": data.get("status"),
+                "estado": estado,
                 "respuesta": data.get("response"),
-                "cod_respuesta": data.get("responseCode"),
+                "cod_respuesta": legacy_status_code(estado, data.get("responseCode")),
                 "cod_error": None,
                 "autorizacion": data.get("authorization"),
                 "ciudad": options.get("city", data.get("city")),

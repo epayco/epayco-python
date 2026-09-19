@@ -1,4 +1,4 @@
-from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
+from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response, legacy_status_code
 
 
 class CashRequestMapper:
@@ -81,7 +81,8 @@ class CashResponseMapper:
             provider_data = {}
         extras_epayco_new = data.get("extrasEpayco") or {}
         amount = data.get("amount")
-        response_code = data.get("responseCode")
+        status = data.get("status")
+        response_code = legacy_status_code(status, data.get("responseCode"))
 
         return {
             "success": success,
@@ -100,7 +101,7 @@ class CashResponseMapper:
                 "netoValue": amount,
                 "currency": data.get("currency"),
                 "bank": data.get("nameBank", "Cash"),
-                "status": data.get("status"),
+                "status": status,
                 "response": data.get("response"),
                 "autorization": data.get("authorization"),
                 "receipt": data.get("receipt"),
@@ -108,7 +109,7 @@ class CashResponseMapper:
                 "paymentDate": data.get("date"),
                 "franchise": data.get("franchise"),
                 "codResponse": response_code,
-                "codError": response_code or "",
+                "codError": data.get("responseCode") or "",
                 "ip": data.get("ip"),
                 "testMode": data.get("testMode"),
                 "docType": options.get("doc_type"),
