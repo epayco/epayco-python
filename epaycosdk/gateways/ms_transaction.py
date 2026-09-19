@@ -13,10 +13,10 @@ from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 
 class MsTransactionGateway(PaymentGateway):
 
-    TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
-    PSE_BANKS_URL = "https://apiflow.epayco.io/payment/api/v1/pse/banks"
-    AUTH_HOST = "https://apiflow.epayco.io"
-    AUTH_PATH = "/authentication/api/v2/login"
+    BASE_URL = "https://apiflow.epayco.io/"
+    TRANSACTIONS_URL = f"{BASE_URL}payment/api/v1/transactions"
+    PSE_BANKS_URL = f"{BASE_URL}payment/api/v1/pse/banks"
+    AUTH_URL = f"{BASE_URL}authentication/api/v2/login"
     IV = "0000000000000000"
 
     _MAPPERS = {
@@ -101,7 +101,7 @@ class MsTransactionGateway(PaymentGateway):
 
     def _get_token(self):
         response = requests.post(
-            "{}{}".format(self.AUTH_HOST, self.AUTH_PATH),
+            self.AUTH_URL,
             headers={"Content-Type": "application/json"},
             json={
                 "client_id": self.epayco.api_key,
