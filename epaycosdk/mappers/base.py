@@ -21,16 +21,26 @@ def legacy_validation_error_response(ms_response):
     }
 
 
-# Mapeo de 'estado'/'status' -> codigo numerico interno del backend legado,
-# distinto del codigo de negocio que trae ms-transaction (ej. 'P004'/'0000').
-# Confirmado empiricamente comparando legacy vs ms-transaction el 2026-09-19:
-# tanto Cash como PSE devuelven el entero 3 para 'Pendiente'. Solo se agregan
-# aqui los estados ya verificados contra una respuesta real de legacy -- para
-# cualquier otro estado se usa el valor de ms-transaction como respaldo
-# (mejor esfuerzo, no confirmado). Ampliar esta tabla a medida que se
-# verifiquen mas estados (Aceptada, Rechazada, Fallida, etc).
+# Mapeo de 'estado'/'status' -> x_cod_transaction_state, el codigo numerico
+# de estado que usa todo el ecosistema legado de ePayco (el mismo que
+# consumen los webhooks/plugins, ej. WooCommerce), distinto del codigo de
+# negocio que trae ms-transaction (ej. 'P004'/'0000'). Basado en el switch
+# real de x_cod_transaction_state usado por los plugins:
+#   1            -> Approved / Aceptada
+#   2, 4, 10, 11 -> Cancelled, failed or rejected / Rechazada, Fallida, Cancelada
+#   3, 7         -> Pending / Pendiente
+#   6            -> Reversed / Reversada
+# Confirmado ademas empiricamente comparando legacy vs ms-transaction el
+# 2026-09-19: tanto Cash como PSE devuelven 3 para 'Pendiente'. Para
+# cualquier estado que no este en esta tabla se usa el valor de
+# ms-transaction como respaldo (mejor esfuerzo, no confirmado).
 _LEGACY_STATUS_CODES = {
+    "Aceptada": 1,
+    "Rechazada": 2,
+    "Fallida": 2,
+    "Cancelada": 2,
     "Pendiente": 3,
+    "Reversada": 6,
 }
 
 
