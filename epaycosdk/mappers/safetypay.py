@@ -91,7 +91,7 @@ class SafetypayResponseMapper:
                 "currency": data.get("currency"),
                 "status": data.get("status"),
                 "response": data.get("response"),
-                "codResponse": data.get("responseCode", ""),
+                "codResponse": "",  # legacy real (apify) nunca devuelve este campo poblado para Safetypay
                 "codError": "",
                 "autorization": data.get("authorization"),
                 "receipt": data.get("receipt"),
