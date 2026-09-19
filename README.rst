@@ -433,8 +433,8 @@ Split payment
         "split_merchant_id": "630339", #P_CUST_ID_CLIENTE COMMERCE
         "split_primary_receiver": "630339", #P_CUST_ID_CLIENTE APPLICATION
         "split_receivers": json.dumps([
-        {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"},
-        {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"}
+        {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "3500", "iva": "0", "base_iva": "0", "fee": "10"},
+        {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "3500", "iva": "0", "base_iva": "0", "fee": "10"}
     ])
     }
     
@@ -513,8 +513,8 @@ use the following attributes in case you need to do a dispersion with one or mul
         "split_merchant_id": "630339", #P_CUST_ID_CLIENTE COMMERCE
         "split_primary_receiver": "630339", #P_CUST_ID_CLIENTE APPLICATION
         "split_receivers": json.dumps([
-        {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"},
-        {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "58000", "iva": "8000", "base_iva": "50000", "fee": "10"}
+        {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "12500", "iva": "0", "base_iva": "0", "fee": "10"},
+        {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "12500", "iva": "0", "base_iva": "0", "fee": "10"}
     ])
     }
     
