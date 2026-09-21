@@ -391,6 +391,7 @@ Create
         "email": "test@gmail.com",
         "country": "CO",
         "phone": "3203602526",
+        "celphone": "3203602526"
         "ip": "192.168.1.100",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
