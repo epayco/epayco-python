@@ -230,7 +230,7 @@ class Client:
 
                         data_to_encrypt = data.copy()
                         extras_epayco = data_to_encrypt.pop("extras_epayco", None)
-                  
+                        factura = data_to_encrypt.pop("factura", None)
 
                         encryptData = aes.encryptArray(data_to_encrypt)
 

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
+=======
+from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response, legacy_status_code
+>>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
 
 
 class CashRequestMapper:
@@ -20,7 +24,11 @@ class CashRequestMapper:
         "amount": options.get("value"),
         "tax": options.get("tax", 0),
         "ico": options.get("ico", 0),
+<<<<<<< HEAD
         "baseTax": options.get("tax_base", 0),
+=======
+        "taxBase": options.get("tax_base", 0),
+>>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
         "currency": options.get("currency", "COP"),
         "testMode": epayco.test,
         "uniqueTransactionPerBill": options.get("unique_transaction_per_bill", False),
@@ -81,6 +89,11 @@ class CashResponseMapper:
             provider_data = {}
         extras_epayco_new = data.get("extrasEpayco") or {}
         amount = data.get("amount")
+<<<<<<< HEAD
+=======
+        status = data.get("status")
+        response_code = legacy_status_code(status, data.get("responseCode"))
+>>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
 
         return {
             "success": success,
@@ -95,14 +108,23 @@ class CashResponseMapper:
                 "tax": data.get("tax"),
                 "ico": data.get("ico"),
                 "taxBase": data.get("taxBase"),
+<<<<<<< HEAD
                 "netoValue": amount,
                 "currency": data.get("currency"),
                 "bank": "Cash",
                 "estatus": data.get("status"),
+=======
+                "total": data.get("subtotal", amount),
+                "netoValue": amount,
+                "currency": data.get("currency"),
+                "bank": data.get("nameBank", "Cash"),
+                "status": status,
+>>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
                 "response": data.get("response"),
                 "autorization": data.get("authorization"),
                 "receipt": data.get("receipt"),
                 "date": data.get("date"),
+<<<<<<< HEAD
                 "franchise": data.get("franchise"),
                 "codResponse": data.get("responseCode"),
                 "codError": "",
@@ -116,6 +138,27 @@ class CashResponseMapper:
                 "city": data.get("city"),
                 "address": options.get("address"),
                 "indCountry": options.get("ind_country", ""),
+=======
+                "paymentDate": data.get("date"),
+                "franchise": data.get("franchise"),
+                "codResponse": response_code,
+                "codError": data.get("responseCode") or "",
+                "ip": data.get("ip"),
+                "testMode": data.get("testMode"),
+                "docType": options.get("doc_type"),
+                "document": options.get("docNumber") or options.get("document"),
+                "name": options.get("name"),
+                "lastName": options.get("last_name"),
+                "email": options.get("email"),
+                "city": options.get("city", ""),
+                "address": options.get("address", "NA"),
+                "indCountry": options.get("ind_country"),
+                "pin": provider_data.get("pin"),
+                "codeProject": provider_data.get("agreementCode"),
+                "expirationDate": provider_data.get("expirationDate"),
+                "conversionFactor": provider_data.get("trm"),
+                "pesos": amount,
+>>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
                 "idSessionToken": provider_data.get("paymentSessionId"),
                 "tokenExpirationDate": provider_data.get("paymentSessionExpirationDate"),
                 "CashOtpLab": None,
