@@ -6,7 +6,6 @@ import base64
 import hashlib
 import requests
 import epaycosdk.errors as errors
-from Crypto.Cipher import AES
 import os
 import sys
 import traceback
@@ -15,10 +14,9 @@ from pathlib import Path
 from requests import Session
 import os
 from dotenv import load_dotenv
-import json
 load_dotenv()
 
-
+# No verificar el certifcado para los request
 ssl._create_default_https_context = ssl._create_unverified_context
 
 BS = 16
@@ -28,28 +26,6 @@ unpad = lambda s : s[0:-(s[-1])]
 BASE_DIR = Path(__file__).resolve().parent.parent
 EPAYCO_KEY_LANG_FILE = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang.json'))
 EPAYCO_KEY_LANG_FILE_APIFY = str(BASE_DIR.joinpath('epaycosdk/utils/key_lang_apify.json'))
-
-class AESCipher:
-    def __init__(self, key, iv):
-        self.key = key
-        self.iv = iv    
-
-    def encrypt(self, row):
-        raw = pad(row).encode("utf8")
-        cipher = AES.new(self.key.encode("utf8"), AES.MODE_CBC, self.iv.encode("utf8"))
-        enc = cipher.encrypt(raw)
-        return base64.b64encode(enc)
-
-    def encryptArray(self, data):
-        aux = {}
-        for key, value in data.items():
-            if key == "extras_epayco" and isinstance(value, dict) and "extra5" in value:
-            
-                aux[key] = {"extra5": self.encrypt(value["extra5"]).decode('utf-8')}
-            else:
-                aux[key] = self.encrypt(value).decode('utf-8')
-        return aux
-
 
 
 class Util():
@@ -101,33 +77,9 @@ class Auth:
             headers["Authorization"] = "Basic {token}".format(token=token)
             payload = ""
         response = requests.request("POST", url, headers=headers, data = payload)
-        
-
-        if not response.text or response.status_code != 200:
-            print(f"Error: Response from authentication endpoint")
-            print(f"Status code: {response.status_code}")
-            print(f"Response text: {response.text}")
-            print(f"Response headers: {response.headers}")
-            raise Exception(f"Authentication failed with status code: {response.status_code}")
-        
         data=response.text.encode('utf8')
-        try:
-            json_data=json.loads(data)
-        except json.JSONDecodeError as e:
-            print(f"Error: Could not parse JSON response from authentication")
-            print(f"Response text: {repr(response.text)}")
-            print(f"Error: {e}")
-            raise
-        if apify:
-            if 'token' not in json_data:
-                print("Error: 'token' not found in authentication response:", json_data)
-                raise Exception("Token not found in authentication response")
-            bearer_token = json_data['token']
-        else:
-            if 'bearer_token' not in json_data:
-                print("Error: 'bearer_token' not found in authentication response:", json_data)
-                raise Exception("Bearer token not found in authentication response")
-            bearer_token = json_data['bearer_token']
+        json_data=json.loads(data)
+        bearer_token=json_data['token'] if apify else json_data['bearer_token']
         return bearer_token
         
 class NoRebuildAuthSession(Session):
@@ -139,7 +91,6 @@ class NoRebuildAuthSession(Session):
         """
 
 class Client:
-
 
     BASE_URL = os.getenv("BASE_URL_SDK") if os.getenv("BASE_URL_SDK") else "https://api.secure.payco.co"
     BASE_URL_SECURE = os.getenv("SECURE_URL_SDK") if os.getenv("SECURE_URL_SDK") else"https://secure.payco.co"
@@ -167,7 +118,7 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False, pse =False ):
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False, pse=False ):
         auth = Auth(api_key, private_key)
         authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
         token_bearer = 'Bearer ' +authentication
@@ -190,24 +141,17 @@ class Client:
         try:
             if (method == "GET"):
                 if(apify):
-                   # response=requests.get(self.build_url(url), data={},headers=headers)
-                   url_with_test = f"{self.build_url(url)}?test={str(test).lower()}"
-                   response = requests.request("GET", url_with_test, headers=headers, data=data)
+                    response=requests.get(self.build_url(url), data={},headers=headers)
                 elif (switch):
-                  if (switch):
                     if test == True or test == "true":
                         test = "TRUE"
                     else:
                         test = "FALSE"
-
-                 
-                    aes = AESCipher(private_key,self.IV)
-                    enpruebas=aes.encrypt(test)
                     addData = {
                         'public_key': api_key,
-                        'i': base64.b64encode(self.IV.encode('ascii')),
+                        #'i': base64.b64encode(self.IV.encode('ascii')),
                         'lenguaje': self.LANGUAGE,
-                        'enpruebas': enpruebas,
+                        'enpruebas': test,
                     }
                     url_params = addData
                     url_params.update(data)
@@ -218,54 +162,19 @@ class Client:
                     payload = {}
                    # session = NoRebuildAuthSession()
                     response = requests.get(self.build_url(url), headers=headers, data = payload, params=url_params)
-
             elif (method == "POST"):
-                if pse == True: 
-                    aes = AESCipher(private_key, self.IV)
-                    data["extras_epayco"] = {"extra5": "P43"}  
-                    if switch:
-                  
-                        if isinstance(test, bool) or (isinstance(test, str) and test.lower() in ["true", "false"]):
-                            test = "TRUE" if str(test).lower() == "true" else "FALSE"
-
-                        data_to_encrypt = data.copy()
-                        extras_epayco = data_to_encrypt.pop("extras_epayco", None)
-                  
-
-                        encryptData = aes.encryptArray(data_to_encrypt)
-
-                       
-                        if extras_epayco:
-                            encryptData["extras_epayco"] = {"extra5": aes.encrypt(extras_epayco["extra5"]).decode('utf-8')}
-
-                        addData = {
-                            'public_key': api_key,
-                            'i': base64.b64encode(self.IV.encode('ascii')).decode('utf-8'),
-                            'enpruebas': aes.encrypt(test).decode('utf-8'),
-                            'lenguaje': self.LANGUAGE,
-                            'p': ''
-                        }
-                        enddata = {**encryptData, **addData}
-                        payload = json.dumps(enddata)
-                        response = requests.post(self.build_url(url), data=payload, headers=headers)
-                        return response.json()
-                else:
-                 for key, value in data.items():
+                for key, value in data.items():
                     if isinstance(value, bytes):
                         data[key] = value.decode('utf-8')
-               
-                if "extras_epayco" not in data or not isinstance(data["extras_epayco"], dict):
-                    data["extras_epayco"] = {"extra5": "P43"}
-                else:
-                    data["extras_epayco"]["extra5"] = "P43"
-
-                if switch:
-                    if test is True or str(test).lower() == "true":
-                        test = "TRUE"
+                data["extras_epayco"] = json.dumps({"extra5":"P43"})
+                if (switch):
+                    if test == True or test == "true":
+                        test= "TRUE"
                     else:
-                        test = "FALSE"
+                        test= "FALSE"
                     addData = {
                         'public_key': api_key,
+                        #'i': base64.b64encode(self.IV.encode('ascii')),
                         'enpruebas': test,
                         'lenguaje': self.LANGUAGE,
                         'p': ''
@@ -273,22 +182,23 @@ class Client:
                     enddata = {}
                     enddata.update(data)
                     enddata.update(addData)
-                    payload = json.dumps(enddata)
-                    response = requests.post(self.build_url(url), data=payload, headers=headers)
-                    return response.json()
+                    data=enddata
+                    payload = json.dumps(data)
+                    #response = requests.post(self.build_url(url),params=data, auth=(api_key, ''),headers=headers)
+                    response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
                 else:
-                   if dt:
-                        payload = json.dumps(data)
-                        response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
-                   else:
+                    #Agregamos la llave publica
+                    if(dt):
+                        data=json.dumps(data)
+                        response = requests.request("POST", self.build_url(url),headers=headers, json=data)
+                    else:
                         enddata = {}
                         data.update({'test': test})
                         enddata.update(data)
-                        payload = json.dumps(enddata)
-                   
+                        data = enddata
+                        payload = json.dumps(data)
+                        # response = requests.post(self.build_url(url), params=data, headers=headers)
                         response = requests.request("POST", self.build_url(url), headers=headers, data=payload)
-
-                   
             elif (method == "PATCH"):
                 response = requests.request(
                     method,
@@ -309,48 +219,48 @@ class Client:
             print(f"Se ha producido un error: {e}")
             #traceback.print_exc()
             raise  errors.ErrorException(lang, 101)
-      
 
         if (response.status_code >= 200 and response.status_code <= 206):
             if (method == "DELETE"):
                 return response.status_code == 204 or response.status_code == 200
+
             return response.json()
-    
-        if (response.status_code >= 400 or response.status_code <= 500):
+
+        if (response.status_code == 400):
             try:
-                if (response.status_code == 400):
-                    raise errors.ErrorException(lang, 103)
-                
-
-                if (response.status_code == 401):
-                    raise errors.ErrorException(lang, 104)
-
-                if (response.status_code == 404):
-                    raise errors.ErrorException(lang, 105)
-
-                if (response.status_code == 403):
-                    raise errors.ErrorException(lang, 106)
-
-                if (response.status_code == 405):
-                    raise errors.ErrorException(lang, 107)
-                
+                raise errors.ErrorException(lang, 103)
             except errors.ErrorException as e:
-                try:
-                    response_json = response.json()
-                except ValueError:
-                    response_json = {}
+                print(e)
 
-                response_json = json.dumps(response_json) 
-                errorExcepcion = json.dumps({
-                    "status": False,
-                    "message": str(e),
-                    "data": response_json,
-                    'errors': {'http_code': response.status_code}
-                })
+        if (response.status_code == 401):
+            try:
+                raise errors.ErrorException(lang, 104)
+            except errors.ErrorException as e:
+                print(e)
 
-                response_final = json.loads(errorExcepcion)
-                return response_final
-            
+        if (response.status_code == 404):
+            try:
+                raise errors.ErrorException(lang, 105)
+            except errors.ErrorException as e:
+                print(e)
+
+        if (response.status_code == 403):
+            try:
+                raise errors.ErrorException(lang, 106)
+            except errors.ErrorException as e:
+                print(e)
+
+        if (response.status_code == 405):
+            try:
+                raise errors.ErrorException(lang, 107)
+            except errors.ErrorException as e:
+                print(e)
+
+        try:
+            raise errors.ErrorException(lang, 102)
+        except errors.ErrorException as e:
+            print(e)
+
     def build_url(self,endpoint):
             """
             Build complete URL from API endpoint

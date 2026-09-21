@@ -411,20 +411,20 @@ class Bank(Resource):
     """
 
     def pseBank(self,options = None):
-      
-        url = "/payment/pse/banks"
+        if self.epayco.test == 'false':
+            url = "/pse/bancos.json?public_key="+self.epayco.api_key+"&test=1"
+        else:
+            url = "/pse/bancos.json?public_key="+self.epayco.api_key
         return self.request(
             "GET",
             url,
             self.epayco.api_key,
-            None,
+            {'public_key':self.epayco.api_key},
             self.epayco.private_key,
             self.epayco.test,
-            False,
+            True,
             self.epayco.lang,
-            None,
-            None,
-            True
+            False
         )
 
     """
@@ -436,17 +436,16 @@ class Bank(Resource):
     def create(self, options=None):
         return self.request(
             "POST",
-            "/pagos/debitos.json",
+            "payment/process/pse",
             self.epayco.api_key,
             options,
             self.epayco.private_key,
             self.epayco.test,
-            True,                
+            True,
             self.epayco.lang,
-            False,           
-            False, 
             False,
-            True                 
+            False,
+            True
         )
 
     """
@@ -556,17 +555,10 @@ class Daviplata(Resource):
 
 
 class Safetypay(Resource):
-    def create(self, options = None):
-        return self.request(
-            "POST",
-            "payment/process/safetypay",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            False,
-            self.epayco.lang,
-            False,
-            False,
-            True
-        )
+    def create(self, options=None):
+        gateway = self.epayco.gateway_for("safetypay")
+        return gateway.create("safetypay", options)
+
+    def get(self, uid):
+        gateway = self.epayco.gateway_for("safetypay")
+        return gateway.get("safetypay", uid)

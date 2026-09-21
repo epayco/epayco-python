@@ -8,19 +8,26 @@ from epaycosdk.resources import Cash
 from epaycosdk.resources import Charge
 from epaycosdk.resources import Safetypay
 from epaycosdk.resources import Daviplata
+from epaycosdk.gateways.legacy import LegacyGateway
+from epaycosdk.gateways.ms_transaction import MsTransactionGateway
 
 class Epayco:
 
     public_key = ""
     api_key = ""
-    test = ""
+    test = False
     lang = "ES"
 
     def __init__(self, options):
         self.api_key = options["apiKey"]
         self.private_key = options["privateKey"]
-        self.test = True if options["test"] else False
+        self.test = "true" if options["test"] else "false"
         self.lang = options["lenguage"]
+
+        self.legacy_methods = set(options.get("transactionMethods", []))
+        self._legacy_gateway = LegacyGateway(self)
+        self._ms_transaction_gateway = MsTransactionGateway(self)
+
         self.token = Token(self)
         self.customer = Customers(self)
         self.plan = Plan(self)
@@ -30,3 +37,8 @@ class Epayco:
         self.charge = Charge(self)
         self.safetypay = Safetypay(self)
         self.daviplata = Daviplata(self)
+
+    def gateway_for(self, payment_method):
+        if payment_method in self.legacy_methods:
+            return self._legacy_gateway
+        return self._ms_transaction_gateway
