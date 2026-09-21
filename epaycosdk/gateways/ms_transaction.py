@@ -11,22 +11,12 @@ from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayRespons
 
 class MsTransactionGateway(PaymentGateway):
 
-    # Dominio real de produccion confirmado en vivo (2026-09-21) contra
-    # green: "apiflow-green" (con guion), NO "apiflow" a secas -- distinto
-    # del usado en preproduccion/QA (apiflow.epayco.io, sin -green).
-    BASE_URL = "https://apiflow-green.epayco.co/"
+
+    BASE_URL = "https://apiflow.epayco.co/"
     TRANSACTIONS_URL = f"{BASE_URL}payment/api/v1/transactions"
     PSE_BANKS_URL = f"{BASE_URL}payment/api/v1/pse/banks"
-    # Dominio de autenticacion Basic-auth apify existente (Client.BASE_URL_APIFY
-    # en green) -- confirmado en vivo que el login OAuth2 nuevo
-    # (authentication/api/v2/login) NO es aceptado por el endpoint de
-    # transacciones en produccion; el mecanismo Basic-auth viejo si.
-    AUTH_URL_APIFY = "https://apify-green.epayco.co"
+    AUTH_URL_APIFY = "https://apify.epayco.co"
     IV = "0000000000000000"
-
-    # Solo safetypay -- SDK-1032 es la unica card certificada para este
-    # branch. No agregar cash/pse/daviplata aqui hasta que sus propias cards
-    # esten certificadas y se despliegue cada una por separado a green.
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
     }

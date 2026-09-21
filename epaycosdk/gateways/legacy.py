@@ -4,10 +4,6 @@ from epaycosdk.gateways.base import PaymentGateway
 
 class LegacyGateway(PaymentGateway):
 
-    # Solo safetypay -- SDK-1032 es la unica card certificada para este
-    # branch. No agregar cash/pse/daviplata aqui hasta que sus propias cards
-    # (SDK-1030/1029/1031) esten certificadas y se despliegue cada una por
-    # separado a green.
     _CREATE_ENDPOINTS = {
         "safetypay": ("payment/process/safetypay", False, True, False),
     }
