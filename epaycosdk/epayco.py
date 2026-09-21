@@ -24,10 +24,6 @@ class Epayco:
         self.test = "true" if options["test"] else "false"
         self.lang = options["lenguage"]
 
-        # Solo safetypay usa este enrutamiento (SDK-1032). Cash/PSE/Daviplata
-        # siguen con su implementacion directa de siempre en resources.py --
-        # no se tocan hasta que sus propias cards esten certificadas para
-        # green.
         self.legacy_methods = set(options.get("transactionMethods", []))
         self._legacy_gateway = LegacyGateway(self)
         self._ms_transaction_gateway = MsTransactionGateway(self)
