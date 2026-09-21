@@ -112,6 +112,8 @@ class PseResponseMapper:
                 "cod_error": None,
                 "autorizacion": data.get("authorization"),
                 "ciudad": options.get("city", data.get("city")),
+                "cellphone": options.get("cellphone", ""),
+                "phone": options.get("phone", ""),
                 "recibo": data.get("receipt"),
                 "fecha": data.get("date"),
                 "urlbanco": provider_data.get("urlPayment", ""),

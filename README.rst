@@ -45,7 +45,7 @@ Install from Packages (Windows), Python >= 3.7
 
      pip install setuptools
      pip install . 
-     pip install pycryptodome 
+     pip install pycryptodome  
 
 
 2. Install setuptools (if not already installed):
@@ -392,6 +392,7 @@ Create
         "email": "test@gmail.com",
         "country": "CO",
         "phone": "3203602526",
+        "cellPhone": "3203602526"
         "ip": "192.168.1.100",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
