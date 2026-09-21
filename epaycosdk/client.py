@@ -118,7 +118,7 @@ class Client:
     """
 
 
-    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False ):
+    def request(self,method='POST',url="",api_key="",data={}, private_key="",test="", switch="", lang="",cashdata="",dt="", apify=False, pse=False ):
         auth = Auth(api_key, private_key)
         authentication = auth.make(self.BASE_URL,self.BASE_URL_APIFY,apify)
         token_bearer = 'Bearer ' +authentication

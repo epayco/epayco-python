@@ -8,6 +8,8 @@ from epaycosdk.resources import Cash
 from epaycosdk.resources import Charge
 from epaycosdk.resources import Safetypay
 from epaycosdk.resources import Daviplata
+from epaycosdk.gateways.legacy import LegacyGateway
+from epaycosdk.gateways.ms_transaction import MsTransactionGateway
 
 class Epayco:
 
@@ -22,6 +24,14 @@ class Epayco:
         self.test = "true" if options["test"] else "false"
         self.lang = options["lenguage"]
 
+        # Solo safetypay usa este enrutamiento (SDK-1032). Cash/PSE/Daviplata
+        # siguen con su implementacion directa de siempre en resources.py --
+        # no se tocan hasta que sus propias cards esten certificadas para
+        # green.
+        self.legacy_methods = set(options.get("transactionMethods", []))
+        self._legacy_gateway = LegacyGateway(self)
+        self._ms_transaction_gateway = MsTransactionGateway(self)
+
         self.token = Token(self)
         self.customer = Customers(self)
         self.plan = Plan(self)
@@ -31,3 +41,8 @@ class Epayco:
         self.charge = Charge(self)
         self.safetypay = Safetypay(self)
         self.daviplata = Daviplata(self)
+
+    def gateway_for(self, payment_method):
+        if payment_method in self.legacy_methods:
+            return self._legacy_gateway
+        return self._ms_transaction_gateway
