@@ -4,18 +4,24 @@ import json
 import requests
 
 from epaycosdk.aes_cipher import AESCipher
+from epaycosdk.client import Auth
 from epaycosdk.gateways.base import PaymentGateway
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 
 
 class MsTransactionGateway(PaymentGateway):
 
-    # Dominio de produccion (.co) -- distinto del usado en preproduccion/QA
-    # (.io, ver epayco-python develop). Confirmado por el equipo para green.
-    BASE_URL = "https://apiflow.epayco.co/"
+    # Dominio real de produccion confirmado en vivo (2026-09-21) contra
+    # green: "apiflow-green" (con guion), NO "apiflow" a secas -- distinto
+    # del usado en preproduccion/QA (apiflow.epayco.io, sin -green).
+    BASE_URL = "https://apiflow-green.epayco.co/"
     TRANSACTIONS_URL = f"{BASE_URL}payment/api/v1/transactions"
     PSE_BANKS_URL = f"{BASE_URL}payment/api/v1/pse/banks"
-    AUTH_URL = f"{BASE_URL}authentication/api/v2/login"
+    # Dominio de autenticacion Basic-auth apify existente (Client.BASE_URL_APIFY
+    # en green) -- confirmado en vivo que el login OAuth2 nuevo
+    # (authentication/api/v2/login) NO es aceptado por el endpoint de
+    # transacciones en produccion; el mecanismo Basic-auth viejo si.
+    AUTH_URL_APIFY = "https://apify-green.epayco.co"
     IV = "0000000000000000"
 
     # Solo safetypay -- SDK-1032 es la unica card certificada para este
@@ -97,16 +103,8 @@ class MsTransactionGateway(PaymentGateway):
         return encrypted
 
     def _get_token(self):
-        response = requests.post(
-            self.AUTH_URL,
-            headers={"Content-Type": "application/json"},
-            json={
-                "client_id": self.epayco.api_key,
-                "client_secret": self.epayco.private_key,
-                "grant_type": "client_credentials",
-            },
-        )
-        return self._parse(response)["data"]["token"]
+        auth = Auth(self.epayco.api_key, self.epayco.private_key)
+        return auth.make(self.BASE_URL, self.AUTH_URL_APIFY, True)
 
     def _headers(self):
         return {
