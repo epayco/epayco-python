@@ -13,26 +13,16 @@ from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 
 class MsTransactionGateway(PaymentGateway):
 
-<<<<<<< HEAD
-    TRANSACTIONS_URL = "https://apiflow.epayco.io/payment/api/v1/transactions"
-    PSE_BANKS_URL = "https://apiflow.epayco.io/payment/api/v1/pse/banks"
-    AUTH_HOST = "https://eks-apify-service.epayco.io"
-=======
     BASE_URL = "https://apiflow.epayco.io/"
     TRANSACTIONS_URL = f"{BASE_URL}payment/api/v1/transactions"
     PSE_BANKS_URL = f"{BASE_URL}payment/api/v1/pse/banks"
     AUTH_URL = f"{BASE_URL}authentication/api/v2/login"
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
     IV = "0000000000000000"
 
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
         "daviplata": (DaviplataRequestMapper(), DaviplataResponseMapper()),
-<<<<<<< HEAD
-        "pse": (PseRequestMapper(), PseResponseMapper()), 
-=======
         "pse": (PseRequestMapper(), PseResponseMapper()),
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
         "cash": (CashRequestMapper(), CashResponseMapper())
     }
 
@@ -59,10 +49,7 @@ class MsTransactionGateway(PaymentGateway):
             url,
             headers=headers,
         )
-<<<<<<< HEAD
-=======
  
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
         return self._parse(response)
 
     def get(self, payment_method, ref_payco):
@@ -76,11 +63,8 @@ class MsTransactionGateway(PaymentGateway):
             headers=headers,
         )
 
-<<<<<<< HEAD
-=======
       
 
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
         return response_mapper.to_sdk_response(
             self._parse(response)
         )

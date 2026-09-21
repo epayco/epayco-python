@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
-=======
 from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response, legacy_status_code
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
 
 
 class PseRequestMapper:
@@ -20,19 +16,11 @@ class PseRequestMapper:
         body = {
             "invoice": options.get("invoice"),
             "documentType": options.get("doc_type"),
-<<<<<<< HEAD
-            "document": options.get("document"),
-            "names": options.get("name"),
-            "lastNames": options.get("last_name"),
-            "phone": options.get("phone"),
-            "cellphone": options.get("cellphone"),
-=======
             "document": options.get("docNumber") or options.get("document") or options.get("doc_number"),
             "names": options.get("name"),
             "lastNames": options.get("last_name"),
             "phone": options.get("phone"),
             "cellphone": options.get("cell_phone") or options.get("cellPhone"),
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
             "email": options.get("email"),
             "amount": options.get("value"),
             "tax": options.get("tax", 0),
@@ -44,18 +32,10 @@ class PseRequestMapper:
             "paymentMethod": "PSE",
             "paymentMethodData": payment_method_data,
             "country": options.get("country", "CO"),
-<<<<<<< HEAD
-            "city": options.get("city", ""),
-            "ip": options.get("ip"),
-            "responseUrl": options.get("url_response"),
-            "confirmationUrl": options.get("url_confirmation"),
-            "confirmationMethod": options.get("method_confirmation", "POST"),
-=======
             "ip": options.get("ip"),
             "responseUrl": options.get("url_response"),
             "confirmationUrl": options.get("url_confirmation"),
             "confirmationMethod": options.get("metodoconfirmacion") or options.get("method_confirmation", "POST"),
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
             "description": options.get("description"),
             "integrationType": {
                 "tipo_checkout": "onpage",
@@ -91,16 +71,11 @@ class PseRequestMapper:
         return body
 
 class PseResponseMapper:
-<<<<<<< HEAD
-
-    _LAST_ACTION = "Envio Transaction Pse"
-=======
     """Replica el contrato historico de PSE legacy (/pagos/debitos.json), que
     usa nombres de campo en espanol/snake_case tanto a nivel raiz como en
     'data' -- distinto de safetypay/daviplata/cash, cuyo legacy (estilo
     apify) ya usaba nombres en ingles/camelCase equivalentes al del flujo
     nuevo. Ver comparacion legacy vs nuevo del 2026-09-18."""
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
 
     def to_sdk_response(self, ms_response, options=None):
         if is_validation_error(ms_response):
@@ -113,37 +88,6 @@ class PseResponseMapper:
         if isinstance(provider_data, list):
             provider_data = {}
         extras_epayco_new = data.get("extrasEpayco") or {}
-<<<<<<< HEAD
-
-        return {
-            "success": success,
-            "titleResponse": "Ok" if success else ms_response.get("message"),
-            "textResponse": ms_response.get("message"),
-            "lastAction": self._LAST_ACTION,
-            "data": {
-                "refPayco": data.get("refPayco"),
-                "invoice": data.get("invoice"),
-                "description": data.get("description"),
-                "value": data.get("amount"),
-                "tax": data.get("tax"),
-                "ico": data.get("ico"),
-                "taxBase": data.get("taxBase"),
-                "currency": data.get("currency"),
-                "status": data.get("status"),
-                "response": data.get("response"),
-                "codResponse": data.get("responseCode", ""),
-                "codError": "",
-                "autorization": data.get("authorization"),
-                "receipt": data.get("receipt"),
-                "date": data.get("date"),
-                "country": options.get("country", "CO"),
-                "city": data.get("city"),
-                "urlBank": provider_data.get("urlPayment", ""),
-                "transactionId": data.get("refPayco"),
-                "ticketId": data.get("receipt"),
-                "extras": data.get("extras") or {},
-                "extras_epayco": {"extra5": extras_epayco_new.get("extra5", "")},
-=======
         cycle = provider_data.get("cycle")
         ticket_id = provider_data.get("ticketId", data.get("receipt"))
         estado = data.get("status")
@@ -176,6 +120,5 @@ class PseResponseMapper:
                 "extras": data.get("extras") or {},
                 "extras_epayco": {"extra5": extras_epayco_new.get("extra5", "")},
                 "ciclo": str(cycle) if cycle is not None else None,
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
             },
         }

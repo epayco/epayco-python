@@ -5,11 +5,7 @@ class DaviplataRequestMapper:
 
     def to_ms_transaction(self, options, epayco):
         options = options or {}
-<<<<<<< HEAD
-        return {
-=======
         body = {
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
             "documentType": options.get("doc_type"),
             "document": options.get("document"),
             "names": options.get("name"),
@@ -39,8 +35,6 @@ class DaviplataRequestMapper:
             "extrasEpayco": {"extra5": "P43"},
             "paymentMethodData": {},
         }
-<<<<<<< HEAD
-=======
         split_info = options.get("split_payment")
         if split_info:
             body["splitPayment"] = {
@@ -54,7 +48,6 @@ class DaviplataRequestMapper:
                 "splitReceivers": split_info.get("split_receivers", []),
             }
         return body
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
 
 
 class DaviplataResponseMapper:
@@ -105,15 +98,9 @@ class DaviplataResponseMapper:
                 "name": options.get("name"),
                 "lastName": options.get("last_name"),
                 "email": options.get("email"),
-<<<<<<< HEAD
-                "city": data.get("city"),
-                "address": options.get("address"),
-                "indCountry": options.get("ind_country", ""),
-=======
                 "city": options.get("city", ""),
                 "address": options.get("address", "NA"),
                 "indCountry": options.get("ind_country"),
->>>>>>> 00f1aebede90193425c7b8d560088cc0324e5702
                 "idSessionToken": provider_data.get("paymentSessionId"),
                 "tokenExpirationDate": provider_data.get("paymentSessionExpirationDate"),
                 "daviplataOtpLab": None,
