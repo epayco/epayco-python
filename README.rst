@@ -468,7 +468,7 @@ Create
         "name": "testing",
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
-        "cellPhone": "3000000001",
+        "celphone": "3000000001",
         "phone": "3010000001",
         "end_date": "2026-09-09",
         "ip": "192.168.1.100",
