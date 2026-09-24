@@ -6,6 +6,7 @@ import base64
 import hashlib
 import requests
 import epaycosdk.errors as errors
+from epaycosdk.utils import with_default_extra5
 from Crypto.Cipher import AES
 import os
 import sys
@@ -221,7 +222,7 @@ class Client:
                   
                     aes = AESCipher(private_key, self.IV)
 
-                    data["extras_epayco"] = {"extra5": "P43"}  
+                    data["extras_epayco"] = with_default_extra5(data.get("extras_epayco"))
 
                     if switch:
                      
@@ -256,10 +257,7 @@ class Client:
                     if isinstance(value, bytes):
                         data[key] = value.decode('utf-8')
                
-                if "extras_epayco" not in data or not isinstance(data["extras_epayco"], dict):
-                    data["extras_epayco"] = {"extra5": "P43"}
-                else:
-                    data["extras_epayco"]["extra5"] = "P43"
+                data["extras_epayco"] = with_default_extra5(data.get("extras_epayco"))
 
                 if switch:
                     if test is True or str(test).lower() == "true":

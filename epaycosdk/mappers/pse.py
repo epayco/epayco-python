@@ -1,4 +1,5 @@
 from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response, legacy_status_code
+from epaycosdk.utils import with_default_extra5
 
 
 class PseRequestMapper:
@@ -45,7 +46,7 @@ class PseRequestMapper:
             "extras": {
                 "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
             },
-            "extrasEpayco": {"extra5": "P43"}
+            "extrasEpayco": with_default_extra5(options.get("extrasEpayco"))
         }
 
         #  Bloque de Split Payment
