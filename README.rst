@@ -19,38 +19,52 @@ If you want to clone the repository, point it directly into our GitHub project:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/epayco/epayco-python.git
+  $ git clone https://github.com/epayco/epayco-python.git
 
-Install from Packages (Linux), Python = 3.7
+Install from Packages (Linux), Python >= 3.7
 -------------------------------------------
 
-Run the file `setup.py`:
+1.  Install the ePayco module:
 
 .. code-block:: bash
 
-    $ sudo python3 setup.py install
+    pip install epaycosdk
 
-Install the ePayco module:
+2.  Run the `setup.py` file:
 
 .. code-block:: bash
 
-    $ pip install epaycosdk
+    sudo python3 setup.py install
 
-Install from Packages (Windows), Python = 3.7
+Install from Packages (Windows), Python >= 3.7
 ---------------------------------------------
 
-Run the file `setup.py`:
+1. Install the ePayco module:
 
 .. code-block:: bash
 
-    $ pip install setuptools
-    $ python setup.py install
+     pip install setuptools
+     pip install . 
+     pip install pycryptodome  
 
-Install the ePayco module:
+
+2. Install setuptools (if not already installed):
 
 .. code-block:: bash
 
-    $ pip install epaycosdk
+    pip install setuptools
+
+3. Run the `setup.py` file:
+
+.. code-block:: bash
+
+    python setup.py install
+
+4. Install pycryptodome (required for encryption):
+
+.. code-block:: bash
+
+    pip install pycryptodome
 
 
 Usage
@@ -68,6 +82,29 @@ Usage
 
     objepayco=epayco.Epayco(options)
 
+Legacy Flow (optional)
+####
+
+By default, Safetypay and Daviplata use the new ms-transaction backend. A merchant can
+keep one or more payment methods on the legacy flow by adding ``transactionMethods`` to
+``options``:
+
+.. code-block:: python
+
+    options = {
+        "apiKey": apiKey,
+        "privateKey": privateKey,
+        "test": test,
+        "lenguage": lenguage,
+        "transactionMethods": ["safetypay", "daviplata"],
+    }
+
+    objepayco = epayco.Epayco(options)
+
+The SDK's public methods (``objepayco.safetypay.create(...)``, etc.) do not change their
+signature or response format depending on the flow used. Payment methods currently
+supported on ms-transaction: ``safetypay``, ``daviplata``.
+
 Create Token
 ####
 
@@ -75,13 +112,14 @@ Create Token
 
     credit_info = {
       "card[number]": "4575623182290326",
-      "card[exp_year]": "2025",
-      "card[exp_month]": "19",
+      "card[exp_year]": "2027",
+      "card[exp_month]": "12",
       "card[cvc]": "123",
-      "hasCvv": True #// hasCvv: validar codigo de seguridad en la transacción
+      "hasCvv": True #// hasCvv: validate the security code on the transaction
       }
 
     token=objepayco.token.create(credit_info)
+    print(token)
 
 Customers
 ####
@@ -104,12 +142,14 @@ Create
       }
 
     customer=objepayco.customer.create(customer_info)
+    print(customer)
 
 Retrieve
 ******
 .. code-block:: python
 
     customer=objepayco.customer.get("id_client")
+    print(customer)
 
 List
 ******
@@ -120,6 +160,7 @@ List
         "perPage": 5 #number of customers per page
     }
     customers = objepayco.customer.getlist(customer_info)
+    print(customers)
 
 Update
 ******
@@ -131,6 +172,7 @@ Update
     }
 
     customer =objepayco.customer.update(update_customer_info)
+    print(customer)
 
 Delete Token
 ******
@@ -143,6 +185,7 @@ Delete Token
     }
 
     customer =objepayco.customer.delete(delete_customer_info)
+    print(customer)
 
 
 
@@ -157,6 +200,7 @@ Add new token default to card existed
         "mask":"457562******0326"
     }
     customer=objepayco.customer.addDefaultCard(customer_info)
+    print(customer)
 
 
 Add new token to customer existed
@@ -168,6 +212,7 @@ Add new token to customer existed
         "customer_id":"id_client"
     }
     customer=objepayco.customer.addNewToken(customer_info)
+    print(customer)
 
 
 
@@ -205,6 +250,8 @@ Create
     }
 
     plan = objepayco.plan.create(plan_info)
+    id_plan=plan['data']['id_plan']
+    print(plan)
 
 
 Retrieve
@@ -212,18 +259,21 @@ Retrieve
 .. code-block:: python
 
     plan = objepayco.plan.get("coursereact")
+    print(plan)
 
 List
 ******
 .. code-block:: python
 
     planes = objepayco.plan.getlist()
+    print(planes)
 
 Remove
 ******
 .. code-block:: python
 
     plan = objepayco.plan.delete("coursereact")
+    print(plan)
 
 Upadate
 ******
@@ -245,6 +295,7 @@ Upadate
         #"afterPayment":"message after paying"
     }
     plan = objepayco.plan.update(id_plan, plan_info_update)
+    print(plan)
 
 Subscriptions
 ####
@@ -265,24 +316,28 @@ Create
     }
 
     sub=objepayco.subscriptions.create(subscription_info)
+    print(sub)
 
 Retrieve
 ******
 .. code-block:: python
 
     sub=objepayco.subscriptions.get("efPXtZ5r4nZRoPtjZ")
+    print(sub)
 
 List
 ******
 .. code-block:: python
 
     sub=objepayco.subscriptions.getlist()
+    print(sub)
 
 Cancel
 ******
 .. code-block:: python
 
     sub=objepayco.subscriptions.cancel("fayE66HxYbxWydaN8")
+    print(sub)
 
 Pay Subscription
 ******
@@ -299,41 +354,49 @@ Pay Subscription
     }
 
     sub = objepayco.subscriptions.charge(subscription_info)
+    print(sub)
 
 PSE
 ####
 
 List Banks
 *****
+
+Integration mode: The list of banks will be displayed depending on how our dashboard
+is configured, in test or production mode.
+
 .. code-block:: python
 
-    banks = objepayco.bank.pseBank()
+  banks = objepayco.bank.pseBank()
+  print(banks)
 
 Create
 *****
+
 .. code-block:: python
 
     pse_info = {
-        "bank": "1007",
-        "invoice": "147205",
-        "description": "pay test",
-        "value": "116000",
-        "tax": float("16000"),
-        "tax_base": float("100000"),
+        "bank": "1077",
+        "invoice": "BANK-78",
+        "description": "test product",
+        "value": 7000,
+        "tax": 0,
+        "tax_base": 0,
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
-        "docNumber": "10000000",
-        "name": "testing",
-        "last_name": "PAYCO",
-        "email": "no-responder@payco.co",
+        "docNumber": "1234567890",
+        "name": "Testing",
+        "last_name": "User",
+        "city": "Bogota",
+        "email": "test@gmail.com",
         "country": "CO",
-        "cellPhone": "3010000001",
-        "ip": "190.000.000.000",  # This is the client's IP, it is required,
+        "phone": "3203602526",
+        "cellPhone": "3203602526"
+        "ip": "192.168.1.100",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "metodoconfirmacion": "GET",
-        # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
         "extra1": "",
         "extra2": "",
         "extra3": "",
@@ -344,12 +407,15 @@ Create
     }
 
     pse = objepayco.bank.create(pse_info)
+    print(pse)
+   
 
 Retrieve
 *****
 .. code-block:: python
 
-    pse = objepayco.bank.pseTransaction("ticketId")
+    pse = objepayco.bank.get(ref_payco)
+    print(pse)
 
 Split Payments
 *****
@@ -363,23 +429,20 @@ Split payment
 
 .. code-block:: python
 
-    import json
-
-    pse_info = {
-    #Other customary parameters...
-      "splitpayment":"true",
-       "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-       "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-       "split_type" : "01",
-       "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-       "split_primary_receiver_fee":"80000"
-       "split_receivers": json.dumps([
-                {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
-                {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ])
-     }
+    "split_payment": {
+       "split_app_id": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_merchant_id": "630339", #P_CUST_ID_CLIENTE COMMERCE
+        "split_primary_receiver": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_receivers": json.dumps([
+        {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "3500", "iva": "0", "base_iva": "0", "fee": "10"},
+        {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "3500", "iva": "0", "base_iva": "0", "fee": "10"}
+    ])
+    }
+    
+    
 
     pse_split = objepayco.bank.create(pse_info)
+    print(pse_split)
     
 
 Cash
@@ -387,16 +450,17 @@ Cash
 
 Create
 *****
+
 .. code-block:: python
 
         # paymentMethod: EF=> efecty, GA=>gana, PR=>puntored, RS=>redservi, SR=>sured
         cash_info = {
         "paymentMethod" :"EF",
-        "invoice": "1472050778",
-        "description": "pay test",
-        "value": "116000",
-        "tax": "16000",
-        "tax_base": "100000",
+        "invoice": "2358-CASH",
+        "description": "test product",
+        "value": 25000,
+        "tax": 0,
+        "tax_base": 0,
         "currency": "COP",
         "type_person": "0",
         "doc_type": "CC",
@@ -404,13 +468,14 @@ Create
         "name": "testing",
         "last_name": "PAYCO",
         "email": "test@mailinator.com",
-        "cellPhone": "3010000001",
-        "end_date": "2025-02-05",
-        "ip": "190.000.000.000",  # This is the client's IP, it is required,
+        "cellPhone": "3000000001",
+        "phone": "3010000001",
+        "end_date": "2026-09-09",
+        "ip": "192.168.1.100",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
-        "metodoconfirmacion": "GET",
-        # Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
+        "metodoconfirmacion": "POST",
+        # Extra parameters must be sent as strings; sending them as an array will cause an error.
         "extra1": "",
         "extra2": "",
         "extra3": "",
@@ -421,21 +486,20 @@ Create
     }
 
     cash = objepayco.cash.create(cash_info)
+    print(cash)
+  
 
 Retrieve
 *****
 .. code-block:: python
 
-    cash = epayco.cash.get("ref_payco")
-
-
+    cash = objepayco.cash.get(ref_payco)
+    print(cash)
 
 Split Payments
 *****
 
 Previous requirements: https://docs.epayco.co/tools/split-payment
-
-
 
 Split payment:
 ****
@@ -444,76 +508,71 @@ use the following attributes in case you need to do a dispersion with one or mul
 
 .. code-block:: python
 
-    import json 
-
-    payment_info = {
-    #Other customary parameters...
-        "splitpayment":"true",
-        "split_app_id":"P_CUST_ID_CLIENTE APPLICATION",
-        "split_merchant_id":"P_CUST_ID_CLIENTE COMMERCE",
-        "split_type" : "02",
-        "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
-        "split_primary_receiver_fee":"0",
-        "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
-        "split_receivers":json.dumps([
-                {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
-                {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ]) #campo obligatorio sí se envía split_rule
-        }
-
-     cash_info_split = objepayco.cash.create('efecty',cash_info)
-
-
-
-
+     #ADD AT THE END OF THE REQUEST
+     "split_payment": {
+       "split_app_id": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_merchant_id": "630339", #P_CUST_ID_CLIENTE COMMERCE
+        "split_primary_receiver": "630339", #P_CUST_ID_CLIENTE APPLICATION
+        "split_receivers": json.dumps([
+        {"id": "P_CUST_ID_CLIENTE 1 RECEIVER", "total": "12500", "iva": "0", "base_iva": "0", "fee": "10"},
+        {"id": "P_CUST_ID_CLIENTE 2 RECEIVER", "total": "12500", "iva": "0", "base_iva": "0", "fee": "10"}
+    ])
+    }
+    
+    
+    cash_split = objepayco.cash.create(cash_info)
+    print(cash_split)
 
 Payment
 ####
 
 Create
 *****
+
 .. code-block:: python
 
     payment_info = {
-      "token_card": "token_card",
-      "customer_id": "customer_id",
-      "doc_type": "CC",
-      "doc_number": "1000000",
-      "name": "John",
-      "last_name": "Doe",
-      "email": "example@email.com",
-      "bill": "OR-1234",
-      "description": "Test Payment",
-      "country": "CO",
-      "city": "bogota",
-      "value": "116000",
-      "tax": "16000",
-      "tax_base": "100000",
-      "currency": "COP",
-      "dues": "12",
-      "ip":"190.000.000.000",  #This is the client's IP, it is required
-      "url_response": "https://tudominio.com/respuesta.php",
-      "url_confirmation": "https://tudominio.com/confirmacion.php",
-      "method_confirmation": "GET",
-      "use_default_card_customer":True, # if the user wants to be charged with the card that the customer currently has as default = true
-      #Los parámetros extras deben ser enviados tipo string, si se envía tipo array generara error.
-      "extra1": "",
-      "extra2": "",
-      "extra3": "",
-      "extra4": "",
-      "extra5": "",  
-      "extra6": "",
-      "extra7": ""
+        "token_card": "token_card",
+        "customer_id": "customer_id",
+        "doc_type": "CC",
+        "doc_number": "1000000",
+        "name": "John",
+        "last_name": "Doe",
+        "email": "example@email.com",
+        "bill": "OR-123767612",
+        "description": "Test Payment",
+        "country": "CO",
+        "city": "bogota",
+        "value": "116000",
+        "tax": "16000",
+        "tax_base": "100000",
+        "currency": "COP",
+        "dues": "12",
+        "ip":"190.000.000.000",  #This is the client's IP, it is required
+        "url_response": "https://tudominio.com/respuesta.php",
+        "url_confirmation": "https://tudominio.com/confirmacion.php",
+        "method_confirmation": "GET",
+        "use_default_card_customer": True,
+        "extra1": "",
+        "extra2": "",
+        "extra3": "",
+        "extra4": "",
+        "extra5": "",
+        "extra6": "",
+        "extra7": ""
     }
 
     pay = objepayco.charge.create(payment_info)
+
 
 Retrieve
 *****
 
 .. code-block:: python
 
-    pay = epayco.charge.get("ref_payco")
+    pay = objepayco.charge.get("ref_payco")
+    print(pay)
+
 
 
 Split Payments
@@ -539,14 +598,15 @@ use the following attributes in case you need to do a dispersion with one or mul
         "split_type" : "02",
         "split_primary_receiver" : "P_CUST_ID_CLIENTE APPLICATION",
         "split_primary_receiver_fee":"0",
-        "split_rule":'multiple', #si se envía este parámetro el campo split_receivers se vuelve obligatorio
+        "split_rule":'multiple', #if this parameter is sent, the split_receivers field becomes mandatory
         "split_receivers":[
                 {"id":"P_CUST_ID_CLIENTE 1 RECEIVER","total":"58000","iva":"8000","base_iva":"50000","fee":"10"},
                 {"id":"P_CUST_ID_CLIENTE 2 RECEIVER","total":"58000","iva":"8000","base_iva":"50000", "fee":"10"}
-        ] #campo obligatorio sí se envía split_rule
+        ] #mandatory field if split_rule is sent
         }
 
     pay_split = objepayco.charge.create(payment_info)
+    print(pay_split)
 
 
 Daviplata
@@ -558,31 +618,31 @@ Create
 .. code-block:: python
 
     payment_info = {
-        "doc_type": "CC",
-        "document": "1053814580414720",
+        "doc_type": "CE",
+        "document": "786630",
         "name": "Testing",
         "last_name": "PAYCO",
         "email": "exmaple@epayco.co",
         "ind_country": "57",
-        "phone": "314853222200033",
+        "phone": "3003689000",
         "country": "CO",
         "city": "bogota",
         "address": "Calle de prueba",
         "ip": "189.176.0.1",
         "currency": "COP",
-        "description": "ejemplo de transaccion con daviplata",
-        "value": "100",
+        "description": "example transaction with daviplata",
+        "value": "50000",
         "tax": "0",
-        "ico": "0"
+        "ico": "0",
         "tax_base": "0",
         "method_confirmation": "GET",
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
-        "extra1": "",      
+        "extra1": "",
         "extra2": "",
         "extra3": "",
         "extra4": "",
-        "extra5": "",  
+        "extra5": "",
         "extra6": "",
         "extra7": "",
         "extra8": "",
@@ -591,8 +651,9 @@ Create
     }
 
     daviplata = objepayco.daviplata.create(payment_info)
+ 
 
-confirm transaccion
+confirm transaction
 *****
 
 .. code-block:: python
@@ -604,6 +665,18 @@ confirm transaccion
     }
    
     daviplata = objepayco.daviplata.confirm(payment_info)
+    print(daviplata)
+
+Retrieve
+******
+
+Available by default (ms-transaction). It does not work if ``daviplata`` is in
+``transactionMethods`` (see "Legacy Flow") -- the legacy flow does not support querying
+Daviplata transactions by ``ref_payco``.
+
+.. code-block:: python
+
+    daviplata = objepayco.daviplata.get("ref_payco")
 
 Safetypay
 ####
@@ -615,21 +688,21 @@ Create
 
     payment_info = {
         "cash": "1",
-        "end_date": "2021-08-05",
+        "end_date": "2025-09-20",
         "doc_type": "CC",
-        "document"": "123456789",
+        "document": "1234567899",
         "name": "Jhon",
         "last_name": "doe",
         "email": "jhon.doe@yopmail.com",
         "ind_country": "57",
         "phone": "3003003434",
         "country": "CO",
-        "invoice": "fac-01", # opcional
+        "invoice": "fac-0555",
         "city": "N/A",
         "address": "N/A",
         "ip": "192.168.100.100",
         "currency": "COP",
-        "description": "Thu Jun 17 2021 11:37:01 GMT-0400 (hora de Venezuela)",
+        "description": "Thu Jun 17 2021 11:37:01 GMT-0400 (Venezuela time)",
         "value": 100000,
         "tax": 0,
         "ico": 0,
@@ -637,11 +710,11 @@ Create
         "url_confirmation": "https://tudominio.com/respuesta.php",
         "url_response": "https://tudominio.com/respuesta.php",
         "method_confirmation": "POST",
-        "extra1": "",      
+        "extra1": "",
         "extra2": "",
         "extra3": "",
         "extra4": "",
-        "extra5": "",  
+        "extra5": "",
         "extra6": "",
         "extra7": "",
         "extra8": "",
@@ -650,3 +723,14 @@ Create
     }
 
     safetypay = objepayco.safetypay.create(payment_info)
+
+Retrieve
+******
+
+Available by default (ms-transaction). It does not work if ``safetypay`` is in
+``transactionMethods`` (see "Legacy Flow") -- the legacy flow does not support querying
+Safetypay transactions by ``ref_payco``.
+
+.. code-block:: python
+
+    safetypay = objepayco.safetypay.get("ref_payco")

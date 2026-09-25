@@ -399,33 +399,19 @@ class Subscriptions(Resource):
             False
         )
 
-"""
- * Pse methods
-"""
-
+    """
+    * Pse methods
+    """
 
 class Bank(Resource):
     """
      * Return list all banks
      * @return object
     """
-
-    def pseBank(self,options = None):
-        if self.epayco.test == 'false':
-            url = "/pse/bancos.json?public_key="+self.epayco.api_key+"&test=1"
-        else:
-            url = "/pse/bancos.json?public_key="+self.epayco.api_key
-        return self.request(
-            "GET",
-            url,
-            self.epayco.api_key,
-            {'public_key':self.epayco.api_key},
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False
-        )
+    
+    def pseBank(self, options=None):
+        gateway = self.epayco.gateway_for("pse")
+        return gateway.pse_banks()
 
     """
      * Create transaction in ACH
@@ -434,19 +420,8 @@ class Bank(Resource):
     """
 
     def create(self, options=None):
-        return self.request(
-            "POST",
-            "payment/process/pse",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False,
-            False,
-            True
-        )
+        gateway = self.epayco.gateway_for("pse")
+        return gateway.create("pse", options)
 
     """
      * Return data transaction
@@ -454,36 +429,12 @@ class Bank(Resource):
      * @return object
     """
 
-    def pseTransaction(self, uid):
-        return self.request(
-            "GET",
-            "/pse/transactioninfomation.json",
-            self.epayco.api_key,
-            {'transactionID':uid},
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False
-        )
-
     def get(self, uid):
-
-        return self.request(
-            "GET",
-            "/transaction/response.json",
-            self.epayco.api_key,
-            {'ref_payco': uid},
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False
-        )
+        gateway = self.epayco.gateway_for("pse")
+        return gateway.get("pse", uid)
 """
  * Cash payment methods
 """
-
 
 class Cash(Resource):
     """
@@ -492,53 +443,24 @@ class Cash(Resource):
     * @param  String $options data transaction
     * @return object
     """
-
     def create(self, options=None):
-        return self.request(
-            "POST",
-            "payment/process/cash",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False,
-            False,
-            True
-        )
-
+        gateway = self.epayco.gateway_for("cash")
+        return gateway.create("cash", options)
+       
     def get(self, uid):
-
-        return self.request(
-            "GET",
-            "/transaction/response.json",
-            self.epayco.api_key,
-            {'ref_payco': uid},
-            self.epayco.private_key,
-            self.epayco.test,
-            True,
-            self.epayco.lang,
-            False
-        )
+        gateway = self.epayco.gateway_for("cash")
+        return gateway.get("cash", uid)
 
 class Daviplata(Resource):
     def create(self, options = None):
-        return self.request(
-            "POST",
-            "payment/process/daviplata",
-            self.epayco.api_key,
-            options,
-            self.epayco.private_key,
-            self.epayco.test,
-            False,
-            self.epayco.lang,
-            False,
-            False,
-            True # apify
-        )
+        gateway = self.epayco.gateway_for("daviplata")
+        return gateway.create("daviplata", options)
 
-    def confirm(self, options = None):  
+    def get(self, uid):
+        gateway = self.epayco.gateway_for("daviplata")
+        return gateway.get("daviplata", uid)
+
+    def confirm(self, options = None):
         return self.request(
             "POST",
             "payment/confirm/daviplata",
@@ -555,12 +477,7 @@ class Daviplata(Resource):
 
 
 class Safetypay(Resource):
-    # SDK-1032: migrado a ms-transaction via gateway_for(); legacy sigue
-    # disponible pasando transactionMethods=["safetypay"] al construir el
-    # SDK. No se toca Cash/Bank(PSE)/Daviplata -- siguen con su
-    # implementacion directa de siempre hasta que sus propias cards se
-    # certifiquen y desplieguen a green por separado.
-    def create(self, options=None):
+    def create(self, options = None):
         gateway = self.epayco.gateway_for("safetypay")
         return gateway.create("safetypay", options)
 

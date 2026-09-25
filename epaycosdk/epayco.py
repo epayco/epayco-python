@@ -15,13 +15,13 @@ class Epayco:
 
     public_key = ""
     api_key = ""
-    test = False
+    test = ""
     lang = "ES"
 
     def __init__(self, options):
         self.api_key = options["apiKey"]
         self.private_key = options["privateKey"]
-        self.test = "true" if options["test"] else "false"
+        self.test = True if options["test"] else False
         self.lang = options["lenguage"]
 
         self.legacy_methods = set(options.get("transactionMethods", []))
