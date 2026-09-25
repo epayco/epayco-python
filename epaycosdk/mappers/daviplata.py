@@ -1,4 +1,5 @@
 from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
+from epaycosdk.utils import with_default_extra5
 
 
 class DaviplataRequestMapper:
@@ -32,7 +33,7 @@ class DaviplataRequestMapper:
             "extras": {
                 "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
             },
-            "extrasEpayco": {"extra5": "P43"},
+            "extrasEpayco": with_default_extra5(options.get("extrasEpayco")),
             "paymentMethodData": {},
         }
         split_info = options.get("split_payment")

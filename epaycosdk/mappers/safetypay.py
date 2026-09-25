@@ -1,4 +1,5 @@
 from epaycosdk.mappers.base import is_validation_error, legacy_validation_error_response
+from epaycosdk.utils import with_default_extra5
 
 
 class SafetypayRequestMapper:
@@ -36,7 +37,7 @@ class SafetypayRequestMapper:
             "extras": {
                 "extra{}".format(i): options.get("extra{}".format(i), "") for i in range(1, 11)
             },
-            "extrasEpayco": {"extra5": "P43"},
+            "extrasEpayco": with_default_extra5(options.get("extrasEpayco")),
             "paymentMethodData": {
                 "country": self._ISO_ALPHA3.get(
                     options.get("country", "CO"), options.get("country", "CO")
