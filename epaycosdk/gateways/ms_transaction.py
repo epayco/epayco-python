@@ -13,7 +13,7 @@ from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 
 class MsTransactionGateway(PaymentGateway):
 
-    BASE_URL = "https://apiflow.epayco.io/"
+    BASE_URL = "https://apiflow-green.epayco.co/"
     TRANSACTIONS_URL = f"{BASE_URL}payment/api/v1/transactions"
     PSE_BANKS_URL = f"{BASE_URL}payment/api/v1/pse/banks"
     AUTH_URL = f"{BASE_URL}authentication/api/v2/login"
