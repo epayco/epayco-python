@@ -25,6 +25,12 @@ class Token(Resource):
     """
 
     def create(self, options):
+        # Tarjeta (TDC) va por el servicio de tokenizacion nuevo salvo que el
+        # comercio fuerce el legado con transactionMethods: ["charge"]. Los
+        # tokens de ambos servicios son intercambiables (verificado en vivo:
+        # un tokenMdb sirve en customer.create/charge legado y viceversa).
+        if not self.epayco.uses_legacy("charge"):
+            return self.epayco._ms_transaction_gateway.create_token(options)
 
         return self.request(
             "POST",
@@ -174,6 +180,8 @@ class Charge(Resource):
         """
 
     def create(self, options=None):
+        if not self.epayco.uses_legacy("charge"):
+            return self.epayco._ms_transaction_gateway.create_charge(options)
         return self.request(
             "POST",
             "payment/v1/charge/create",
@@ -187,6 +195,8 @@ class Charge(Resource):
         )
 
     def get(self, uid):
+        if not self.epayco.uses_legacy("charge"):
+            return self.epayco._ms_transaction_gateway.get_charge(uid)
 
         return self.request(
             "GET",

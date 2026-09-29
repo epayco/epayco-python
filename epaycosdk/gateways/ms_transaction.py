@@ -9,6 +9,10 @@ from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayRespons
 from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataResponseMapper
 from epaycosdk.mappers.pse import PseRequestMapper, PseResponseMapper
 from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
+from epaycosdk.mappers.tdc import (
+    TdcRequestMapper, TdcResponseMapper, TdcQueryResponseMapper,
+    TokenRequestMapper, TokenResponseMapper,
+)
 
 
 class MsTransactionGateway(PaymentGateway):
@@ -17,6 +21,7 @@ class MsTransactionGateway(PaymentGateway):
     TRANSACTIONS_URL = f"{BASE_URL}payment/api/v1/transactions"
     PSE_BANKS_URL = f"{BASE_URL}payment/api/v1/pse/banks"
     AUTH_URL = f"{BASE_URL}authentication/api/v2/login"
+    TOKENIZATION_URL = f"{BASE_URL}payment/subscriptions/v1/tokenization/createToken"
     IV = "0000000000000000"
 
     _MAPPERS = {
@@ -39,6 +44,35 @@ class MsTransactionGateway(PaymentGateway):
         )
         return response_mapper.to_sdk_response(self._parse(response), options)
     
+    def create_token(self, options):
+        """Tokeniza la tarjeta en el servicio nuevo. El id devuelto es el
+        tokenMdb que create_charge envia en paymentMethodData."""
+        body = TokenRequestMapper().to_tokenization(options, self.epayco)
+        response = requests.post(self.TOKENIZATION_URL, json=body, headers=self._headers())
+        return TokenResponseMapper().to_sdk_response(
+            self._parse(response), response.status_code, options, self.epayco.lang
+        )
+
+    def create_charge(self, options):
+        body = TdcRequestMapper().to_ms_transaction(options, self.epayco)
+        response = requests.post(
+            self.TRANSACTIONS_URL,
+            json=self._encrypt(body),
+            headers=self._headers(),
+        )
+        return TdcResponseMapper().to_sdk_response(
+            self._parse(response), response.status_code, options, self.epayco.lang
+        )
+
+    def get_charge(self, ref_payco):
+        response = requests.get(
+            "{}/{}".format(self.TRANSACTIONS_URL, ref_payco),
+            headers=self._headers(),
+        )
+        return TdcQueryResponseMapper().to_sdk_response(
+            self._parse(response), response.status_code, None, self.epayco.lang
+        )
+
     def pse_banks(self):
         public_key = self.epayco.api_key
 

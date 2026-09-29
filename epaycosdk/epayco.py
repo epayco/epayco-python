@@ -38,6 +38,9 @@ class Epayco:
         self.safetypay = Safetypay(self)
         self.daviplata = Daviplata(self)
 
+    def uses_legacy(self, payment_method):
+        return payment_method in self.legacy_methods
+
     def gateway_for(self, payment_method):
         if payment_method in self.legacy_methods:
             return self._legacy_gateway
