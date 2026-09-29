@@ -103,7 +103,8 @@ keep one or more payment methods on the legacy flow by adding ``transactionMetho
 
 The SDK's public methods (``objepayco.safetypay.create(...)``, etc.) do not change their
 signature or response format depending on the flow used. Payment methods currently
-supported on ms-transaction: ``safetypay``, ``daviplata``.
+supported on ms-transaction: ``safetypay``, ``daviplata``, ``pse``, ``cash`` and ``charge``
+(credit card: ``token.create``, ``charge.create`` and ``charge.get`` switch together).
 
 Create Token
 ####
@@ -120,6 +121,10 @@ Create Token
 
     token=objepayco.token.create(credit_info)
     print(token)
+
+By default the card is tokenized with the ms-transaction tokenization service; the returned
+``id`` is used as ``token_card`` in ``charge.create``. Tokens from either service work with
+``customer.create`` and subscriptions.
 
 Customers
 ####
@@ -548,7 +553,7 @@ Create
         "tax_base": "100000",
         "currency": "COP",
         "dues": "12",
-        "ip":"190.000.000.000",  #This is the client's IP, it is required
+        "ip":"190.0.0.1",  #This is the client's IP, it is required (must be a valid IP)
         "url_response": "https://tudominio.com/respuesta.php",
         "url_confirmation": "https://tudominio.com/confirmacion.php",
         "method_confirmation": "GET",
@@ -563,6 +568,9 @@ Create
     }
 
     pay = objepayco.charge.create(payment_info)
+
+On ms-transaction (default) ``customer_id`` and ``use_default_card_customer`` are not
+required: the charge is made directly against ``token_card``. Installments go in ``dues``.
 
 
 Retrieve
