@@ -116,7 +116,8 @@ Create Token
       "card[exp_year]": "2027",
       "card[exp_month]": "12",
       "card[cvc]": "123",
-      "hasCvv": True #// hasCvv: validate the security code on the transaction
+      "hasCvv": True, #// hasCvv: validate the security code on the transaction (legacy flow only)
+      "providerTokenizer": "kms" #// optional, ms-transaction flow only: "kms" (default) or "cybersource"
       }
 
     token=objepayco.token.create(credit_info)
