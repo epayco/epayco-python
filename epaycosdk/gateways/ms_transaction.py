@@ -10,7 +10,7 @@ from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataRespons
 from epaycosdk.mappers.pse import PseRequestMapper, PseResponseMapper
 from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
 from epaycosdk.mappers.tdc import (
-    TdcRequestMapper, TdcResponseMapper, TdcQueryResponseMapper,
+    InvalidChargeRequest, TdcRequestMapper, TdcResponseMapper, TdcQueryResponseMapper,
     TokenRequestMapper, TokenResponseMapper,
 )
 
@@ -22,6 +22,8 @@ class MsTransactionGateway(PaymentGateway):
     PSE_BANKS_URL = f"{BASE_URL}payment/api/v1/pse/banks"
     AUTH_URL = f"{BASE_URL}authentication/api/v2/login"
     TOKENIZATION_URL = f"{BASE_URL}payment/subscriptions/v1/tokenization/createToken"
+    # La tokenizacion lleva PAN/CVC: no se deja la conexion colgada sin limite.
+    TOKENIZATION_TIMEOUT = 30
     IV = "0000000000000000"
 
     _MAPPERS = {
@@ -48,13 +50,19 @@ class MsTransactionGateway(PaymentGateway):
         """Tokeniza la tarjeta en el servicio nuevo. El id devuelto es el
         tokenMdb que create_charge envia en paymentMethodData."""
         body = TokenRequestMapper().to_tokenization(options, self.epayco)
-        response = requests.post(self.TOKENIZATION_URL, json=body, headers=self._headers())
+        response = requests.post(
+            self.TOKENIZATION_URL, json=body, headers=self._headers(), timeout=self.TOKENIZATION_TIMEOUT
+        )
         return TokenResponseMapper().to_sdk_response(
             self._parse(response), response.status_code, options, self.epayco.lang
         )
 
     def create_charge(self, options):
-        body = TdcRequestMapper().to_ms_transaction(options, self.epayco)
+        try:
+            body = TdcRequestMapper().to_ms_transaction(options, self.epayco)
+        except InvalidChargeRequest as error:
+            # Se responde el error sin pedir el token ni llamar a ms-transaction.
+            return TdcResponseMapper().invalid_request_response(str(error), self.epayco.lang)
         response = requests.post(
             self.TRANSACTIONS_URL,
             json=self._encrypt(body),

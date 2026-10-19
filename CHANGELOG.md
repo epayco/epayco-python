@@ -15,6 +15,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
   cobra directo contra el token. Los tokens de ambos servicios son intercambiables, así que
   `Customers`/`Subscriptions` (que siguen en legado) aceptan el token nuevo.
 - El flujo nuevo exige una IP válida en `ip` (`190.000.000.000` responde error de validación).
+- `Token.create(...)` en el flujo nuevo tokeniza con `providerTokenizer: "kms"` por defecto; se puede
+  enviar `"cybersource"` en `options["providerTokenizer"]`. La tokenización tiene un timeout de 30 s.
+- `Charge.create(...)` en el flujo nuevo: un split que no se puede leer (`split_payment` o
+  `split_receivers` en un string que no es JSON válido, o receptores que no son una lista) devuelve
+  el error de validación del SDK sin crear la transacción, en vez de cobrar sin dispersión.
+- `direccion` sale `"SIN DIRECCION"` cuando no se envía `address`, igual que en el legado.
 
 ### Known differences vs. legacy
 - `ind_pais`/`country_card` salen en `None`: ms-transaction no expone el país emisor.

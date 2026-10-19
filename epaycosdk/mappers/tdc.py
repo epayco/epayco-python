@@ -12,6 +12,11 @@ _LEGACY_VALIDATION_MESSAGE = "Error validando datos"
 _LEGACY_VALIDATION_DESCRIPTION = "Los datos son erroneos o son requeridos por favor compruebe."
 
 
+class InvalidChargeRequest(ValueError):
+    """Opciones de charge.create que no se pueden enviar a ms-transaction (hoy,
+    un split que no se puede leer). El gateway responde el error sin cobrar."""
+
+
 def _tdc_status_code(status, fallback):
     # Legacy de TDC devuelve 4 para "Fallida" (verificado en vivo 2026-09-29,
     # tarjeta 5170394490379427 en ambos flujos), no el 2 de la tabla comun
@@ -91,8 +96,9 @@ class TokenRequestMapper:
     (POST payment/subscriptions/v1/tokenization/createToken)."""
 
     # El servicio solo acepta "cybersource" o "kms" (verificado: cualquier otro
-    # valor responde 400 "providerTokenizer debe ser cybersource o kms").
-    PROVIDER_TOKENIZER = "cybersource"
+    # valor responde 400 "providerTokenizer debe ser cybersource o kms"). "kms"
+    # por defecto; el comercio puede enviar options["providerTokenizer"].
+    PROVIDER_TOKENIZER = "kms"
 
     def to_tokenization(self, options, epayco):
         options = options or {}
@@ -105,7 +111,7 @@ class TokenRequestMapper:
             "card[email]": options.get("card[email]"),
             "session": "API",
             "type": "single-payment",
-            "providerTokenizer": self.PROVIDER_TOKENIZER,
+            "providerTokenizer": options.get("providerTokenizer") or self.PROVIDER_TOKENIZER,
             "test": bool(epayco.test),
         }
         return {k: v for k, v in body.items() if v is not None}
@@ -139,11 +145,26 @@ class TokenResponseMapper:
         }
 
 
+def _load_split_json(value, field):
+    # Un split en string que no es JSON (p. ej. str() de un dict de Python) no
+    # se puede descartar en silencio: el cobro saldria sin dispersion y con
+    # success true.
+    try:
+        return json.loads(value)
+    except (ValueError, RecursionError):
+        raise InvalidChargeRequest("El campo {} no es un JSON válido".format(field)) from None
+
+
 def _split_payment(options):
     """Acepta los dos formatos de split que ya usa el SDK: el plano de
     charge.create legado (splitpayment/split_app_id/... en la raiz, receptores
-    con base_iva) y el dict anidado split_payment de Cash/PSE."""
+    con base_iva) y el dict anidado split_payment de Cash/PSE (tambien como
+    string JSON). Un split que no se puede leer lanza InvalidChargeRequest."""
     nested = options.get("split_payment")
+    if isinstance(nested, str):
+        nested = _load_split_json(nested, "split_payment") if nested.strip() else None
+    if nested is not None and not isinstance(nested, dict):
+        raise InvalidChargeRequest("El campo split_payment debe ser un objeto JSON")
     if isinstance(nested, dict):
         src = nested
     elif str(options.get("splitpayment", "")).lower() == "true":
@@ -153,7 +174,9 @@ def _split_payment(options):
 
     receivers = src.get("split_receivers") or []
     if isinstance(receivers, str):
-        receivers = json.loads(receivers)
+        receivers = _load_split_json(receivers, "split_receivers")
+    if not isinstance(receivers, list) or not all(isinstance(r, dict) for r in receivers):
+        raise InvalidChargeRequest("El campo split_receivers debe ser una lista de receptores")
     mapped = []
     for r in receivers:
         mapped.append({
@@ -174,6 +197,16 @@ def _split_payment(options):
         "splitRule": src.get("split_rule", "multiple"),
         "splitReceivers": mapped,
     }
+
+
+def _extras_epayco(options):
+    # extrasEpayco (convencion del resto de mappers de ms-transaction) gana si
+    # trae algun valor; si no, se usa extras_epayco (la del legado).
+    for key in ("extrasEpayco", "extras_epayco"):
+        extras = options.get(key)
+        if isinstance(extras, dict) and any(v not in (None, "") for v in extras.values()):
+            return extras
+    return None
 
 
 class TdcRequestMapper:
@@ -226,7 +259,7 @@ class TdcRequestMapper:
             "integrationType": {"tipo_checkout": "api", "modo_pago": "payment"},
             "publicKey": epayco.api_key,
             "extras": extras,
-            "extrasEpayco": with_default_extra5(options.get("extras_epayco") or options.get("extrasEpayco")),
+            "extrasEpayco": with_default_extra5(_extras_epayco(options)),
         }
         split = _split_payment(options)
         if split:
@@ -291,7 +324,9 @@ class TdcResponseMapper:
                 "apellidos": options.get("last_name"),
                 "email": options.get("email"),
                 "ciudad": data.get("city") or options.get("city"),
-                "direccion": options.get("address"),
+                # Sin address, el legado responde "SIN DIRECCION" (verificado
+                # 2026-09-28) y ms-transaction guarda lo mismo.
+                "direccion": options.get("address") or "SIN DIRECCION",
                 # Pais emisor de la tarjeta: ms-transaction no lo expone
                 # (payerInformation.country viene enmascarado). Sin equivalente.
                 "ind_pais": None,
@@ -306,6 +341,11 @@ class TdcResponseMapper:
         if three_ds:
             response["data"]["3DS"] = three_ds
         return response
+
+    def invalid_request_response(self, message, lang):
+        """Error de validacion del legado para un cobro que no se envio a
+        ms-transaction (InvalidChargeRequest)."""
+        return legacy_error_response({"data": {"errors": message}}, 400, lang)
 
 
 class TdcQueryResponseMapper:
