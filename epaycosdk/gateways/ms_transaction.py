@@ -1,14 +1,17 @@
 import base64
 import json
+import re
+from urllib.parse import quote
 
 import requests
 
 from epaycosdk.client import AESCipher
 from epaycosdk.gateways.base import PaymentGateway
+from epaycosdk.mappers.base import LegacyResponseError
 from epaycosdk.mappers.safetypay import SafetypayRequestMapper, SafetypayResponseMapper
 from epaycosdk.mappers.daviplata import DaviplataRequestMapper, DaviplataResponseMapper
 from epaycosdk.mappers.pse import PseRequestMapper, PseResponseMapper
-from epaycosdk.mappers.cash import CashRequestMapper, CashResponseMapper
+from epaycosdk.mappers.cash import CashQueryResponseMapper, CashRequestMapper, CashResponseMapper
 from epaycosdk.mappers.tdc import (
     InvalidChargeRequest, TdcRequestMapper, TdcResponseMapper, TdcQueryResponseMapper,
     TokenRequestMapper, TokenResponseMapper,
@@ -24,7 +27,9 @@ class MsTransactionGateway(PaymentGateway):
     TOKENIZATION_URL = f"{BASE_URL}payment/subscriptions/v1/tokenization/createToken"
     # La tokenizacion lleva PAN/CVC: no se deja la conexion colgada sin limite.
     TOKENIZATION_TIMEOUT = 30
+    REQUEST_TIMEOUT = (5, 30)
     IV = "0000000000000000"
+    REF_PAYCO_PATTERN = re.compile(r"[A-Za-z0-9_-]{1,64}")
 
     _MAPPERS = {
         "safetypay": (SafetypayRequestMapper(), SafetypayResponseMapper()),
@@ -32,17 +37,22 @@ class MsTransactionGateway(PaymentGateway):
         "pse": (PseRequestMapper(), PseResponseMapper()),
         "cash": (CashRequestMapper(), CashResponseMapper())
     }
+    _QUERY_MAPPERS = {"cash": CashQueryResponseMapper()}
 
     def __init__(self, epayco):
         self.epayco = epayco
 
     def create(self, payment_method, options):
         request_mapper, response_mapper = self._MAPPERS[payment_method]
-        body = request_mapper.to_ms_transaction(options, self.epayco)
+        try:
+            body = request_mapper.to_ms_transaction(options, self.epayco)
+        except LegacyResponseError as error:
+            return error.response
         response = requests.post(
             self.TRANSACTIONS_URL,
             json=self._encrypt(body),
             headers=self._headers(),
+            timeout=self.REQUEST_TIMEOUT,
         )
         return response_mapper.to_sdk_response(self._parse(response), options)
     
@@ -67,15 +77,21 @@ class MsTransactionGateway(PaymentGateway):
             self.TRANSACTIONS_URL,
             json=self._encrypt(body),
             headers=self._headers(),
+            timeout=self.REQUEST_TIMEOUT,
         )
         return TdcResponseMapper().to_sdk_response(
             self._parse(response), response.status_code, options, self.epayco.lang
         )
 
     def get_charge(self, ref_payco):
+        if not self._valid_ref_payco(ref_payco):
+            return TdcQueryResponseMapper().to_sdk_response(
+                self._not_found(ref_payco), 422, None, self.epayco.lang
+            )
         response = requests.get(
-            "{}/{}".format(self.TRANSACTIONS_URL, ref_payco),
+            self._transaction_url(ref_payco),
             headers=self._headers(),
+            timeout=self.REQUEST_TIMEOUT,
         )
         return TdcQueryResponseMapper().to_sdk_response(
             self._parse(response), response.status_code, None, self.epayco.lang
@@ -90,19 +106,24 @@ class MsTransactionGateway(PaymentGateway):
         response = requests.get(
             url,
             headers=headers,
+            timeout=self.REQUEST_TIMEOUT,
         )
  
         return self._parse(response)
 
     def get(self, payment_method, ref_payco):
         _, response_mapper = self._MAPPERS[payment_method]
+        response_mapper = self._QUERY_MAPPERS.get(payment_method, response_mapper)
+        if not self._valid_ref_payco(ref_payco):
+            return response_mapper.to_sdk_response(self._not_found(ref_payco))
 
-        url =f"{self.TRANSACTIONS_URL}/{ref_payco}"
+        url = self._transaction_url(ref_payco)
         headers = self._headers()
 
         response = requests.get(
             url,
             headers=headers,
+            timeout=self.REQUEST_TIMEOUT,
         )
 
       
@@ -110,6 +131,25 @@ class MsTransactionGateway(PaymentGateway):
         return response_mapper.to_sdk_response(
             self._parse(response)
         )
+
+    def _valid_ref_payco(self, ref_payco):
+        return isinstance(ref_payco, (str, int)) and not isinstance(ref_payco, bool) and bool(
+            self.REF_PAYCO_PATTERN.fullmatch(str(ref_payco))
+        )
+
+    def _not_found(self, ref_payco):
+        return {
+            "success": False,
+            "message": "Transaction request",
+            "data": {
+                "errorType": "ValidationException",
+                "errorTypeDescription": "Information error",
+                "errors": [{"code": "", "message": "Transaction # {} no encontrada.".format(ref_payco)}],
+            },
+        }
+
+    def _transaction_url(self, ref_payco):
+        return "{}/{}".format(self.TRANSACTIONS_URL, quote(str(ref_payco), safe=""))
 
     def _parse(self, response):
         try:
@@ -150,6 +190,7 @@ class MsTransactionGateway(PaymentGateway):
                 "client_secret": self.epayco.private_key,
                 "grant_type": "client_credentials",
             },
+            timeout=self.REQUEST_TIMEOUT,
         )
         return self._parse(response)["data"]["token"]
 
