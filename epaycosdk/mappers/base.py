@@ -1,3 +1,10 @@
+class LegacyResponseError(Exception):
+
+    def __init__(self, response):
+        super().__init__(response.get("textResponse"))
+        self.response = response
+
+
 def is_validation_error(ms_response):
     data = ms_response.get("data") or {}
     return isinstance(data, dict) and "errorType" in data
